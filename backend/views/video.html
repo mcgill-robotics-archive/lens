@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Upload Video</title>
+  </head>
+  <body>
+    <form enctype="multipart/form-data" action="/video" method="post">
+      <fieldset name="properties">
+        <legend>Upload a video</legend>
+
+        <label for="name">Name</label>
+        <input name="name" type="text"><br>
+
+        <label for="description">Description</label>
+        <input name="description" type="text"><br>
+
+        <label for="location">Location</label>
+        <input name="location" type="text"><br>
+
+        <label for="recorded">Date recorded</label>
+        <input name="recorded" type="datetime-local"><br>
+
+        <input type="file" name="filearg" /><br>
+        <input type="submit" value="Upload" />
+      </fieldset>
+    </form>
+  </body>
+</html>
