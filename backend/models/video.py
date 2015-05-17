@@ -7,7 +7,7 @@ from motorengine import Document, fields
 from tornado.gen import coroutine, Return
 
 __author__ = "Anass Al-Wohoush"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 class Video(Document):
@@ -34,6 +34,8 @@ class Video(Document):
         """Returns dictionary representation of video information."""
         return {
             "id": str(self._id),
+            "name": self.name,
+            "description": self.description,
             "location": self.location,
             "recorded": self.recorded,
             "added": self.added

@@ -12,7 +12,7 @@ from tornado.gen import coroutine, Return
 from motorengine import Document, fields, Q
 
 __author__ = "Anass Al-Wohoush"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 lock = Lock()
 
@@ -39,11 +39,11 @@ class ImageField(fields.BinaryField):
 
 class Frame(Document):
 
-    """Video frame document.
+    """Video image document.
 
     Attributes:
         video: Corresponding video.
-        sequence: Frame sequence in video.
+        index: Frame index in video.
         image: JPEG binary data.
         tags: List of tags.
         metadata: List of JSON annotations.
@@ -55,7 +55,7 @@ class Frame(Document):
     __collection__ = "frames"
 
     video = fields.ReferenceField(reference_document_type=Video)
-    sequence = fields.IntField(required=True)
+    index = fields.IntField(required=True)
     image = ImageField(required=True)
     tags = fields.ListField(base_field=fields.StringField())
     metadata = fields.ListField(base_field=fields.JsonField())
@@ -67,7 +67,7 @@ class Frame(Document):
         return {
             "id": str(self._id),
             "video": self.video.dump(),
-            "sequence": self.sequence,
+            "index": self.index,
             "tags": self.tags,
             "metadata": self.metadata,
             "accessed": self.accessed,
@@ -103,7 +103,7 @@ class Frame(Document):
             cache = datetime.utcnow() - timedelta(minutes=10)
             return (
                 Q({"metadata": {"$size": 0}})
-                & (Q(accessed__lt=cache))
+                & (Q(accessed__is_null=True) | Q(accessed__lt=cache))
             )
 
         # Look for optimal frame following the previously annotated one.
@@ -116,10 +116,10 @@ class Frame(Document):
             # Avoid querying for next frame while marking another frame in use.
             with (yield lock.acquire()):
                 # Find next non-annotated frame from the same video with a
-                # greater sequence number.
+                # greater index.
                 query = prepare_query() & Q(video=previous_frame.video)
                 next_frame = yield Frame.objects.filter(query).get(
-                    sequence__gt=previous_frame.sequence
+                    index__gt=previous_frame.index
                 )
 
             # Return the frame if found and mark as in use.
@@ -158,12 +158,12 @@ class Frame(Document):
 
     @classmethod
     @coroutine
-    def from_image(cls, video, sequence, image):
+    def from_image(cls, video, index, image):
         """Creates a Frame from image data and writes it to the database.
 
         Args:
             video: Corresponding video.
-            sequence: Frame sequence in video.
+            index: Frame index in video.
             image: JPEG binary data.
 
         Returns:
@@ -171,7 +171,7 @@ class Frame(Document):
         """
         frame = yield Frame.objects.create(
             video=video,
-            sequence=sequence,
+            index=index,
             image=image
         )
         raise Return(frame)

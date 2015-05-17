@@ -16,7 +16,7 @@ from tornado.web import RequestHandler
 from moviepy.editor import VideoFileClip
 
 __author__ = "Anass Al-Wohoush"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 class VideoHandler(RequestHandler):
@@ -46,6 +46,8 @@ class VideoHandler(RequestHandler):
             For example:
                 {
                     'id': unique video ID,
+                    'name': video name,
+                    'description': video description,
                     'location': location,
                     'recorded': datetime recorded in UTC,
                     'added': datetime added in UTC
@@ -99,15 +101,15 @@ class VideoHandler(RequestHandler):
         v = VideoFileClip(self.path)
 
         # Iterate through frames.
-        for sequence, image in enumerate(v.iter_frames()):
+        for index, image in enumerate(v.iter_frames()):
             # Compress as JPEG.
             jpeg = StringIO()
             Image.fromarray(image).save(jpeg, "jpeg")
 
             # Write frame to database.
-            logging.info("Adding frame %d to %s", sequence, self.video.name)
+            logging.info("Adding frame %d to %s", index, self.video.name)
             yield Frame.from_image(
                 video=self.video,
-                sequence=sequence,
+                index=index,
                 image=Binary(jpeg.getvalue())
             )
