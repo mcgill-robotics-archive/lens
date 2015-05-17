@@ -150,9 +150,11 @@ class Frame(Document):
             metadata: Metadata.
             tags: List of tags.
         """
-        self.metadata.append(metadata)
-        self.tags.extend(tags)
-        yield self.save()
+        # Avoid concurrently overwriting a frame's annotations.
+        with (yield lock.acquire()):
+            self.metadata.append(metadata)
+            self.tags.extend(tags)
+            yield self.save()
 
     @classmethod
     @coroutine
