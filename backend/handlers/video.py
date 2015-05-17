@@ -61,7 +61,7 @@ class VideoHandler(RequestHandler):
         )
 
         # Get file.
-        fileinfo = self.request.files["filearg"][0]
+        fileinfo = self.request.files["video"][0]
         fname = fileinfo["filename"]
         extn = os.path.splitext(fname)[1]
         cname = str(uuid.uuid4()) + extn
