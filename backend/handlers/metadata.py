@@ -10,7 +10,7 @@ from tornado.escape import json_decode
 from tornado.web import RequestHandler
 
 __author__ = "Anass Al-Wohoush"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 
 class MetadataHandler(RequestHandler):

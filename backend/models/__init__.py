@@ -6,6 +6,6 @@ from frame import Frame
 from video import Video
 
 __author__ = "Anass Al-Wohoush"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = ["Frame", "Video"]

@@ -16,7 +16,7 @@ from tornado.web import RequestHandler
 from moviepy.editor import VideoFileClip
 
 __author__ = "Anass Al-Wohoush"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 
 class VideoHandler(RequestHandler):

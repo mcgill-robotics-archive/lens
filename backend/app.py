@@ -10,7 +10,7 @@ from tornado.web import Application
 from tornado.options import define, options
 
 __author__ = "Anass Al-Wohoush"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 # Set up command-line arguments.
 define("db", default="lens", help="database name")
