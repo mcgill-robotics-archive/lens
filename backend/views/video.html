@@ -2,27 +2,73 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Upload Video</title>
+    <style type="text/css">
+      body {
+        font-family: Arial, sans-serif;
+      }
+      #recorded {
+        display: none;
+      }
+    </style>
+    <script type="text/javascript">
+      var video;
+      var fname;
+      var recorded;
+      var details;
+      var loc;
+      var upload_button;
+
+      function init() {
+        video = document.getElementById("video");
+        fname = document.getElementById("fname");
+        recorded = document.getElementById("recorded");
+        details = document.getElementById("details");
+        loc = document.getElementById("loc");
+        upload_button = document.getElementById("upload");
+      }
+
+      function update() {
+        if (!video.files.length) {
+          fname.value = "";
+          recorded.value = "";
+          details.style.display = "none";
+          return;
+        }
+
+        file = video.files[0];
+
+        if (!fname.value) {
+          fname.value = file.name;
+        }
+        recorded.value = file.lastModifiedDate.toISOString();
+        details.style.display = "block";
+
+        if (fname.value && recorded.value && loc.value) {
+          upload_button.disabled = false;
+        } else {
+          upload_button.disabled = true;
+        }
+      }
+    </script>
   </head>
-  <body>
+  <body onload="init()">
+    <h1>Upload Video</h1>
     <form enctype="multipart/form-data" action="/video" method="post">
-      <fieldset name="properties">
-        <legend>Upload a video</legend>
+      <input id="video" onchange="update()"
+        type="file" name="video" accept="video/*" /><br>
+      <fieldset id="details" style="display: none;">
+        <legend>Details</legend>
 
         <label for="name">Name</label>
-        <input name="name" type="text"><br>
-
-        <label for="description">Description</label>
-        <input name="description" type="text"><br>
-
+        <input onchange="update()" id="fname" name="name" type="text">
+        <br>
         <label for="location">Location</label>
-        <input name="location" type="text"><br>
+        <input onchange="update()" id="loc" name="location" type="text">
 
-        <label for="recorded">Date recorded</label>
-        <input name="recorded" type="datetime-local"><br>
-
-        <input type="file" name="video" accept="video/*" /><br>
-        <input type="submit" value="Upload" />
+        <!-- Hidden timestamp -->
+        <input id="recorded" name="recorded" type="text" >
       </fieldset>
+      <input id="upload" type="submit" value="Upload" disabled />
     </form>
   </body>
 </html>

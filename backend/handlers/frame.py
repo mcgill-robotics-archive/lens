@@ -31,16 +31,15 @@ class NextFrameHandler(RequestHandler):
                     'video': {
                         'id': unique video ID,
                         'name': video name,
-                        'description': video description,
                         'location': location,
-                        'recorded': datetime recorded in UTC,
-                        'added': datetime added in UTC
+                        'recorded': datetime recorded in ISO 8601,
+                        'added': datetime added in ISO 8601
                     },
                     'index': frame index,
                     'tags': list of tags,
                     'metadata': list of JSON metadata,
-                    'accessed': datetime last accessed in UTC,
-                    'added': datetime added in UTC
+                    'accessed': datetime last accessed in ISO 8601,
+                    'added': datetime added in ISO 8601
                 }
         """
         previous = self.get_argument("previous", None)

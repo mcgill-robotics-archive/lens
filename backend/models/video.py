@@ -16,7 +16,6 @@ class Video(Document):
 
     Attributes:
         name: Video name.
-        description: Video description.
         location: Location recorded.
         recorded: Datetime recorded in UTC.
         added: Datetime added to the database in UTC.
@@ -25,7 +24,6 @@ class Video(Document):
     __collection__ = "videos"
 
     name = fields.StringField(required=True)
-    description = fields.StringField(required=True)
     location = fields.StringField(required=True)
     recorded = fields.DateTimeField(required=True)
     added = fields.DateTimeField(default=datetime.utcnow())
@@ -35,7 +33,6 @@ class Video(Document):
         return {
             "id": str(self._id),
             "name": self.name,
-            "description": self.description,
             "location": self.location,
             "recorded": self.recorded,
             "added": self.added
@@ -43,12 +40,11 @@ class Video(Document):
 
     @classmethod
     @coroutine
-    def from_form(cls, name, description, location, recorded):
+    def from_form(cls, name, location, recorded):
         """Creates a Video from form data and writes it to the database.
 
         Args:
             name: Video name.
-            description: Video description.
             location: Location taken.
             recorded: Datetime recorded in UTC.
 
@@ -57,7 +53,6 @@ class Video(Document):
         """
         video = yield Video.objects.create(
             name=name,
-            description=description,
             location=location,
             recorded=recorded
         )

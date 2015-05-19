@@ -12,10 +12,10 @@ __version__ = "0.1.0"
 class Encoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
-            return str(obj)
+            return obj.isoformat()
         elif isinstance(obj, datetime.date):
-            return str(obj)
+            return obj.isoformat()
         elif isinstance(obj, datetime.timedelta):
-            return str(datetime.datetime.min + obj)
+            return (datetime.datetime.min + obj).isoformat()
         else:
             return super(Encoder, self).default(obj)

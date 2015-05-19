@@ -6,9 +6,9 @@ import os
 import uuid
 import logging
 from PIL import Image
+import dateutil.parser
 from bson import Binary
 from helpers import Encoder
-from datetime import datetime
 from cStringIO import StringIO
 from models import Frame, Video
 from tornado.gen import coroutine
@@ -36,9 +36,8 @@ class VideoHandler(RequestHandler):
 
         Properties:
             name: Video name.
-            description: Video description.
             location: Location taken.
-            recorded: Datetime recorded as 'YYYY-mm-ddTHH:MM'.
+            recorded: Datetime recorded as ISO 8601.
 
         Returns:
             application/json of the video properties.
@@ -47,20 +46,16 @@ class VideoHandler(RequestHandler):
                 {
                     'id': unique video ID,
                     'name': video name,
-                    'description': video description,
                     'location': location,
-                    'recorded': datetime recorded in UTC,
-                    'added': datetime added in UTC
+                    'recorded': datetime recorded in ISO 8601,
+                    'added': datetime added in ISO 8601
                 }
         """
         # Get form data.
         name = self.get_argument("name")
-        description = self.get_argument("description")
         location = self.get_argument("location")
-        recorded = datetime.strptime(
-            self.get_argument("recorded"),
-            "%Y-%m-%dT%H:%M"
-        )
+        print(self.get_argument("recorded"))
+        recorded = dateutil.parser.parse(self.get_argument("recorded"))
 
         # Get file.
         fileinfo = self.request.files["video"][0]
@@ -78,7 +73,6 @@ class VideoHandler(RequestHandler):
         # Write video properties to database.
         self.video = yield Video.from_form(
             name=name,
-            description=description,
             location=location,
             recorded=recorded
         )
