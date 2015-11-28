@@ -55,3 +55,7 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Temp files
+.DS_Store
+*~
