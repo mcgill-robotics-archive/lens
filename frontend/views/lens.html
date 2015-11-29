@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>McGill Robotics Lens</title>
+</head>
+<body>
+  <!--Here is where we need to serve the next image-->
+  <img src="cat.jpg">
+  <!--Need to think of a way of tracking the user's stuff relative to their clicks--> 
+  <!-- use on downclick and on upclick events to get the start and end positions, you can define a rectangle between the two points specified and print it to the screen for the user to see while keeping track of the length width and center of the rectangle for the user.-->
+  <!-- other concern is that we should be wary of using pixels, and they should be scaled according to their appropriate size -->
+  <script type="text/javascript">
+    'use strict'
+    var vertices = {};
+    vertices.startX;
+    vertices.startY;
+    vertices.endX;
+    vertices.endY;
+    
+    var image = document.querySelector('img');
+    
+    image.addEventListener('mousedown', function (event) {
+      vertices.startX = event.pageX;
+      vertices.startY = event.pageY;
+    });
+
+    image.addEventListener('mouseup', function (event) {
+      if (vertices.startX !== undefined && vertices.startY !== undefined) {
+        vertices.endX = event.pageX;
+        vertices.endY = event.pageY;
+        drawRectangle();
+      }
+    });
+
+    document.addEventListener('mouseup', function () {
+      vertices.startX = undefined;
+      vertices.startY = undefined;
+      vertices.endX = undefined;
+      vertices.endY = undefined;
+    });
+
+    
+    function drawRectangle () {
+      for (keys in vertices) {
+        if (vertices.hasOwnProperty(keys)) {
+          console.log(keys + ' is: ' + vertices[keys]);
+        }
+      }
+    }
+
+  </script>
+</body>
+</html>

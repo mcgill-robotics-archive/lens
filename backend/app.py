@@ -27,7 +27,7 @@ class Backend(Application):
         """Constructs Backend application."""
         super(Backend, self).__init__(
             handlers=get_handlers(),
-            template_path="views",
+            template_path="/../frontend/views",
             **kwargs
         )
 
