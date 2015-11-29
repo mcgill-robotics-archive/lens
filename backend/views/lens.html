@@ -2,48 +2,97 @@
 <html>
 <head>
   <title>McGill Robotics Lens</title>
+  <style type="text/css">
+    .annotate-img{
+      background-image: url("http://dreamatico.com/data_images/cat/cat-4.jpg");
+      height: 400px;
+      width: 600px;
+    }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  <script type="text/javascript">
+      'use strict'
+      var vertices = {};
+      vertices.startX;
+      vertices.startY;
+      vertices.endX;
+      vertices.endY;
+
+      var inputData;
+      
+      var image = document.querySelector('div');
+      
+
+      image.addEventListener('mousedown', function (event) {
+        vertices.startX = event.offsetX;
+        vertices.startY = event.offsetY;
+      });
+
+      image.addEventListener('mouseup', function (event) {
+        if (vertices.startX !== undefined && vertices.startY !== undefined) {
+          vertices.endX = event.offsetX;
+          vertices.endY = event.offsetY;
+          drawRect();
+          promptUserForLabel();
+          appendInput();
+        }
+      });
+
+      document.addEventListener('mouseup', function (event) {
+        unSetValues();
+      });
+
+      function promptUserForLabel() {
+        // Add small pop up window to page
+        // Basically this is where all of the code for the labeler will go
+        /* it will be a little pop up with an onclick event handler that will
+        take whatever the user enters in the `label` field and append it to the JSON 
+        object that we're eventually going to submit
+        */
+        
+      }
+
+      function drawRect () {
+        for (var keys in vertices) {
+          if (vertices.hasOwnProperty(keys)){
+            console.log(keys + ' is: ' + vertices[keys]);
+          }
+        }
+      }
+
+      function appendInput() {
+        inputData = {};
+        inputData.v1x = vertices.startX;
+        inputData.v1y = vertices.startY;
+        inputData.v2x = vertices.endX;
+        inputData.v2y = vertices.endY;
+        
+      }
+
+      function unSetValues () {
+        for (var keys in vertices) {
+          if (vertices.hasOwnProperty(keys)) {
+            vertices[keys] = undefined;
+          }
+        }
+      }
+
+    </script>
 </head>
 <body>
-  <!--Here is where we need to serve the next image-->
-  <img src="http://dreamatico.com/data_images/cat/cat-4.jpg" width="400px">
-  <!--Need to think of a way of tracking the user's stuff relative to their clicks--> 
-  <!-- use on downclick and on upclick events to get the start and end positions, you can define a rectangle between the two points specified and print it to the screen for the user to see while keeping track of the length width and center of the rectangle for the user.-->
-  <!-- other concern is that we should be wary of using pixels, and they should be scaled according to their appropriate size -->
-  <script type="text/javascript">
-    'use strict'
-    var vertices = {};
-    vertices.startX;
-    vertices.startY;
-    vertices.endX;
-    vertices.endY;
+  <div data-role="page">
+    <!--Here is where we need to serve the next image-->
+    <div class="annotate-img"></div>
     
-    var image = document.querySelector('img');
-    
-    image.addEventListener('click', function (event) {
-      // If they are undefined then it's an even click, otherwise we should be completing the rect
-      if (vertices.startX === undefined && vertices.startY === undefined) {
-        vertices.startX = event.pageX;
-        vertices.startY = event.pageY;
-      } else {
-        vertices.endX = event.pageX;
-        vertices.endY = event.pageY;
-        drawRect();
-        unSetValues();
-      }
-    });    
+    <form>
+      <!--JSON input-->
+      <input type="hidden" name="labels" value="[]">
+      <input type="submit" value="Submit">
+    </form>
+  </div>
 
-    function drawRect () {
-      for (keys in vertices) {
-        console.log(keys + ' is: ' + vertices[keys]);
-      }
-    }
-
-    function unSetValues () {
-      for (keys in vertices) {
-        vertices[keys] = undefined;
-      }
-    }
-
-  </script>
 </body>
 </html>
