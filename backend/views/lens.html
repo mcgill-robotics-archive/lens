@@ -3,8 +3,9 @@
 <head>
   <title>McGill Robotics Lens</title>
   <style type="text/css">
-    .annotate-img{
+    #annotate-img{
       background-image: url("http://dreamatico.com/data_images/cat/cat-4.jpg");
+      background-size: 100% 100%;
       height: 400px;
       width: 600px;
     }
@@ -19,23 +20,27 @@
 
     var inputData;
     
-    var image = document.querySelector('div');
+    document.addEventListener("DOMContentLoaded", initializeImageListeners, false);
     
+    function initializeImageListeners (event) {
+      var image = document.getElementById('annotate-img');
+      
+      image.addEventListener('mousedown', function (event) {
+        vertices.startX = event.offsetX;
+        vertices.startY = event.offsetY;
+      });
 
-    image.addEventListener('mousedown', function (event) {
-      vertices.startX = event.offsetX;
-      vertices.startY = event.offsetY;
-    });
+      image.addEventListener('mouseup', function (event) {
+        if (vertices.startX !== undefined && vertices.startY !== undefined) {
+          vertices.endX = event.offsetX;
+          vertices.endY = event.offsetY;
+          drawRect();
+          promptUserForLabel();
+          appendInput();
+        }
+      });
 
-    image.addEventListener('mouseup', function (event) {
-      if (vertices.startX !== undefined && vertices.startY !== undefined) {
-        vertices.endX = event.offsetX;
-        vertices.endY = event.offsetY;
-        drawRect();
-        promptUserForLabel();
-        appendInput();
-      }
-    });
+    }
 
     document.addEventListener('mouseup', function (event) {
       unSetValues();
@@ -79,9 +84,9 @@
   </script>
 </head>
 <body>
-  <div class="annotate-img"></div>
+  <div id="annotate-img"></div>
   
-  
+
   <form>
     <!--JSON input-->
     <input type="hidden" name="labels" value="[]">
