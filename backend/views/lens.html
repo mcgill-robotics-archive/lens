@@ -34,9 +34,13 @@
         if (vertices.startX !== undefined && vertices.startY !== undefined) {
           vertices.endX = event.offsetX;
           vertices.endY = event.offsetY;
-          drawRect();
-          promptUserForLabel();
-          appendInput();
+          
+          var label = promptUserForLabel();
+          // If the label is not empty then proceed
+          if (label) {
+            drawRect()
+            appendInput(label);
+          }
         }
       });
 
@@ -47,30 +51,32 @@
     });
 
     function promptUserForLabel() {
-      // Add small pop up window to page
-      // Basically this is where all of the code for the labeler will go
-      /* it will be a little pop up with an onclick event handler that will
-      take whatever the user enters in the `label` field and append it to the JSON 
-      object that we're eventually going to submit
-      */
-      
+      // This will become much more involved and pretty
+      return prompt('Please enter a label');
     }
 
     function drawRect () {
-      for (var keys in vertices) {
-        if (vertices.hasOwnProperty(keys)){
-          console.log(keys + ' is: ' + vertices[keys]);
-        }
-      }
+      var image = document.getElementById('annotate-img');
+      var rectangle = document.createElement('rect');
+      rectangle.setAttribute('width', Math.abs(vertices.startX - vertices.endX));
+      rectangle.setAttribute('height', Math.abs(vertices.startY - vertices.endY));
+      rectangle.setAttribute('x', Math.min(vertices.startX, vertices.endX));
+      rectangle.setAttribute('y', Math.min(vertices.startY, vertices.endY));
+      rectangle.setAttribute('fill', 'red');
+      image.appendChild(rectangle);
     }
 
-    function appendInput() {
+    function appendInput(label) {
+      var previousData = JSON.parse(document.getElementsByName('labels').value);
+
       inputData = {};
       inputData.v1x = vertices.startX;
       inputData.v1y = vertices.startY;
       inputData.v2x = vertices.endX;
       inputData.v2y = vertices.endY;
-      
+      inputData.label = label;
+
+      document.getElementsByName('labels').value = JSON.stringify(previousData.push(inputData));
     }
 
     function unSetValues () {
@@ -84,9 +90,8 @@
   </script>
 </head>
 <body>
-  <div id="annotate-img"></div>
+  <svg id="annotate-img" xmlns="http://www.w3.org/2000/svg"></svg>
   
-
   <form>
     <!--JSON input-->
     <input type="hidden" name="labels" value="[]">
