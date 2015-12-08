@@ -57,17 +57,19 @@
 
     function drawRect () {
       var image = document.getElementById('annotate-img');
-      var rectangle = document.createElement('rect');
+      var rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rectangle.setAttribute('width', Math.abs(vertices.startX - vertices.endX));
       rectangle.setAttribute('height', Math.abs(vertices.startY - vertices.endY));
       rectangle.setAttribute('x', Math.min(vertices.startX, vertices.endX));
       rectangle.setAttribute('y', Math.min(vertices.startY, vertices.endY));
-      rectangle.setAttribute('fill', 'red');
+      rectangle.setAttribute('stroke-width', '3');
+      rectangle.setAttribute('stroke', 'red');
+      rectangle.setAttribute('fill', 'transparent');
       image.appendChild(rectangle);
     }
 
     function appendInput(label) {
-      var previousData = JSON.parse(document.getElementsByName('labels').value);
+      var previousData = JSON.parse(document.getElementsByName('labels')[0].value);
 
       inputData = {};
       inputData.v1x = vertices.startX;
@@ -76,7 +78,7 @@
       inputData.v2y = vertices.endY;
       inputData.label = label;
 
-      document.getElementsByName('labels').value = JSON.stringify(previousData.push(inputData));
+      document.getElementsByName('labels')[0].value = JSON.stringify(previousData.push(inputData));
     }
 
     function unSetValues () {
