@@ -4,21 +4,159 @@
   <title>McGill Robotics Lens</title>
   <style type="text/css">
     #annotate-img{
-      background-image: url("http://dreamatico.com/data_images/cat/cat-4.jpg");
+      background-image: url("http://hd.wallpaperswide.com/thumbs/kittens-t2.jpg");
       background-size: 100% 100%;
       height: 400px;
       width: 600px;
     }
   </style>
   <script type="text/javascript">
-    'use strict'
-    var vertices = {};
-    vertices.startX;
-    vertices.startY;
-    vertices.endX;
-    vertices.endY;
+    'use strict';
 
-    var inputData;
+    @TODO : Refactor into OO code --> Rethink your Objects.
+    @TODO : Change image size
+    @TODO : Add mobile detection
+    @TODO : Add action to submit button
+
+    var LENS = {
+      page : undefined, // Gets initialized by the body elements onload event handler
+      methods : {
+        /**
+         * Initialize the page property and add all required event listeners.
+         * @return undefined
+         */
+        init : function () {
+          LENS.page = new Page();
+          LENS.methods.initializeImageListeners();
+        },
+
+        /**
+         * Initialize the event listeners relevant to the selection of regions on the image.
+         * @return undefined
+         */
+        initializeImageListeners : function () {
+          var image = LENS.page.image.container; // The HTML element that contains the image to be annotated
+          image.addEventListener('mousedown', LENS.methods.imageDownClickListener);
+          image.addEventListener('mouseup', LENS.methods.imageReleaseClickListener);
+        },
+
+        /**
+         * Sets the starting point (x and y) of the LENS object when the image is clicked.
+         * @param  {MouseEvent} event : The event object containing all relevant event data.
+         * @return undefined
+         */
+        imageDownClickListener : function (event) {
+          // Check for an offset on the element that triggered the event
+          var triggerElement = event.target;
+          var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
+          var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
+
+          LENS.properties.vertices.startX = event.offsetX + elementOffsetX;
+          LENS.properties.vertices.startY = event.offsetY + elementOffsetY;
+        },
+
+        /**
+         * Handles the addition of annotations when the user releases a click on the image.
+         * @param  {MouseEvent} event : The event object containing all relevant event data.
+         * @return undefined
+         */
+        imageReleaseClickListener : function (event) {
+          // TODO, add logic such that it doesn't catch events that are just clicks without drags
+          if (LENS.properties.vertices.startX !== undefined && LENS.properties.vertices.startY !== undefined) {
+            LENS.properties.vertices.endX = event.offsetX;
+            LENS.properties.vertices.endY = event.offsetY;
+
+
+            //Draw box before prompting for label
+            var label = promptUserForLabel();
+            // If the label is not empty then proceed
+            if (label) {
+              drawRect()
+              appendInput(label, document.getElementById('labels'));
+            }
+          }
+        }
+      }
+    };
+
+
+
+    // Constructors
+    function Page () {
+      this.image = new Image();
+      this.imageId = '';
+      this.vertices = {
+        startX : undefined,
+        startY : undefined,
+        endX : undefined,
+        endY : undefined
+      }
+    }
+
+    function Image () {
+      this.container = document.getElementById('annotate-img');
+      this.annotationTable = new AnnotationTable ();
+    }
+
+    function AnnotationTable () {
+      this.annotations = [];
+      this.table = document.getElementById('annotation-table');
+    }
+
+    function Annotation (vertices, label, box) {
+      this.x = vertices.startX;
+      this.y = vertices.startY;
+      this.width = vertices.endX - vertices.startX;
+      this.height = vertices.endY = vertices.startY;
+      this.label = label;
+      this.boxElement = box;
+    }
+
+
+
+
+
+
+
+
+
+
+    var LENS = {
+      properties : {
+        image : ,
+        inputData : undefined
+      };
+      methods : {
+        initializeImageListeners : function (initializationEvent) {
+          var image = document.getElementById('annotate-img');
+          image.addEventListener('mousedown', LENS.methods.imageDownClickListener);
+          image.addEventListener('mouseup', LENS.methods.imageReleaseClickListener);
+        },
+        imageDownClickListener : function (event) {
+          // Check for an offset on the element that triggered the event
+          var triggerElement = event.target;
+          var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
+          var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
+
+          LENS.properties.vertices.startX = event.offsetX + elementOffsetX;
+          LENS.properties.vertices.startY = event.offsetY + elementOffsetY;
+        },
+        imageReleaseClickListener : function (event) {
+          // TODO, add logic such that it doesn't catch events that are just clicks without drags
+          if (LENS.properties.vertices.startX !== undefined && LENS.properties.vertices.startY !== undefined) {
+            LENS.properties.vertices.endX = event.offsetX;
+            LENS.properties.vertices.endY = event.offsetY;
+
+            var label = promptUserForLabel();
+            // If the label is not empty then proceed
+            if (label) {
+              drawRect()
+              appendInput(label, document.getElementById('labels'));
+            }
+          }
+        }
+      }
+    };
 
     document.addEventListener("DOMContentLoaded", initializeImageListeners, false);
 
@@ -31,15 +169,15 @@
         var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
         var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
 
-        vertices.startX = event.offsetX + elementOffsetX;
-        vertices.startY = event.offsetY + elementOffsetY;
+        LENS.properties.vertices.startX = event.offsetX + elementOffsetX;
+        LENS.properties.vertices.startY = event.offsetY + elementOffsetY;
       });
 
       image.addEventListener('mouseup', function (event) {
         // TODO, add logic such that it doesn't catch events that are just clicks without drags
-        if (vertices.startX !== undefined && vertices.startY !== undefined) {
-          vertices.endX = event.offsetX;
-          vertices.endY = event.offsetY;
+        if (LENS.properties.vertices.startX !== undefined && LENS.properties.vertices.startY !== undefined) {
+          LENS.properties.vertices.endX = event.offsetX;
+          LENS.properties.vertices.endY = event.offsetY;
 
           var label = promptUserForLabel();
           // If the label is not empty then proceed
@@ -64,18 +202,18 @@
     function drawRect () {
       var image = document.getElementById('annotate-img');
       var rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rectangle.setAttribute('width', Math.abs(vertices.startX - vertices.endX));
-      rectangle.setAttribute('height', Math.abs(vertices.startY - vertices.endY));
-      rectangle.setAttribute('x', Math.min(vertices.startX, vertices.endX));
-      rectangle.setAttribute('y', Math.min(vertices.startY, vertices.endY));
+      rectangle.setAttribute('width', Math.abs(LENS.properties.vertices.startX - LENS.properties.vertices.endX));
+      rectangle.setAttribute('height', Math.abs(LENS.properties.vertices.startY - LENS.properties.vertices.endY));
+      rectangle.setAttribute('x', Math.min(LENS.properties.vertices.startX, LENS.properties.vertices.endX));
+      rectangle.setAttribute('y', Math.min(LENS.properties.vertices.startY, LENS.properties.vertices.endY));
       rectangle.setAttribute('stroke-width', '3');
       rectangle.setAttribute('stroke', 'red');
       rectangle.setAttribute('fill', 'transparent');
 
       rectangle.createAttribute('img-offsetx');
       rectangle.createAttribute('img-offsety');
-      rectangle.setAttribute('img-offsetx', Math.min(vertices.startX, vertices.endX));
-      rectangle.setAttribute('img-offsety', Math.min(vertices.startY, vertices.endY));
+      rectangle.setAttribute('img-offsetx', Math.min(LENS.properties.vertices.startX, LENS.properties.vertices.endX));
+      rectangle.setAttribute('img-offsety', Math.min(LENS.properties.vertices.startY, LENS.properties.vertices.endY));
       image.appendChild(rectangle);
     }
 
@@ -84,10 +222,10 @@
       var previousData = JSON.parse(element.getAttribute('value'));
 
       var inputData = {};
-      inputData.v1x = vertices.startX;
-      inputData.v1y = vertices.startY;
-      inputData.v2x = vertices.endX;
-      inputData.v2y = vertices.endY;
+      inputData.v1x = LENS.properties.vertices.startX;
+      inputData.v1y = LENS.properties.vertices.startY;
+      inputData.v2x = LENS.properties.vertices.endX;
+      inputData.v2y = LENS.properties.vertices.endY;
       inputData.label = label;
 
       var newData = previousData.push(inputData);
@@ -95,18 +233,22 @@
     }
 
     function unSetValues () {
-      for (var keys in vertices) {
-        if (vertices.hasOwnProperty(keys)) {
-          vertices[keys] = undefined;
+      for (var keys in LENS.properties.vertices) {
+        if (LENS.properties.vertices.hasOwnProperty(keys)) {
+          LENS.properties.vertices[keys] = undefined;
         }
       }
     }
 
   </script>
 </head>
-<body>
+<body onload="LENS.methods.init()">
   <svg id="annotate-img" xmlns="http://www.w3.org/2000/svg"></svg>
-
+  <table id="annotation-table">
+    <tr class="annotation-header" id="annotation-header">
+      <th>colour</th><th>label</th><th>x</th><th>y</th><th>width</th><th>height</th><th>remove</th>
+    </tr>
+  </table>
   <form>
     <!--JSON input-->
     <input type="hidden" id="labels" name="labels" value="[]">
