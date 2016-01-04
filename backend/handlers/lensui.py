@@ -16,3 +16,7 @@ class LensUIHandler(RequestHandler):
     def get(self):
         """Renders lens UI"""
         self.render("lens.html")
+
+    @coroutine
+    def post(self):
+        pass
