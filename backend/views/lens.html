@@ -36,7 +36,7 @@
 
     /* LENS Global stores all data & functionality related to LENS appart from constructors and class methods.*/
     var LENS = {
-      page : undefined, // Gets initialized by the body elements onload event handler
+      page : null, // Gets initialized by the body elements onload event handler
       methods : {
         /**
          * Initialize the page property and add all required event listeners.
@@ -72,8 +72,13 @@
           var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
           var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
 
-          LENS.properties.vertices.startX = event.offsetX + elementOffsetX;
-          LENS.properties.vertices.startY = event.offsetY + elementOffsetY;
+          var startX = event.offsetX + elementOffsetX;
+          var startY = event.offsetY + elementOffsetY;
+
+          var image = LENS.page.image.container;
+
+          image.addEventListener('mouseup', LENS.methods.imageReleaseClickListener);
+          document.addEventListener('mouseup', LENS.methods.removeClickReleaseListeners);
         },
 
         /**
@@ -82,33 +87,28 @@
          * @return undefined
          */
         imageReleaseClickListener : function (event) {
-          // TODO, add logic such that it doesn't catch events that are just clicks without drags
-          if (LENS.properties.vertices.startX !== undefined && LENS.properties.vertices.startY !== undefined) {
-            LENS.properties.vertices.endX = event.offsetX;
-            LENS.properties.vertices.endY = event.offsetY;
+          // Check for an offset on the element that triggered the event
+          var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
+          var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
 
+          var endX = event.offsetX + elementOffsetX;
+          var endY = event.offsetY + elementOffsetY;
 
-            /* Create anotation here */
-            //Draw box before prompting for label
-            var label = promptUserForLabel();
-            // If the label is not empty then proceed
-            if (label) {
-              drawRect()
-              appendInput(label, document.getElementById('labels'));
-            }
-          }
+          var annotation = new Annotation({startX: startX, startY: startY, endX: endX, endY: endY});
+
+          console.log('it worked: ' + JSON.stringify(annotation));
+
+          image.
         },
 
         /**
-         * Unset vertices fields.
+         * Remove event listeners.
          * @return undefined
          */
-        unsetVertices : function () {
-          for (var keys in LENS.properties.vertices) {
-            if (LENS.properties.vertices.hasOwnProperty(keys)) {
-              LENS.properties.vertices[keys] = undefined;
-            }
-          }
+        removeClickReleaseListeners : function () {
+          var image = LENS.page.image.container;
+          image.removeEventListener('mouseup', LENS.methods.imageReleaseClickListener);
+          document.removeEventListener('mouseup', LENS.methods.removeClickReleaseListeners);
         }
       }
     };
@@ -128,42 +128,69 @@
       }
     }
 
+    /**
+     * Constructs the image object which is basically just a container for the image
+     * and the annotation table.
+     * @constructor
+     */
     function Image () {
       this.container = document.getElementById('annotate-img');
       this.annotationTable = new AnnotationTable ();
     }
 
+    /**
+     * Will be both the source where we store the annotations for the image,
+     * as well as the table which will be a visual queue for previously added labels.
+     * @constructor
+     */
     function AnnotationTable () {
       this.annotations = [];
       this.table = document.getElementById('annotation-table');
     }
 
+    /**
+     * Stores all data relevant to the annotation by the user.
+     * @param {object} vertices : Describes the endpoints of the user's clicks.
+     */
     function Annotation (vertices) {
-      this.x = vertices.startX;
-      this.y = vertices.startY;
-      this.width = vertices.endX - vertices.startX;
-      this.height = vertices.endY - vertices.startY;
+      this.x = Math.min(vertices.startX, vertices.endX);
+      this.y = Math.min(vertices.startY, vertices.endY);
+      this.width = Math.abs(vertices.endX - vertices.startX);
+      this.height = Math.abs(vertices.endY - vertices.startY);
       this.boxElement = this.drawBox();
       this.label = this.promptUserForLabel();
     }
 
     /**
      * Uses the coordinates, width and height to draw containing region.
-     * @return {[type]} svgBox : The HTML element for drawn box.
+     * @return {object} svgBox : The HTML element for drawn box.
      */
     Annotation.prototype.drawBox = function () {
-      var image = document.getElementById('annotate-img');
+      var image = LENS.page.image.container;
       var rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+      rectangle.setAttribute('x', this.x);
+      rectangle.setAttribute('y', this.y);
       rectangle.setAttribute('width', this.width);
       rectangle.setAttribute('height', this.height);
-
-      // Complete this
-      rectangle.setAttribute('x', Math.min(LENS.properties.vertices.startX, LENS.properties.vertices.endX));
-      rectangle.setAttribute('y', Math.min(LENS.properties.vertices.startY, LENS.properties.vertices.endY));
       rectangle.setAttribute('stroke-width', '3');
       rectangle.setAttribute('stroke', 'red');
+
+      rectangle.createAttribute('img-offsetx');
+      rectangle.createAttribute('img-offsety');
+      rectangle.setAttribute('img-offsetx', this.x);
+      rectangle.setAttribute('img-offsety', this.y);
+
+      image.appendChild(rectangle);
+      return rectangle;
     }
 
+    /**
+     * This is in the works. It is planned to append all of my labels
+     * to the input table, this would allow me to remove them.
+     * @param  {[type]} first_argument [description]
+     * @return {[type]}                [description]
+     */
     Annotation.prototype.removeBox = function(first_argument) {
       // body...
     };
@@ -175,26 +202,6 @@
     Annotation.prototype.promptUserForLabel = function(){
       return prompt('Label:');
     };
-
-    // Make this a class method of the Annotation
-    function drawRect () {
-      var image = document.getElementById('annotate-img');
-      var rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rectangle.setAttribute('width', Math.abs(LENS.properties.vertices.startX - LENS.properties.vertices.endX));
-      rectangle.setAttribute('height', Math.abs(LENS.properties.vertices.startY - LENS.properties.vertices.endY));
-      rectangle.setAttribute('x', Math.min(LENS.properties.vertices.startX, LENS.properties.vertices.endX));
-      rectangle.setAttribute('y', Math.min(LENS.properties.vertices.startY, LENS.properties.vertices.endY));
-      rectangle.setAttribute('stroke-width', '3');
-      rectangle.setAttribute('stroke', 'red');
-      rectangle.setAttribute('fill', 'transparent');
-
-      rectangle.createAttribute('img-offsetx');
-      rectangle.createAttribute('img-offsety');
-      rectangle.setAttribute('img-offsetx', Math.min(LENS.properties.vertices.startX, LENS.properties.vertices.endX));
-      rectangle.setAttribute('img-offsety', Math.min(LENS.properties.vertices.startY, LENS.properties.vertices.endY));
-      image.appendChild(rectangle);
-    }
-
 
     // Make this a class method
     function appendInput(label, element) {
