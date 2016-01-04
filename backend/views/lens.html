@@ -68,38 +68,27 @@
 
           var image = LENS.page.image.container;
 
-          image.addEventListener('mouseup', LENS.methods.imageReleaseClickListener);
-          document.addEventListener('mouseup', LENS.methods.removeClickReleaseListeners);
-        },
+          image.addEventListener('mouseup', function imageReleaseClickListener (event) {
+            // Check for an offset on the element that triggered the event
+            var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
+            var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
 
-        /**
-         * Handles the addition of annotations when the user releases a click on the image.
-         * @param  {MouseEvent} event : The event object containing all relevant event data.
-         * @return undefined
-         */
-        imageReleaseClickListener : function (event) {
-          // Check for an offset on the element that triggered the event
-          var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
-          var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
+            var endX = event.offsetX + elementOffsetX;
+            var endY = event.offsetY + elementOffsetY;
 
-          var endX = event.offsetX + elementOffsetX;
-          var endY = event.offsetY + elementOffsetY;
+            var annotation = new Annotation({startX: startX, startY: startY, endX: endX, endY: endY});
 
-          var annotation = new Annotation({startX: startX, startY: startY, endX: endX, endY: endY});
+            console.log('it worked: ' + JSON.stringify(annotation));
 
-          console.log('it worked: ' + JSON.stringify(annotation));
+            removeClickReleaseListeners();
+          });
+          document.addEventListener('mouseup', removeClickReleaseListeners);
 
-          LENS.methods.removeClickReleaseListeners();
-        },
-
-        /**
-         * Remove event listeners.
-         * @return undefined
-         */
-        removeClickReleaseListeners : function () {
-          var image = LENS.page.image.container;
-          image.removeEventListener('mouseup', LENS.methods.imageReleaseClickListener);
-          document.removeEventListener('mouseup', LENS.methods.removeClickReleaseListeners);
+          function removeClickReleaseListeners() {
+            var image = LENS.page.image.container;
+            image.removeEventListener('mouseup', imageReleaseClickListener);
+            document.removeEventListener('mouseup', removeClickReleaseListeners);
+          }
         }
       }
     };
@@ -111,12 +100,6 @@
     function Page () {
       this.image = new Image();
       this.imageId = '';
-      this.vertices = {
-        startX : undefined,
-        startY : undefined,
-        endX : undefined,
-        endY : undefined
-      }
     }
 
     /**
@@ -212,7 +195,7 @@
 
   </script>
 </head>
-<body>
+<body onload="LENS.methods.init()">
   <h3>McGill Robotics LENS</h3>
 
   <!--Consider putting this in a DIV-->
