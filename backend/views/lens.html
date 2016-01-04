@@ -4,7 +4,7 @@
   <title>McGill Robotics Lens</title>
   <style type="text/css">
     table, th, td {
-      border: 3px solid black;
+      border: 1px solid black;
       border-collapse: collapse;
     }
     tr {
@@ -28,12 +28,6 @@
   <script type="text/javascript">
     'use strict';
 
-    @TODO : Refactor into OO code
-    @TODO : Add action to submit button
-    @TODO : Change image size
-    @TODO : Add mobile detection
-
-
     /* LENS Global stores all data & functionality related to LENS appart from constructors and class methods.*/
     var LENS = {
       page : null, // Gets initialized by the body elements onload event handler
@@ -54,11 +48,8 @@
         initializeImageListeners : function () {
           var image = LENS.page.image.container; // The HTML element that contains the image to be annotated
 
-          @TODO: Change the way the event listeners work such that when the image is clicked it add event listeners.
           // The above todo will avoid the need of having the vertices as globally stored properties.
           image.addEventListener('mousedown', LENS.methods.imageDownClickListener);
-          image.addEventListener('mouseup', LENS.methods.imageReleaseClickListener);
-          document.addEventListener('mouseup', LENS.methods.unsetVertices);
         },
 
         /**
@@ -221,7 +212,7 @@
 
   </script>
 </head>
-<body onload="LENS.methods.init()">
+<body>
   <h3>McGill Robotics LENS</h3>
 
   <!--Consider putting this in a DIV-->
