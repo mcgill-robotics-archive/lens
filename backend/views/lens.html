@@ -60,29 +60,30 @@
         imageDownClickListener : function (event) {
           // Check for an offset on the element that triggered the event
           var triggerElement = event.target;
-          var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
-          var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
-
-          var startX = event.offsetX + elementOffsetX;
-          var startY = event.offsetY + elementOffsetY;
+          
+          var startX = event.offsetX;
+          var startY = event.offsetY;
 
           var image = LENS.page.image.container;
 
-          image.addEventListener('mouseup', function imageReleaseClickListener (event) {
+          image.addEventListener('mouseup', imageReleaseClickListener);
+          document.addEventListener('mouseup', removeClickReleaseListeners);
+
+          function imageReleaseClickListener (_event) {
             // Check for an offset on the element that triggered the event
             var elementOffsetX = triggerElement.getAttribute('img-offsetx') || 0;
             var elementOffsetY = triggerElement.getAttribute('img-offsety') || 0;
 
-            var endX = event.offsetX + elementOffsetX;
-            var endY = event.offsetY + elementOffsetY;
+            var endX = _event.offsetX;
+            var endY = _event.offsetY;
 
             var annotation = new Annotation({startX: startX, startY: startY, endX: endX, endY: endY});
 
-            console.log('it worked: ' + JSON.stringify(annotation));
+            var annotationTable = LENS.page.image.annotationTable;
+            annotationTable.validateAndAdd(annotation);
 
             removeClickReleaseListeners();
-          });
-          document.addEventListener('mouseup', removeClickReleaseListeners);
+          }
 
           function removeClickReleaseListeners() {
             var image = LENS.page.image.container;
@@ -122,6 +123,19 @@
       this.table = document.getElementById('annotation-table');
     }
 
+    AnnotationTable.prototype.validateAndAdd = function (annotation) {
+    	if (annotation.label) {
+    		this.annotations.push(annotation);
+    	}
+    };
+
+    // Returns a set of label vertices objects. 
+    AnnotationTable.prototype.stringify = function() {
+    	return JSON.stringify(this.annotations.map(function (annotation) {
+    		return annotation.getUsefullData();
+    	}));
+    };
+
     /**
      * Stores all data relevant to the annotation by the user.
      * @param {object} vertices : Describes the endpoints of the user's clicks.
@@ -133,6 +147,9 @@
       this.height = Math.abs(vertices.endY - vertices.startY);
       this.boxElement = this.drawBox();
       this.label = this.promptUserForLabel();
+      if (!this.label) {
+      	LENS.page.image.container.removeChild(this.boxElement);
+      }
     }
 
     /**
@@ -149,9 +166,8 @@
       rectangle.setAttribute('height', this.height);
       rectangle.setAttribute('stroke-width', '3');
       rectangle.setAttribute('stroke', 'red');
+      rectangle.setAttribute('fill-opacity', '0');
 
-      rectangle.createAttribute('img-offsetx');
-      rectangle.createAttribute('img-offsety');
       rectangle.setAttribute('img-offsetx', this.x);
       rectangle.setAttribute('img-offsety', this.y);
 
@@ -167,6 +183,16 @@
      */
     Annotation.prototype.removeBox = function(first_argument) {
       // body...
+    };
+
+    Annotation.prototype.getUsefullData = function(first_argument) {
+    	return {
+    		x : this.x,
+    		y : this.y,
+    		height : this.height,
+    		width : this.width, 
+    		label : this.label
+    	};
     };
 
     /**
