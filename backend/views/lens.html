@@ -60,7 +60,7 @@
         imageDownClickListener : function (event) {
           // Check for an offset on the element that triggered the event
           var triggerElement = event.target;
-          
+
           var startX = event.offsetX;
           var startY = event.offsetY;
 
@@ -129,7 +129,7 @@
     	}
     };
 
-    // Returns a set of label vertices objects. 
+    // Returns a set of label vertices objects.
     AnnotationTable.prototype.stringify = function() {
     	return JSON.stringify(this.annotations.map(function (annotation) {
     		return annotation.getUsefullData();
@@ -190,7 +190,7 @@
     		x : this.x,
     		y : this.y,
     		height : this.height,
-    		width : this.width, 
+    		width : this.width,
     		label : this.label
     	};
     };
