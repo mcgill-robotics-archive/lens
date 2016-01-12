@@ -6,6 +6,8 @@ from tornado.gen import coroutine
 from tornado.web import RequestHandler
 from image import ImageHandler
 from frame import NextFrameHandler
+from helpers import Encoder
+from models import Frame
 import json
 
 __author__ = "Malcolm Watt"
@@ -18,11 +20,7 @@ class LensUIHandler(RequestHandler):
     @coroutine
     def get(self):
         """Renders lens UI"""
-        imageInfo = NextFrameHandler.objects.get()
-        imageId = json.loads(imageInfo)['id']
-        image = ImageHandler.objects.get(imageId)
-        print(image)
-        self.render("lens.html")
+        self.render('lens.html')
 
     @coroutine
     def post(self):
