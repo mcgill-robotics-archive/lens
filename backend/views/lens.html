@@ -26,10 +26,11 @@
   </style>
   <script type="text/javascript">
     'use strict';
-
+var image, imageElem;
     /* LENS Global stores all data & functionality related to LENS appart from constructors and class methods.*/
     var LENS = {
       page : null, // Gets initialized by the body elements onload event handler
+      frameId : null,
       methods : {
         /**
          * Initialize the page property and add all required event listeners.
@@ -37,21 +38,31 @@
          */
         init : function () {
           LENS.page = new Page();
-          LENS.methods.getBackgroundImage();
+          LENS.methods.getBackgroundImageId();
           LENS.methods.initializeImageListeners();
         },
 
-        getBackgroundImage : function () {
+        getBackgroundImageId : function () {
           var req = new XMLHttpRequest();
-          req.addEventListener('load', LENS.methods.setBackgroundImage)
+          req.addEventListener('load', LENS.methods.getBackgroundImage);
           req.open("GET", '/next');
           req.send();
-        }
+        },
+
+        getBackgroundImage : function () {
+          var frameInfo = JSON.parse(this.responseText);
+          LENS.frameId = frameInfo.id;
+          var req = new XMLHttpRequest();
+          req.addEventListener('load', LENS.methods.setBackgroundImage);
+          req.open("GET", '/image/' + LENS.frameId);
+          req.send();
+        },
 
         setBackgroundImage : function () {
-          console.log(this.responseText);
-        }
-
+          image = this.responseText;
+          imageElem = document.querySelector("#annotate-img");
+          debugger;
+        },
 
         /**
          * Initialize the event listeners relevant to the selection of regions on the image.
