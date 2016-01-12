@@ -37,8 +37,21 @@
          */
         init : function () {
           LENS.page = new Page();
+          LENS.methods.getBackgroundImage();
           LENS.methods.initializeImageListeners();
         },
+
+        getBackgroundImage : function () {
+          var req = new XMLHttpRequest();
+          req.addEventListener('load', LENS.methods.setBackgroundImage)
+          req.open("GET", '/next');
+          req.send();
+        }
+
+        setBackgroundImage : function () {
+          console.log(this.responseText);
+        }
+
 
         /**
          * Initialize the event listeners relevant to the selection of regions on the image.
