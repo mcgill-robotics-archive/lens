@@ -19,6 +19,7 @@
       background-color: #CDCCCC;
     }
     #annotate-img{
+      background-image: 'http://img.thesun.co.uk/aidemitlum/archive/01368/Catfight_____the_t_1368212a.jpg';
       background-size: 100% 100%;
       height: 400px;
       width: 600px;
@@ -26,7 +27,14 @@
   </style>
   <script type="text/javascript">
     'use strict';
-var image, imageElem;
+    //@TODO : add circles, and also add arbitrary polygons
+    //@TODO : angled rectangles
+    //@TODO : want to be able to say there is nothing
+    //@TODO : Selecting instead of just free form input
+    //@TODO : Way to visualize / edit already annotated frames
+    //@TODO : buggy events (svg elements getting in the way of each other?)
+    
+    var image, imageElem;
     /* LENS Global stores all data & functionality related to LENS appart from constructors and class methods.*/
     var LENS = {
       page : null, // Gets initialized by the body elements onload event handler
