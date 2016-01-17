@@ -7,6 +7,9 @@
       border: 1px solid black;
       border-collapse: collapse;
     }
+    h3, p, div {
+      text-align: center;
+    }
     tr {
       padding: 15px;
     }
@@ -15,14 +18,18 @@
       text-align: center;
       vertical-align: center;
     }
+    div.displayed {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
     #annotation-header {
       background-color: #CDCCCC;
     }
     #annotate-img{
-      background-image: 'http://img.thesun.co.uk/aidemitlum/archive/01368/Catfight_____the_t_1368212a.jpg';
+      width: 100%;
+      height: 600px;
       background-size: 100% 100%;
-      height: 400px;
-      width: 600px;
     }
   </style>
 
@@ -69,11 +76,10 @@
 <body onload="LENS.methods.init()">
   <h3>McGill Robotics LENS</h3>
 
-  <!--Consider putting this in a DIV-->
   <svg id="annotate-img" xmlns="http://www.w3.org/2000/svg"></svg>
-
+  
   <div style="overflow-x:auto;">
-    <table id="annotation-table">
+    <table id="annotation-table" align="center">
       <tr class="annotation-header" id="annotation-header">
         <th>colour</th><th>label</th><th>x</th><th>y</th><th>width</th><th>height</th><th>remove</th>
       </tr>
@@ -86,13 +92,17 @@
   </p>
 
   <!-- Configure this button to set the 'Tags' of the image -->
-  <button>Nothing Interesting</button>
+  <div>
+    <button>Nothing Interesting</button>
+  </div>
 
-  <form>
-    <!--JSON input-->
-    <input type="hidden" id="labels" name="labels" value="[]">
-    <input type="submit" value="Submit">
-  </form>
+  <div>
+    <form>
+      <!--JSON input-->
+      <input type="hidden" id="labels" name="labels" value="[]">
+      <input type="submit" value="Submit">
+    </form>
+  </div>
 
 </body>
 </html>

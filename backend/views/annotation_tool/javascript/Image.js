@@ -7,7 +7,6 @@
  */
 function Image () {
   this.container = document.getElementById('annotate-img');
-  this.setSize();
   this.annotationTable = new AnnotationTable ();
   resolveImage();
   var that = this;
@@ -30,15 +29,7 @@ function Image () {
   };
 }
 
-/**
- * Sets the size of the image dynamically to give the user the best possible view.
- * @author Malcolm Watt
- */
-Image.prototype.setSize = function () {
-  this.container.width = window.innerWidth;
-  this.container.height = window.innerHeight;
-};
-
 Image.prototype.setImage = function(frameId) {
-  this.container.style.backgroundImage = url('/image/' + frameId);
+  var url = 'url(/image/' + frameId + ')';
+  this.container.style.backgroundImage = url;
 };
