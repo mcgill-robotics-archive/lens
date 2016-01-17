@@ -16,30 +16,24 @@ var LENS = {
      */
     init : function () {
       LENS.page = new Page();
-      LENS.methods.getBackgroundImageId();
+      LENS.methods.resolveImage();
       LENS.methods.initializeImageListeners();
     },
 
-    getBackgroundImageId : function () {
+    resolveImage : function () {
       var req = new XMLHttpRequest();
-      req.addEventListener('load', LENS.methods.getBackgroundImage);
+      req.addEventListener('load', LENS.methods.setBackgroundImage);
       req.open("GET", '/next');
       req.send();
     },
 
-    getBackgroundImage : function () {
+    setBackgroundImage : function () {
       var frameInfo = JSON.parse(this.responseText);
       LENS.frameId = frameInfo.id;
       var req = new XMLHttpRequest();
       req.addEventListener('load', LENS.methods.setBackgroundImage);
       req.open("GET", '/image/' + LENS.frameId);
       req.send();
-    },
-
-    setBackgroundImage : function () {
-      image = this.responseText;
-      imageElem = document.querySelector("#annotate-img");
-      debugger;
     },
 
     /**
