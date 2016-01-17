@@ -1,0 +1,24 @@
+'use strict';
+/**
+ * Will be both the source where we store the annotations for the image,
+ * as well as the table which will be a visual queue for previously added labels.
+ * @constructor
+ * @author Malcolm Watt
+ */
+function AnnotationTable () {
+  this.annotations = [];
+  this.table = document.getElementById('annotation-table');
+}
+
+AnnotationTable.prototype.validateAndAdd = function (annotation) {
+  if (annotation.label) {
+    this.annotations.push(annotation);
+  }
+};
+
+// Returns a set of label vertices objects.
+AnnotationTable.prototype.stringify = function() {
+  return JSON.stringify(this.annotations.map(function (annotation) {
+    return annotation.getUsefullData();
+  }));
+};

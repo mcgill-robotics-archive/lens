@@ -25,235 +25,46 @@
       width: 600px;
     }
   </style>
-  <script type="text/javascript">
-    'use strict';
-    //@TODO : add circles, and also add arbitrary polygons
-    //@TODO : angled rectangles
-    //@TODO : want to be able to say there is nothing
-    //@TODO : Selecting instead of just free form input
-    //@TODO : Way to visualize / edit already annotated frames
-    
-    var image, imageElem;
-    /* LENS Global stores all data & functionality related to LENS appart from constructors and class methods.*/
-    var LENS = {
-      page : null, // Gets initialized by the body elements onload event handler
-      frameId : null,
-      methods : {
-        /**
-         * Initialize the page property and add all required event listeners.
-         * @return undefined
-         */
-        init : function () {
-          LENS.page = new Page();
-          LENS.methods.getBackgroundImageId();
-          LENS.methods.initializeImageListeners();
-        },
 
-        getBackgroundImageId : function () {
-          var req = new XMLHttpRequest();
-          req.addEventListener('load', LENS.methods.getBackgroundImage);
-          req.open("GET", '/next');
-          req.send();
-        },
+  <!--
+    @TODO : add circles, and also add arbitrary polygons
+    @TODO : angled rectangles
+    @TODO : want to be able to say there is nothing - HTML Element (Button) & Onclick Function.
+    @TODO : Selecting instead of just free form input
+    @TODO : Way to visualize / edit already annotated frames
+  -->
 
-        getBackgroundImage : function () {
-          var frameInfo = JSON.parse(this.responseText);
-          LENS.frameId = frameInfo.id;
-          var req = new XMLHttpRequest();
-          req.addEventListener('load', LENS.methods.setBackgroundImage);
-          req.open("GET", '/image/' + LENS.frameId);
-          req.send();
-        },
 
-        setBackgroundImage : function () {
-          image = this.responseText;
-          imageElem = document.querySelector("#annotate-img");
-          debugger;
-        },
+  <!--
+    The following script tag fetches the Lens.js script from annotation_tool/javascript.
+    The script contains the pages event listeners and is the driver of the annotation tool.
+    Its entry point is the Lens.methods.init method, which is triggered by the onload event of the body.
+   -->
+  <script type="text/javascript" src="/lens?script=Lens.js"></script>
 
-        /**
-         * Initialize the event listeners relevant to the selection of regions on the image.
-         * @return undefined
-         */
-        initializeImageListeners : function () {
-          var image = LENS.page.image.container; // The HTML element that contains the image to be annotated
+  <!--
+    Page.js only contains the image on the page for now, but the Page object will eventually
+    encapsulate all of the form like behaviour of the Page. For instance, it will contain the
+    user prompt form logic, which will allow the user to select labels from a form.
+  -->
+  <script type="text/javascript" src="/lens?script=Page.js"></script>
 
-          // The above todo will avoid the need of having the vertices as globally stored properties.
-          image.addEventListener('mousedown', LENS.methods.imageDownClickListener);
-        },
+  <!--
+    The image class contains the container for the image as well as the Annotation table
+    data.
+  -->
+  <script type="text/javascript" src="/lens?script=Image.js"></script>
 
-        /**
-         * Sets the starting point (x and y) of the LENS object when the image is clicked.
-         * @param  {MouseEvent} event : The event object containing all relevant event data.
-         * @return undefined
-         */
-        imageDownClickListener : function (event) {
-          // Check for an offset on the element that triggered the event
-          var triggerElement = event.target;
+  <!--
+    The Annotation Table is the Object that allows us to keep track of all annotations.
+  -->
+  <script type="text/javascript" src="/lens?script=AnnotationTable.js"></script>
 
-          var elementOffsetX = parseFloat(triggerElement.getAttribute('img-offsetx')) || 0;
-          var elementOffsetY = parseFloat(triggerElement.getAttribute('img-offsety')) || 0;
+  <!--
+    The Annotation is an Object template for the Annotations of the image.
+  -->
+  <script type="text/javascript" src="/lens?script=Annotation.js"></script>
 
-          var startX = event.offsetX + elementOffsetX;
-          var startY = event.offsetY + elementOffsetY;
-
-          var image = LENS.page.image.container;
-
-          image.addEventListener('mouseup', imageReleaseClickListener);
-          document.addEventListener('mouseup', removeClickReleaseListeners);
-
-          function imageReleaseClickListener (_event) {
-            // Check for an offset on the element that triggered the event
-            var _triggerElement = _event.target;
-            var _elementOffsetX = parseFloat(_triggerElement.getAttribute('img-offsetx')) || 0;
-            var _elementOffsetY = parseFloat(_triggerElement.getAttribute('img-offsety')) || 0;
-
-            var endX = _event.offsetX + _elementOffsetX;
-            var endY = _event.offsetY + _elementOffsetY;
-
-            var annotation = new Annotation({startX: startX, startY: startY, endX: endX, endY: endY});
-
-            var annotationTable = LENS.page.image.annotationTable;
-            annotationTable.validateAndAdd(annotation);
-
-            removeClickReleaseListeners();
-          }
-
-          function removeClickReleaseListeners() {
-            var image = LENS.page.image.container;
-            image.removeEventListener('mouseup', imageReleaseClickListener);
-            document.removeEventListener('mouseup', removeClickReleaseListeners);
-          }
-        }
-      }
-    };
-
-    /**
-     * Constructs a Page object which allows us to keep track of important contents of the page.
-     * @constructor
-     */
-    function Page () {
-      this.image = new Image();
-      this.imageId = '';
-    }
-
-    /**
-     * Constructs the image object which is basically just a container for the image
-     * and the annotation table.
-     * @constructor
-     */
-    function Image () {
-      this.container = document.getElementById('annotate-img');
-      this.annotationTable = new AnnotationTable ();
-    }
-
-    /**
-     * Will be both the source where we store the annotations for the image,
-     * as well as the table which will be a visual queue for previously added labels.
-     * @constructor
-     */
-    function AnnotationTable () {
-      this.annotations = [];
-      this.table = document.getElementById('annotation-table');
-    }
-
-    AnnotationTable.prototype.validateAndAdd = function (annotation) {
-    	if (annotation.label) {
-    		this.annotations.push(annotation);
-    	}
-    };
-
-    // Returns a set of label vertices objects.
-    AnnotationTable.prototype.stringify = function() {
-    	return JSON.stringify(this.annotations.map(function (annotation) {
-    		return annotation.getUsefullData();
-    	}));
-    };
-
-    /**
-     * Stores all data relevant to the annotation by the user.
-     * @param {object} vertices : Describes the endpoints of the user's clicks.
-     */
-    function Annotation (vertices) {
-      this.x = Math.min(vertices.startX, vertices.endX);
-      this.y = Math.min(vertices.startY, vertices.endY);
-      this.width = Math.abs(vertices.endX - vertices.startX);
-      this.height = Math.abs(vertices.endY - vertices.startY);
-      this.boxElement = this.drawBox();
-      this.label = this.promptUserForLabel();
-      if (!this.label) {
-      	LENS.page.image.container.removeChild(this.boxElement);
-      }
-    }
-
-    /**
-     * Uses the coordinates, width and height to draw containing region.
-     * @return {object} svgBox : The HTML element for drawn box.
-     */
-    Annotation.prototype.drawBox = function () {
-      var image = LENS.page.image.container;
-      var rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-
-      rectangle.setAttribute('x', this.x);
-      rectangle.setAttribute('y', this.y);
-      rectangle.setAttribute('width', this.width);
-      rectangle.setAttribute('height', this.height);
-      rectangle.setAttribute('stroke-width', '3');
-      rectangle.setAttribute('stroke', 'red');
-      rectangle.setAttribute('fill-opacity', '0');
-
-      rectangle.setAttribute('img-offsetx', this.x);
-      rectangle.setAttribute('img-offsety', this.y);
-
-      image.appendChild(rectangle);
-      return rectangle;
-    }
-
-    /**
-     * This is in the works. It is planned to append all of my labels
-     * to the input table, this would allow me to remove them.
-     * @param  {[type]} first_argument [description]
-     * @return {[type]}                [description]
-     */
-    Annotation.prototype.removeBox = function(first_argument) {
-      // body...
-    };
-
-    Annotation.prototype.getUsefullData = function(first_argument) {
-    	return {
-    		x : this.x,
-    		y : this.y,
-    		height : this.height,
-    		width : this.width,
-    		label : this.label
-    	};
-    };
-
-    /**
-     * Requests that the user enter a label for the selected region.
-     * @return {string} label : The user entered annotation.
-     */
-    Annotation.prototype.promptUserForLabel = function(){
-      return prompt('Label:');
-    };
-
-    // Make this a class method
-    function appendInput(label, element) {
-
-      var previousData = JSON.parse(element.getAttribute('value'));
-
-      var inputData = {};
-      inputData.v1x = LENS.properties.vertices.startX;
-      inputData.v1y = LENS.properties.vertices.startY;
-      inputData.v2x = LENS.properties.vertices.endX;
-      inputData.v2y = LENS.properties.vertices.endY;
-      inputData.label = label;
-
-      var newData = previousData.push(inputData);
-      element.setAttribute('value', JSON.stringify(newData));
-    }
-
-  </script>
 </head>
 <body onload="LENS.methods.init()">
   <h3>McGill Robotics LENS</h3>
