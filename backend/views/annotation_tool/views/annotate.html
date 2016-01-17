@@ -27,7 +27,7 @@
       background-color: #CDCCCC;
     }
     #annotate-img{
-      width: 100%;
+      width: 600px;
       height: 600px;
       background-size: 100% 100%;
     }
@@ -76,7 +76,9 @@
 <body onload="LENS.methods.init()">
   <h3>McGill Robotics LENS</h3>
 
-  <svg id="annotate-img" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div>
+    <svg id="annotate-img" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
   
   <div style="overflow-x:auto;">
     <table id="annotation-table" align="center">
