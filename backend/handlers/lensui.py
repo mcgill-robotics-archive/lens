@@ -14,13 +14,21 @@ __author__ = "Malcolm Watt"
 __version__ = "0.0.1"
 
 class LensUIHandler(RequestHandler):
+    VIEWS_DIR = "./views/"
+    SCRIPTS_DIR = "./scripts/"
 
-    """Main page handler."""
+    def get_template_path(self):
+        """ Overide the template path for Lens """
+        return "views/annotation_tool"
 
     @coroutine
     def get(self):
-        """Renders lens UI"""
-        self.render('lens.html')
+        script_id = self.get_argument('script')
+        if (script_id):
+            # Check if the script exists, then respond with it if it does
+            pass
+        else:
+            self.render(VIEWS_DIR + 'lens.html')
 
     @coroutine
     def post(self):
