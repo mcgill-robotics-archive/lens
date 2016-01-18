@@ -25,6 +25,7 @@ Annotation.prototype.drawBox = function () {
   var image = LENS.page.image.container;
   var rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 
+  rectangle.setAttribute('class', 'annotation')
   rectangle.setAttribute('x', this.x);
   rectangle.setAttribute('y', this.y);
   rectangle.setAttribute('width', this.width);

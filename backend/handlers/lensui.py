@@ -18,14 +18,17 @@ class LensUIHandler(RequestHandler):
     SOURCE_DIR = "javascript/"
 
     def get_template_path(self):
-        """ Overide the template path for Lens """
+        """ Overide the template path for Lens.
+        """
         return "views/annotation_tool"
 
     @coroutine
     def get(self):
+        """ Handles annotation tool application and client script dispatching.
+        """
+        # scripts are accessed with urls of form : [..]/lens?script=name.js
         script_id = self.get_query_argument('script', None)
         if (script_id):
-            # Check if the script exists, then respond with it if it does
             self.render(LensUIHandler.SOURCE_DIR + script_id);
         else:
             self.render(LensUIHandler.VIEWS_DIR + 'annotate.html')

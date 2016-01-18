@@ -42,8 +42,25 @@ var LENS = {
       var elementOffsetX = parseFloat(triggerElement.getAttribute('img-offsetx')) || 0;
       var elementOffsetY = parseFloat(triggerElement.getAttribute('img-offsety')) || 0;
 
-      var startX = event.offsetX + elementOffsetX;
-      var startY = event.offsetY + elementOffsetY;
+      /*
+       * event.offsetX and event.offsetY are new to the MDN spec, and because of this they
+       * behave differently in different browsers: Chrome and Mozilla, the same event.target,
+       * and the same event.currentTarget, yet event.offsetX for Chrome is relative to the
+       * currentTarget, whereas on Mozilla it is relative to the target.
+       *
+       * Since I did not see a clear cut alternative to the offset property, I do some loose
+       * browser detection. I have made the assumption that all browsers except chrome behave
+       * like Mozilla when it comes to event.offset propeties. This is most likely false, and
+       * I will change it as I test different (less popular) browsers.
+       */
+      var startX, startY;
+      if (!!window.chrome) {
+        startX = event.offsetX;
+        startY = event.offsetY;
+      } else {
+        startX = event.offsetX + elementOffsetX;
+        startY = event.offsetY + elementOffsetY;
+      }
 
       var image = LENS.page.image.container;
 
@@ -57,8 +74,15 @@ var LENS = {
         var _elementOffsetX = parseFloat(_triggerElement.getAttribute('img-offsetx')) || 0;
         var _elementOffsetY = parseFloat(_triggerElement.getAttribute('img-offsety')) || 0;
 
-        var endX = _event.offsetX + _elementOffsetX;
-        var endY = _event.offsetY + _elementOffsetY;
+        // See above block comment on event.offset
+        var endX, endY;
+        if (!!window.chrome) {
+          endX = _event.offsetX;
+          endY = _event.offsetY;
+        } else {
+          endX = _event.offsetX + _elementOffsetX;
+          endY = _event.offsetY + _elementOffsetY;
+        }
 
         var annotation = new Annotation({startX: startX, startY: startY, endX: endX, endY: endY});
 

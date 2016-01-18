@@ -37,8 +37,10 @@
     @TODO : add circles, and also add arbitrary polygons
     @TODO : angled rectangles
     @TODO : want to be able to say there is nothing - HTML Element (Button) & Onclick Function.
+     * Need to add the onclick functionality
+     * Need to be able to actually submit tags and annotations (Server side post configuration)
+     * Need to be able to visualize the currently existing tags / annotations of the image
     @TODO : Selecting instead of just free form input
-    @TODO : Way to visualize / edit already annotated frames
   -->
 
 
@@ -77,9 +79,9 @@
   <h3>McGill Robotics LENS</h3>
 
   <div>
-    <svg id="annotate-img" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg id="annotate-img" class="annotate-img" xmlns="http://www.w3.org/2000/svg"></svg>
   </div>
-  
+
   <div style="overflow-x:auto;">
     <table id="annotation-table" align="center">
       <tr class="annotation-header" id="annotation-header">
