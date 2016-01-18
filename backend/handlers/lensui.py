@@ -35,4 +35,5 @@ class LensUIHandler(RequestHandler):
 
     @coroutine
     def post(self):
-        pass
+        body = self.request.body
+        print(body)

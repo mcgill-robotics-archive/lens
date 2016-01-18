@@ -97,15 +97,11 @@
 
   <!-- Configure this button to set the 'Tags' of the image -->
   <div>
-    <button>Nothing Interesting</button>
+    <button type="button" onclick="LENS.methods.submit(false);">Nothing Interesting</button>
   </div>
 
   <div>
-    <form>
-      <!--JSON input-->
-      <input type="hidden" id="labels" name="labels" value="[]">
-      <input type="submit" value="Submit">
-    </form>
+    <button type="button" onclick="LENS.methods.submit(true);">Submit Annotations</button>
   </div>
 
 </body>

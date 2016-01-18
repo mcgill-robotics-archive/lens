@@ -19,6 +19,26 @@ var LENS = {
       LENS.methods.initializeImageListeners();
     },
 
+    submit : function (interesting) {
+      var req = new XMLHttpRequest();
+      req.open('POST', '/lens/', true);
+      req.setRequestHeader('Content-Type', 'application/json');
+      req.send(LENS.methods.formatData(interesting)); 
+      location.reload(true); // true forces it to not reload from cache
+    },
+
+    formatData : function (interesting) {
+      var description = {};
+      description.frame = LENS.frameId;
+      description.interesting = interesting;
+      // description.tags = LENS.tags; We need a way to annotate the image in general. This is a placeholder for when this is implemented. 
+      description.annotations = JSON.parse(
+              LENS.page.image.annotationTable.stringify()
+      );
+      console.log(description);
+      return JSON.stringify(description);
+    },
+
     /**
      * Initialize the event listeners relevant to the selection of regions on the image.
      * @return undefined

@@ -12,6 +12,7 @@ function Annotation (vertices) {
   this.height = Math.abs(vertices.endY - vertices.startY);
   this.boxElement = this.drawBox();
   this.label = this.promptUserForLabel();
+  this.type = 'rectangle'; // This needs to be sourced from a multiple select
   if (!this.label) {
     LENS.page.image.container.removeChild(this.boxElement);
   }
@@ -25,7 +26,8 @@ Annotation.prototype.drawBox = function () {
   var image = LENS.page.image.container;
   var rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 
-  rectangle.setAttribute('class', 'annotation')
+  rectangle.setAttribute('class', 'annotation');
+  rectangle.setAttribute('shape-type', this.type);
   rectangle.setAttribute('x', this.x);
   rectangle.setAttribute('y', this.y);
   rectangle.setAttribute('width', this.width);
@@ -47,17 +49,18 @@ Annotation.prototype.drawBox = function () {
  * @param  {[type]} first_argument [description]
  * @return {[type]}                [description]
  */
-Annotation.prototype.removeBox = function(first_argument) {
+Annotation.prototype.removeBox = function() {
   // body...
 };
 
-Annotation.prototype.getUsefullData = function(first_argument) {
+Annotation.prototype.getUsefullData = function() {
   return {
     x : this.x,
     y : this.y,
     height : this.height,
     width : this.width,
-    label : this.label
+    label : this.label,
+    type : this.type
   };
 };
 
