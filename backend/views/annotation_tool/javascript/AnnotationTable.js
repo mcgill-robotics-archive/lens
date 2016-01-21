@@ -7,18 +7,24 @@
  */
 function AnnotationTable () {
   this.annotations = [];
+  this.tags = [];
   this.table = document.getElementById('annotation-table');
 }
 
 AnnotationTable.prototype.validateAndAdd = function (annotation) {
   if (annotation.label) {
     this.annotations.push(annotation);
+    this.tags.push(annotation.label);
   }
 };
 
 // Returns a set of label vertices objects.
 AnnotationTable.prototype.stringify = function() {
-  return JSON.stringify(this.annotations.map(function (annotation) {
+  var information = {};
+  information.annotations = this.annotations.map(function (annotation) {
     return annotation.getUsefullData();
-  }));
+  });
+  information.tags = this.tags;
+  information.image = LENS.frameId;
+  return JSON.stringify(information);
 };

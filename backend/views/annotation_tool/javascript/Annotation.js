@@ -70,4 +70,5 @@ Annotation.prototype.getUsefullData = function() {
  */
 Annotation.prototype.promptUserForLabel = function(){
   return prompt('Label:');
+  // Dynamically add a form element to the page
 };

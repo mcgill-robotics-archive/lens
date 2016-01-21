@@ -12,7 +12,7 @@ function Image () {
   var that = this;
 
   /**
-   * Requests that next frame from the database via XMLHttpRequest.
+   * Requests the next frame from the database via XMLHttpRequest.
    * @author Malcolm Watt
    */
   function resolveImage() {

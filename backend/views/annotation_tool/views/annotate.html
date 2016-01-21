@@ -27,13 +27,32 @@
       background-color: #CDCCCC;
     }
     #annotate-img{
-      width: 600px;
-      height: 600px;
+      width: 100%;
+      height: 100%;
       background-size: 100% 100%;
+    }
+    #main {
+      position: absolute;
+      left: 0; top: 0; bottom: 0; right: 60px;
+    }
+    #toolbar {
+      position: absolute;
+      right: 0; top: 0; bottom: 0; width: 60px;
+      background-color: #F9F9F9;
+    }
+    #toolbar ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
     }
   </style>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
   <!--
+    1 - Database stuff
+    2 - Selection
+    3 - Form input
     @TODO : add circles, and also add arbitrary polygons
     @TODO : angled rectangles
     @TODO : want to be able to say there is nothing - HTML Element (Button) & Onclick Function.
@@ -78,8 +97,18 @@
 <body onload="LENS.methods.init()">
   <h3>McGill Robotics LENS</h3>
 
-  <div>
-    <svg id="annotate-img" class="annotate-img" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="main">
+    <svg id="annotate-img" class="annotate-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"></svg>
+  </div>
+  <div id="toolbar">
+    <ul>
+      <li><button>A</button></li>
+      <li><button>B</button></li>
+      <li><button>C</button></li>
+      <li><button>D</button></li>
+      <li><button>E</button></li>
+      <li><button>F</button></li>
+    </ul>
   </div>
 
   <div style="overflow-x:auto;">
