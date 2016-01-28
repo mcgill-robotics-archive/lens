@@ -1,6 +1,7 @@
 'use strict';
 /**
- * Constructs the image object which is basically just a container for the image
+ * Constructs the image object which is basically
+ * just a container for the image
  * and the annotation table.
  * @author Malcolm Watt
  * @constructor
@@ -18,7 +19,8 @@ function Image () {
   function resolveImage() {
     var req = new XMLHttpRequest();
     req.addEventListener('load', setBackgroundImage);
-    req.open("GET", '/next', true); // Make an assynchronous request for the next frame
+    // Make an assynchronous request for the next frame
+    req.open("GET", '/next', true);
     req.send();
   };
 
@@ -29,7 +31,7 @@ function Image () {
   function setBackgroundImage() {
     var frameInfo = JSON.parse(this.responseText);
     LENS.frameId = frameInfo.id;
-    var url = 'url(/image/' + frameId + ')';
+    var url = 'url(/image/' + LENS.frameId + ')';
     that.container.style.backgroundImage = url;
   };
 }
