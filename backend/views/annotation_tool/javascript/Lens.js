@@ -2,8 +2,8 @@
 
 var image, imageElem;
 /**
- * LENS Global stores all data & functionality related to LENS appart from constructors and class methods.
- * @type {Object}
+ * LENS Global stores all data & functionality related to LENS appart from
+ * constructors and class methods.
  * @author Malcolm Watt
  */
 var LENS = {
@@ -12,6 +12,7 @@ var LENS = {
   methods : {
     /**
      * Initialize the page property and add all required event listeners.
+     * @author Malcolm Watt
      * @return undefined
      */
     init : function () {
@@ -19,19 +20,33 @@ var LENS = {
       LENS.methods.initializeImageListeners();
     },
 
+    /**
+     * Submit the annotations from the annotation table to the backend.
+     * @author Malcolm Watt
+     * @param  {boolean} interesting :
+     * If the `Not Interesting` button is pressed then this is true.
+     */
     submit : function (interesting) {
       var req = new XMLHttpRequest();
       req.open('POST', '/lens/', true);
       req.setRequestHeader('Content-Type', 'application/json');
-      req.send(LENS.methods.formatData(interesting)); 
+      req.send(LENS.methods.formatData(interesting));
       location.reload(true); // true forces it to not reload from cache
     },
 
+    /**
+     * Gets the annotations and tags to the backend.
+     * @author Malcolm Watt
+     * @param  {boolean} interesting :
+     * If the `Not Interesting` button is pressed then this is true.
+     * return {string} The data from the annotations.
+     */
     formatData : function (interesting) {
       var description = {};
       description.frame = LENS.frameId;
       description.interesting = interesting;
-      // description.tags = LENS.tags; We need a way to annotate the image in general. This is a placeholder for when this is implemented. 
+      // description.tags = LENS.tags; We need a way to annotate the image in
+      // general. This is a placeholder for when this is implemented.
       description.annotations = JSON.parse(
               LENS.page.image.annotationTable.stringify()
       );
@@ -40,38 +55,47 @@ var LENS = {
     },
 
     /**
-     * Initialize the event listeners relevant to the selection of regions on the image.
+     * Initialize the event listeners relevant to the selection of regions on
+     * the image.
+     * @author Malcolm Watt
      * @return undefined
      */
     initializeImageListeners : function () {
-      var image = LENS.page.image.container; // The HTML element that contains the image to be annotated
-
-      // The above todo will avoid the need of having the vertices as globally stored properties.
+      // The HTML element that contains the image to be annotated
+      var image = LENS.page.image.container;
       image.addEventListener('mousedown', LENS.methods.imageDownClickListener);
     },
 
     /**
-     * Sets the starting point (x and y) of the LENS object when the image is clicked.
-     * @param  {MouseEvent} event : The event object containing all relevant event data.
+     * Sets the starting point (x and y) of the LENS object when the
+     * image is clicked.
+     * @author Malcolm Watt
+     * @param  {MouseEvent} event
+     *        : The event object containing all relevant event data.
      * @return undefined
      */
     imageDownClickListener : function (event) {
       // Check for an offset on the element that triggered the event
       var triggerElement = event.target;
 
-      var elementOffsetX = parseFloat(triggerElement.getAttribute('img-offsetx')) || 0;
-      var elementOffsetY = parseFloat(triggerElement.getAttribute('img-offsety')) || 0;
+      var imageOffsetX = triggerElement.getAttribute('img-offsetx');
+      var elementOffsetX = parseFloat(imageOffsetX) || 0;
+
+      var imageOffsetY = triggerElement.getAttribute('img-offsety');
+      var elementOffsetY = parseFloat(imageOffsetY) || 0;
 
       /*
-       * event.offsetX and event.offsetY are new to the MDN spec, and because of this they
-       * behave differently in different browsers: Chrome and Mozilla, the same event.target,
-       * and the same event.currentTarget, yet event.offsetX for Chrome is relative to the
-       * currentTarget, whereas on Mozilla it is relative to the target.
+       * event.offsetX and event.offsetY are new to the MDN spec, and because
+       * of this they behave differently in different browsers: Chrome and
+       * Mozilla, the same event.target, and the same event.currentTarget, yet
+       * event.offsetX for Chrome is relative to the currentTarget, whereas
+       * on Mozilla it is relative to the target.
        *
-       * Since I did not see a clear cut alternative to the offset property, I do some loose
-       * browser detection. I have made the assumption that all browsers except chrome behave
-       * like Mozilla when it comes to event.offset propeties. This is most likely false, and
-       * I will change it as I test different (less popular) browsers.
+       * Since I did not see a clear cut alternative to the offset property,
+       * I do some loose browser detection. I have made the assumption that
+       * all browsers except chrome behave like Mozilla when it comes to
+       * event.offset propeties. This is most likely false, and will change
+       * as different (less popular) browsers are tested.
        */
       var startX, startY;
       if (!!window.chrome) {
@@ -88,11 +112,20 @@ var LENS = {
       document.addEventListener('mouseup', removeClickReleaseListeners);
 
 
+      /**
+       * Handles the release of the click.
+       * @author Malcolm Watt
+       * @param  {Event} _event : The Event object
+       */
       function imageReleaseClickListener (_event) {
         // Check for an offset on the element that triggered the event
         var _triggerElement = _event.target;
-        var _elementOffsetX = parseFloat(_triggerElement.getAttribute('img-offsetx')) || 0;
-        var _elementOffsetY = parseFloat(_triggerElement.getAttribute('img-offsety')) || 0;
+
+        var _imageOffsetX = _triggerElement.getAttribute('img-offsetx');
+        var _elementOffsetX = parseFloat(_imageOffsetX) || 0;
+
+        var _imageOffsetY = _triggerElement.getAttribute('img-offsety');
+        var _elementOffsetY = parseFloat(_imageOffsetY) || 0;
 
         // See above block comment on event.offset
         var endX, endY;
@@ -104,7 +137,12 @@ var LENS = {
           endY = _event.offsetY + _elementOffsetY;
         }
 
-        var annotation = new Annotation({startX: startX, startY: startY, endX: endX, endY: endY});
+        var annotation = new Annotation({
+          startX: startX,
+          startY: startY,
+          endX: endX,
+          endY: endY
+        });
 
         var annotationTable = LENS.page.image.annotationTable;
         annotationTable.validateAndAdd(annotation);

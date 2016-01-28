@@ -2,14 +2,14 @@
 /**
  * Constructs the image object which is basically just a container for the image
  * and the annotation table.
- * @constructor
  * @author Malcolm Watt
+ * @constructor
  */
 function Image () {
   this.container = document.getElementById('annotate-img');
   this.annotationTable = new AnnotationTable ();
-  resolveImage();
   var that = this;
+  resolveImage();
 
   /**
    * Requests that next frame from the database via XMLHttpRequest.
@@ -22,14 +22,14 @@ function Image () {
     req.send();
   };
 
+  /**
+   * Sets the `background-img` property of the main SVG tag.
+   * @author Malcolm Watt
+   */
   function setBackgroundImage() {
     var frameInfo = JSON.parse(this.responseText);
     LENS.frameId = frameInfo.id;
-    that.setImage(LENS.frameId);
+    var url = 'url(/image/' + frameId + ')';
+    that.container.style.backgroundImage = url;
   };
 }
-
-Image.prototype.setImage = function(frameId) {
-  var url = 'url(/image/' + frameId + ')';
-  this.container.style.backgroundImage = url;
-};

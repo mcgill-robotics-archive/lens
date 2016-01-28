@@ -2,8 +2,8 @@
 /**
  * Stores all data relevant to the annotation by the user.
  * @param {object} vertices : Describes the endpoints of the user's clicks.
- * @constructor
  * @author Malcolm Watt
+ * @constructor
  */
 function Annotation (vertices) {
   this.x = Math.min(vertices.startX, vertices.endX);
@@ -20,11 +20,13 @@ function Annotation (vertices) {
 
 /**
  * Uses the coordinates, width and height to draw containing region.
+ * @author Malcolm Watt
  * @return {object} svgBox : The HTML element for drawn box.
  */
 Annotation.prototype.drawBox = function () {
   var image = LENS.page.image.container;
-  var rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  var rectangle = document.createElementNS('http://www.w3.org/2000/svg',
+    'rect');
 
   rectangle.setAttribute('class', 'annotation');
   rectangle.setAttribute('shape-type', this.type);
@@ -66,6 +68,7 @@ Annotation.prototype.getUsefullData = function() {
 
 /**
  * Requests that the user enter a label for the selected region.
+ * @author  Malcolm Watt
  * @return {string} label : The user entered annotation.
  */
 Annotation.prototype.promptUserForLabel = function(){
