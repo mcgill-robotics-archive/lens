@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>McGill Robotics Lens</title>
+  <style type="text/css">
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    h3, p, div {
+      text-align: center;
+    }
+    tr {
+      padding: 15px;
+    }
+    th, td {
+      padding: 15px;
+      text-align: center;
+      vertical-align: center;
+    }
+    div.displayed {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #annotation-header {
+      background-color: #CDCCCC;
+    }
+    #annotate-img{
+      width: 600px;
+      height: 600px;
+      background-size: 100% 100%;
+    }
+  </style>
+
+  <!--
+    @TODO : add circles, and also add arbitrary polygons
+    @TODO : angled rectangles
+    @TODO : want to be able to say there is nothing - HTML Element (Button) &
+    Onclick Function.
+     * Need to add the onclick functionality
+     * Need to be able to actually submit tags and annotations (Server side
+     * post configuration)
+     * Need to be able to visualize the currently existing tags / annotations
+     *  of the image
+    @TODO : Selecting instead of just free form input
+  -->
+
+
+  <!--
+    The following script tag fetches the Lens.js script from
+    annotation_tool/javascript. The script contains the pages
+    event listeners and is the driver of the annotation tool.
+    Its entry point is the Lens.methods.init method, which is
+    triggered by the onload event of the body.
+   -->
+  <script type="text/javascript" src="/lens?script=Lens.js"></script>
+
+  <!--
+    Page.js only contains the image on the page for now, but
+    the Page object will eventually encapsulate all of the
+    form like behaviour of the Page. For instance, it will
+    contain the user prompt form logic, which will allow the
+    user to select labels from a form.
+  -->
+  <script type="text/javascript" src="/lens?script=Page.js"></script>
+
+  <!--
+    The image class contains the container for the image
+    as well as the Annotation table data.
+  -->
+  <script type="text/javascript" src="/lens?script=Image.js"></script>
+
+  <!--
+    The Annotation Table is the Object that allows us to
+    keep track of all annotations.
+  -->
+  <script type="text/javascript" src="/lens?script=AnnotationTable.js">
+  </script>
+
+  <!--
+    The Annotation is an Object template for the Annotations of the image.
+  -->
+  <script type="text/javascript" src="/lens?script=Annotation.js"></script>
+
+</head>
+<body onload="LENS.methods.init()">
+  <h3>McGill Robotics LENS</h3>
+
+  <div>
+    <svg
+      id="annotate-img"
+      class="annotate-img"
+      xmlns="http://www.w3.org/2000/svg">
+    </svg>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table id="annotation-table" align="center">
+      <tr class="annotation-header" id="annotation-header">
+        <th>colour</th>
+        <th>label</th>
+        <th>x</th>
+        <th>y</th>
+        <th>width</th>
+        <th>height</th>
+        <th>remove</th>
+      </tr>
+    </table>
+  </div>
+  <p>
+    <b>Help: </b> <br>
+    Click and drag on the image to select a region you wish to annotate. <br>
+    You will be prompted to enter a label for the selected region.
+  </p>
+
+  <!-- Configure this button to set the 'Tags' of the image -->
+  <div>
+    <button type="button" onclick="LENS.methods.submit(false);">
+      Nothing Interesting
+    </button>
+  </div>
+
+  <div>
+    <button type="button" onclick="LENS.methods.submit(true);">
+      Submit Annotations
+    </button>
+  </div>
+
+</body>
+</html>
