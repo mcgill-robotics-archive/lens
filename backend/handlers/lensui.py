@@ -2,7 +2,7 @@
 
 """Lens UI."""
 
-from tornado.log import logging
+import logging
 from tornado.gen import coroutine
 from tornado.web import RequestHandler
 from image import ImageHandler
