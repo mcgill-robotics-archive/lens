@@ -2,6 +2,7 @@
 
 """Lens UI."""
 
+from tornado.log import logging
 from tornado.gen import coroutine
 from tornado.web import RequestHandler
 from image import ImageHandler
@@ -36,4 +37,6 @@ class LensUIHandler(RequestHandler):
     @coroutine
     def post(self):
         body = self.request.body
-        print(body)
+        self.finish()
+        logging.debug(body)
+

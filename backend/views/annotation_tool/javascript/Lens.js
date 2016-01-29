@@ -9,6 +9,7 @@ var image, imageElem;
 var LENS = {
   page : null, // Gets initialized by the body elements onload event handler
   frameId : null,
+  tags : [],
   methods : {
     /**
      * Initialize the page property and add all required event listeners.
@@ -45,7 +46,7 @@ var LENS = {
       var description = {};
       description.frame = LENS.frameId;
       description.interesting = interesting;
-      // description.tags = LENS.tags; We need a way to annotate the image in
+      description.tags = LENS.tags; 
       // general. This is a placeholder for when this is implemented.
       description.annotations = JSON.parse(
               LENS.page.image.annotationTable.stringify()
