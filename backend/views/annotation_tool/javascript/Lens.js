@@ -8,6 +8,7 @@
 var LENS = {
   image : null, // Gets initialized by the body elements onload event handler
   frameId : null,
+  tags : [],
   methods : {
     /**
      * Initialize the page property and add all required event listeners.
@@ -40,8 +41,13 @@ var LENS = {
      */
     reload : function () {
       LENS.frameId = null;
+      LENS.tags = [];
       LENS.image = new Image();
-    }
+      var annotations = document.getElementsByClassName('annotation');
+      for (var i = 0; i < annotations.length; i++) {
+          annotations[i].remove();
+      }
+    },
 
     /**
      * Gets the annotations and tags to the backend.
