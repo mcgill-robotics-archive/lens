@@ -1,13 +1,12 @@
 'use strict';
 
-var image, imageElem;
 /**
  * LENS Global stores all data & functionality related to LENS appart from
  * constructors and class methods.
  * @author Malcolm Watt
  */
 var LENS = {
-  page : null, // Gets initialized by the body elements onload event handler
+  image : null, // Gets initialized by the body elements onload event handler
   frameId : null,
   tags : [],
   methods : {
@@ -17,7 +16,7 @@ var LENS = {
      * @return undefined
      */
     init : function () {
-      LENS.page = new Page();
+      LENS.image = new Image();
       LENS.methods.initializeImageListeners();
     },
 
@@ -32,7 +31,22 @@ var LENS = {
       req.open('POST', '/lens/', true);
       req.setRequestHeader('Content-Type', 'application/json');
       req.send(LENS.methods.formatData(interesting));
-      location.reload(true); // true forces it to not reload from cache
+      LENS.methods.reload();
+    },
+
+    /**
+     * Reset globals and get new frame from database.
+     * @author Malcolm Watt
+     * @return undefined
+     */
+    reload : function () {
+      LENS.frameId = null;
+      LENS.tags = [];
+      LENS.image = new Image();
+      var annotations = document.getElementsByClassName('annotation');
+      for (var i = 0; i < annotations.length; i++) {
+          annotations[i].remove();
+      }
     },
 
     /**
@@ -46,10 +60,10 @@ var LENS = {
       var description = {};
       description.frame = LENS.frameId;
       description.interesting = interesting;
-      description.tags = LENS.tags; 
+      // description.tags = LENS.tags; We need a way to annotate the image in
       // general. This is a placeholder for when this is implemented.
       description.annotations = JSON.parse(
-              LENS.page.image.annotationTable.stringify()
+              LENS.image.annotationTable.stringify()
       );
       console.log(description);
       return JSON.stringify(description);
@@ -63,7 +77,7 @@ var LENS = {
      */
     initializeImageListeners : function () {
       // The HTML element that contains the image to be annotated
-      var image = LENS.page.image.container;
+      var image = LENS.image.container;
       image.addEventListener('mousedown', LENS.methods.imageDownClickListener);
     },
 
@@ -107,7 +121,7 @@ var LENS = {
         startY = event.offsetY + elementOffsetY;
       }
 
-      var image = LENS.page.image.container;
+      var image = LENS.image.container;
 
       image.addEventListener('mouseup', imageReleaseClickListener);
       document.addEventListener('mouseup', removeClickReleaseListeners);
@@ -145,14 +159,14 @@ var LENS = {
           endY: endY
         });
 
-        var annotationTable = LENS.page.image.annotationTable;
+        var annotationTable = LENS.image.annotationTable;
         annotationTable.validateAndAdd(annotation);
 
         removeClickReleaseListeners();
       }
 
       function removeClickReleaseListeners() {
-        var image = LENS.page.image.container;
+        var image = LENS.image.container;
         image.removeEventListener('mouseup', imageReleaseClickListener);
         document.removeEventListener('mouseup', removeClickReleaseListeners);
       }

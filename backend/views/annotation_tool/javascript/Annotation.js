@@ -14,7 +14,7 @@ function Annotation (vertices) {
   this.label = this.promptUserForLabel();
   this.type = 'rectangle'; // This needs to be sourced from a multiple select
   if (!this.label) {
-    LENS.page.image.container.removeChild(this.boxElement);
+    LENS.image.container.removeChild(this.boxElement);
   }
 }
 
@@ -24,7 +24,7 @@ function Annotation (vertices) {
  * @return {object} svgBox : The HTML element for drawn box.
  */
 Annotation.prototype.drawBox = function () {
-  var image = LENS.page.image.container;
+  var image = LENS.image.container;
   var rectangle = document.createElementNS('http://www.w3.org/2000/svg',
     'rect');
 
