@@ -46,6 +46,33 @@ Annotation.prototype.drawBox = function () {
 }
 
 /**
+ * Uses the coordinates, width and height to draw a containing circle.
+ * @author David Lougheed
+ * @return {object} circle : The SVG element for drawn box.
+ */
+Annotation.prototype.drawCircle = function() {
+  var image = Lens.image.container;
+  var ellipse = document.createElementNS('http://www.w3.org/2000/svg',
+    'ellipse');
+
+  ellipse.setAttribute('class', 'annotation');
+  ellipse.setAttribute('shape-type', this.type);
+  ellipse.setAttribute('cx', this.x + this.width / 2);
+  ellipse.setAttribute('cy', this.y + this.height / 2);
+  ellipse.setAttribute('rx', this.width / 2);
+  ellipse.setAttribute('ry', this.height / 2);
+  ellipse.setAttribute('stroke-width', '3');
+  ellipse.setAttribute('stroke', 'red');
+  ellipse.setAttribute('fill-opacity', '0');
+
+  ellipse.setAttribute('img-offsetx', this.x);
+  ellipse.setAttribute('img-offsety', this.y);
+
+  image.appendChild(ellipse);
+  return circle;
+}
+
+/**
  * This is in the works. It is planned to append all of my labels
  * to the input table, this would allow me to remove them.
  * @param  {[type]} first_argument [description]
