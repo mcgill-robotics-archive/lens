@@ -23,6 +23,93 @@
       margin-left: auto;
       margin-right: auto;
     }
+
+    h1#title {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 100;
+
+      margin: 0;
+
+      font-family: sans-serif;
+      font-size: 1rem;
+    }
+
+    #display {
+      position: absolute;
+      top: 0; bottom: 0; left: 0; right: 60px;
+
+      background-color: #777;
+    }
+    #sidebar {
+      box-sizing: border-box;
+
+      position: absolute;
+      top: 0; bottom: 0; right: 0;
+      width: 60px;
+      padding: 10px;
+
+      border-left: 1px solid #666;
+
+      background-color: #F9F9F9;
+    }
+    #sidebar ul {
+      list-style: none;
+      padding: 0; margin: 0;
+    }
+    #sidebar ul li {
+      margin-bottom: 10px;
+    }
+    #sidebar ul li button {
+      box-sizing: border-box;
+
+      width: 40px;
+      height: 40px;
+      line-height: 39px;
+
+      border: 1px solid #C9C9C9;
+      border-radius: 3px;
+      background-color: #EAEAEA;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05),
+        inset 0px 1px 0px rgba(255, 255, 255, 0.3);
+
+      font-size: 1.4rem;
+
+      outline: none;
+    }
+    #sidebar ul li button:active, #sidebar ul li button.active {
+      background-color: #DADADA;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05),
+        inset 0px 1px 3px rgba(0, 0, 0, 0.15);
+    }
+    #sidebar ul li hr {
+      border: none;
+      border-top: 1px solid #C9C9C9;
+    }
+    #help {
+      position: absolute;
+      bottom: 0; left: 0; right: 60px;
+
+      padding: 5px; margin: 0;
+
+      background-color: #AAA;
+      border-top: 1px solid #888;
+      box-shadow: 0px -1px 3px rgba(0, 0, 0, 0.1);
+
+      font-family: sans-serif;
+      font-size: 0.9rem;
+    }
+
+    #nothing-interesting {
+      position: absolute;
+      top: 0;
+      left: 50%;
+
+      width: 150px;
+      margin-left: -75px;
+    }
+
     #annotation-header {
       background-color: #CDCCCC;
     }
@@ -77,47 +164,52 @@
 
 </head>
 <body onload="Lens.methods.init()">
-  <h3>McGill Robotics Lens</h3>
+  <h1 id="title">McGill Robotics Lens</h1>
 
-  <div>
+  <div id="display">
     <svg
       id="annotate-img"
       class="annotate-img"
       xmlns="http://www.w3.org/2000/svg">
     </svg>
   </div>
-
-  <div style="overflow-x:auto;">
-    <table id="annotation-table" align="center">
-      <tr class="annotation-header" id="annotation-header">
-        <th>colour</th>
-        <th>label</th>
-        <th>x</th>
-        <th>y</th>
-        <th>width</th>
-        <th>height</th>
-        <th>remove</th>
-      </tr>
-    </table>
+  <div id="sidebar">
+    <ul>
+      <li>
+        <button type="button" onclick="Lens.methods.submit(true);">
+          &#10003;
+        </button>
+      </li>
+      <li><hr></li>
+      <li>
+        <button type="button" class="active">
+          &#9633;
+        </button>
+      </li>
+      <li>
+        <button type="button">
+          &#9675;
+        </button>
+      </li>
+      <li>
+        <button type="button">
+          &#11041;
+        </button>
+      </li>
+    </ul>
   </div>
-  <p>
-    <b>Help: </b> <br>
-    Click and drag on the image to select a region you wish to annotate. <br>
+
+  <p id="help">
+    <b>Help: </b>
+    Click and drag on the image to select a region you wish to annotate.
     You will be prompted to enter a label for the selected region.
   </p>
 
   <!-- Configure this button to set the 'Tags' of the image -->
-  <div>
+  <div id="nothing-interesting">
     <button type="button" onclick="Lens.methods.submit(false);">
       Nothing Interesting
     </button>
   </div>
-
-  <div>
-    <button type="button" onclick="Lens.methods.submit(true);">
-      Submit Annotations
-    </button>
-  </div>
-
 </body>
 </html>
