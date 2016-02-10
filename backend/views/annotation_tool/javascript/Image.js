@@ -30,8 +30,8 @@ function Image () {
    */
   function setBackgroundImage() {
     var frameInfo = JSON.parse(this.responseText);
-    LENS.frameId = frameInfo.id;
-    var url = 'url(/image/' + LENS.frameId + ')';
+    Lens.frameId = frameInfo.id;
+    var url = 'url(/image/' + Lens.frameId + ')';
     that.container.style.backgroundImage = url;
   };
 }

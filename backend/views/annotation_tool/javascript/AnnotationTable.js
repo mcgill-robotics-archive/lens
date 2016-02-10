@@ -18,7 +18,7 @@ function AnnotationTable () {
 AnnotationTable.prototype.validateAndAdd = function (annotation) {
   if (annotation.label) {
     this.annotations.push(annotation);
-    LENS.tags.push(annotation.label);
+    Lens.tags.push(annotation.label);
   }
 };
 
