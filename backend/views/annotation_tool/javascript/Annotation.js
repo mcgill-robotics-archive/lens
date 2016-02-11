@@ -6,11 +6,22 @@
  * @constructor
  */
 function Annotation (vertices) {
-  this.x = Math.min(vertices.startX, vertices.endX);
-  this.y = Math.min(vertices.startY, vertices.endY);
-  this.width = Math.abs(vertices.endX - vertices.startX);
-  this.height = Math.abs(vertices.endY - vertices.startY);
-  this.boxElement = this.drawBox();
+  // The Px suffix denotes that the unit is pixels
+  let leftXVertexPx = Math.min(vertices.startX, vertices.endX);
+  let bottomYVertexPx = Math.min(vertices.startY, vertices.endY);
+  let widthPx = Math.abs(vertices.endX - vertices.startX);
+  let heightPx = Math.abs(vertices.endY - vertices.startY);
+ 
+  this.boxElement = this.drawBox(leftXVertexPx, bottomYVertexPx, widthPx, 
+          heightPx);
+  
+  let img = Lens.image.container;
+ 
+  this.x = leftXVertexPx / img.clientWidth;
+  this.y = bottomYVertexPx / img.clientHeight;
+  this.width = widthPx / img.clientWidth;
+  this.height = heightPx / img.clientHeight;
+
   this.label = this.promptUserForLabel();
   this.type = 'rectangle'; // This needs to be sourced from a multiple select
   if (!this.label) {
@@ -23,23 +34,23 @@ function Annotation (vertices) {
  * @author Malcolm Watt
  * @return {object} svgBox : The HTML element for drawn box.
  */
-Annotation.prototype.drawBox = function () {
+Annotation.prototype.drawBox = function (x, y, width, height) {
   var image = Lens.image.container;
   var rectangle = document.createElementNS('http://www.w3.org/2000/svg',
     'rect');
 
   rectangle.setAttribute('class', 'annotation');
   rectangle.setAttribute('shape-type', this.type);
-  rectangle.setAttribute('x', this.x);
-  rectangle.setAttribute('y', this.y);
-  rectangle.setAttribute('width', this.width);
-  rectangle.setAttribute('height', this.height);
+  rectangle.setAttribute('x', x);
+  rectangle.setAttribute('y', y);
+  rectangle.setAttribute('width', width);
+  rectangle.setAttribute('height', height);
   rectangle.setAttribute('stroke-width', '3');
   rectangle.setAttribute('stroke', 'red');
   rectangle.setAttribute('fill-opacity', '0');
 
-  rectangle.setAttribute('img-offsetx', this.x);
-  rectangle.setAttribute('img-offsety', this.y);
+  rectangle.setAttribute('img-offsetx', x);
+  rectangle.setAttribute('img-offsety', y);
 
   image.appendChild(rectangle);
   return rectangle;
