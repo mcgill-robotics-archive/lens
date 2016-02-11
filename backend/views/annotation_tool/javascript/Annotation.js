@@ -6,31 +6,52 @@
  * @constructor
  */
 function Annotation (vertices) {
+  this.svgGroup = this.constructGroup();
   this.x = Math.min(vertices.startX, vertices.endX);
   this.y = Math.min(vertices.startY, vertices.endY);
   this.width = Math.abs(vertices.endX - vertices.startX);
   this.height = Math.abs(vertices.endY - vertices.startY);
   this.boxElement = this.drawBox();
   this.label = this.promptUserForLabel();
-  this.type = 'rectangle'; // This needs to be sourced from a multiple select
+  this.type = 'rect'; // This needs to be sourced from a multiple select
   if (this.label) {
     this.addLabel();
   } else {
-    Lens.image.container.removeChild(this.boxElement);
+    Lens.image.container.removeChild(this.svgGroup);
   }
 }
 
+/**
+ * Creates an SVG Group to store our SVG Elements (text for the tag and shape
+ * for the actual visual delimiter) for this particular annotation.
+ * @author Malcolm Watt
+ * @return {object} group : The DOM element for the SVG Group.
+ */
+Annotation.prototype.constructGroup = function() {
+  var image = Lens.image.container;
+  var group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  image.appendChild(group);
+  return group;
+};
 
+
+/**
+ * This function creates a text element with the current label and positions it
+ * along side the actual shape that we have just created.
+ * @author Malcolm Watt
+ */
 Annotation.prototype.addLabel = function () {
-  // new div
-  let nd = document.createElement('div');
-  nd.className = 'label';
-  nd.innerText = this.label;
-  nd.style.top = this.y + 'px';
-  nd.style.left = this.x + 'px';
-  let img = document.getElementById('img-container');
+  var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 
-  img.appendChild(nd);
+  label.innerHTML = this.label;
+  label.setAttribute('x', this.x);
+  label.setAttribute('y', this.y);
+  label.setAttribute('font-family', 'Times New Roman');
+  label.setAttribute('font-size', '24');
+  label.setAttribute('stroke', '#00ff00');
+  label.setAttribute('fill', '#0000ff')
+
+  this.svgGroup.appendChild(label);
 }
 
 
@@ -40,25 +61,24 @@ Annotation.prototype.addLabel = function () {
  * @return {object} svgBox : The HTML element for drawn box.
  */
 Annotation.prototype.drawBox = function () {
-  var image = Lens.image.container;
-  var rectangle = document.createElementNS('http://www.w3.org/2000/svg',
+  var rect = document.createElementNS('http://www.w3.org/2000/svg',
     'rect');
 
-  rectangle.setAttribute('class', 'annotation');
-  rectangle.setAttribute('shape-type', this.type);
-  rectangle.setAttribute('x', this.x);
-  rectangle.setAttribute('y', this.y);
-  rectangle.setAttribute('width', this.width);
-  rectangle.setAttribute('height', this.height);
-  rectangle.setAttribute('stroke-width', '3');
-  rectangle.setAttribute('stroke', 'red');
-  rectangle.setAttribute('fill-opacity', '0');
+  rect.setAttribute('class', 'annotation');
+  rect.setAttribute('shape-type', this.type);
+  rect.setAttribute('x', this.x);
+  rect.setAttribute('y', this.y);
+  rect.setAttribute('width', this.width);
+  rect.setAttribute('height', this.height);
+  rect.setAttribute('stroke-width', '3');
+  rect.setAttribute('stroke', 'red');
+  rect.setAttribute('fill-opacity', '0');
 
-  rectangle.setAttribute('img-offsetx', this.x);
-  rectangle.setAttribute('img-offsety', this.y);
+  rect.setAttribute('img-offsetx', this.x);
+  rect.setAttribute('img-offsety', this.y);
 
-  image.appendChild(rectangle);
-  return rectangle;
+  this.svgGroup.appendChild(rect);
+  return rect;
 }
 
 /**
