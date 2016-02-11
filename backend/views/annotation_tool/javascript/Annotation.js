@@ -42,16 +42,27 @@ Annotation.prototype.constructGroup = function() {
  */
 Annotation.prototype.addLabel = function () {
   var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-
+  var font = 15;
   label.innerHTML = this.label;
-  label.setAttribute('x', this.x);
-  label.setAttribute('y', this.y);
-  label.setAttribute('font-family', 'Times New Roman');
-  label.setAttribute('font-size', '24');
-  label.setAttribute('stroke', '#00ff00');
-  label.setAttribute('fill', '#0000ff')
+  label.setAttribute('x', this.x + 3);
+  label.setAttribute('y', this.y + font);
+  label.setAttribute('font-family', 'Arial');
+  label.setAttribute('font-size', font);
+  label.setAttribute('stroke', '#FFFFFF');
+  label.setAttribute('fill', '#FFFFFF');
+  
+  label.setAttribute('img-offsetx', this.x + 3);
+  label.setAttribute('img-offsety', this.y + font);
 
+
+  label.addEventListener('mousedown', this.displayAnnotationInfo);
   this.svgGroup.appendChild(label);
+}
+
+Annotation.prototype.displayAnnotationInfo = function (event){
+  // Code for the display should go here. 
+  console.log('Hi there');
+  event.stopPropagation();
 }
 
 
