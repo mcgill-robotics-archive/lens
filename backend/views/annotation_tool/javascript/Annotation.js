@@ -13,10 +13,26 @@ function Annotation (vertices) {
   this.boxElement = this.drawBox();
   this.label = this.promptUserForLabel();
   this.type = 'rectangle'; // This needs to be sourced from a multiple select
-  if (!this.label) {
+  if (this.label) {
+    this.addLabel();
+  } else {
     Lens.image.container.removeChild(this.boxElement);
   }
 }
+
+
+Annotation.prototype.addLabel = function () {
+  // new div
+  let nd = document.createElement('div');
+  nd.className = 'label';
+  nd.innerText = this.label;
+  nd.style.top = this.y + 'px';
+  nd.style.left = this.x + 'px';
+  let img = document.getElementById('img-container');
+
+  img.appendChild(nd);
+}
+
 
 /**
  * Uses the coordinates, width and height to draw containing region.
