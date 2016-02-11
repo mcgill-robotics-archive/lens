@@ -10,9 +10,17 @@ function Annotation (vertices) {
   this.y = Math.min(vertices.startY, vertices.endY);
   this.width = Math.abs(vertices.endX - vertices.startX);
   this.height = Math.abs(vertices.endY - vertices.startY);
-  this.boxElement = this.drawBox();
+  this.type = Lens.shapeType;
+  switch (this.type) {
+    case 'circle':
+      this.boxElement = this.drawCircle();
+      break;
+    case 'rectangle':
+    default:
+      this.boxElement = this.drawBox();
+      break;
+  }
   this.label = this.promptUserForLabel();
-  this.type = 'rectangle'; // This needs to be sourced from a multiple select
   if (!this.label) {
     Lens.image.container.removeChild(this.boxElement);
   }
@@ -69,7 +77,7 @@ Annotation.prototype.drawCircle = function() {
   ellipse.setAttribute('img-offsety', this.y);
 
   image.appendChild(ellipse);
-  return circle;
+  return ellipse;
 }
 
 /**

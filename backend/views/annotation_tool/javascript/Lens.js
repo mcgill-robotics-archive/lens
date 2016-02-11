@@ -8,6 +8,7 @@
 var Lens = {
   image : null, // Gets initialized by the body elements onload event handler
   frameId : null,
+  shapeType : 'rectangle',
   tags : [],
   methods : {
     /**
@@ -170,6 +171,10 @@ var Lens = {
         image.removeEventListener('mouseup', imageReleaseClickListener);
         document.removeEventListener('mouseup', removeClickReleaseListeners);
       }
+    },
+
+    setShapeType : function (newType) {
+      Lens.shapeType = newType;
     }
   }
 };
