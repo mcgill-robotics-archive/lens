@@ -36,11 +36,13 @@
       font-size: 1rem;
     }
 
-    #display {
+    #img-container {
       position: absolute;
       top: 0; bottom: 0; left: 0; right: 60px;
 
       background-color: #777;
+
+      overflow-y: auto;
     }
     #sidebar {
       box-sizing: border-box;
@@ -109,6 +111,23 @@
       width: 150px;
       margin-left: -75px;
     }
+    #nothing-interesting button {
+      width: 100%;
+      height: 25px;
+
+      border: 1px solid #C9C9C9;
+      border-top: none;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      background-color: #EAEAEA;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.15),
+        inset 0px 1px 0px rgba(255, 255, 255, 0.15);
+
+      font-size: 0.9rem;
+      line-height: 25px;
+
+      outline: none;
+    }
 
     #annotation-header {
       background-color: #CDCCCC;
@@ -162,11 +181,35 @@
   -->
   <script type="text/javascript" src="/lens?script=Annotation.js"></script>
 
+  <script type="text/javascript">
+    function updateToolUI() {
+      var rectangleTool = document.getElementById('tool-rectangle');
+      var circleTool = document.getElementById('tool-circle');
+      var polygonTool = document.getElementById('tool-polygon');
+
+      rectangleTool.className = '';
+      circleTool.className = '';
+      polygonTool.className = '';
+
+      switch (Lens.shapeType) {
+        case 'rectangle':
+          rectangleTool.className = 'active';
+          break;
+        case 'circle':
+          circleTool.className = 'active';
+          break;
+        case 'polygon':
+          polygonTool.className = 'active';
+          break;
+      }
+    }
+  </script>
+
 </head>
 <body onload="Lens.methods.init()">
   <h1 id="title">McGill Robotics Lens</h1>
 
-  <div id="display">
+  <div id="img-container">
     <svg
       id="annotate-img"
       class="annotate-img"
@@ -182,17 +225,21 @@
       </li>
       <li><hr></li>
       <li>
-        <button type="button" class="active">
+        <button type="button" id="tool-rectangle" class="active"
+          onclick="Lens.methods.setShapeType('rectangle'); updateToolUI();">
           &#9633;
         </button>
       </li>
       <li>
-        <button type="button">
+        <button type="button" id="tool-circle"
+          onclick="Lens.methods.setShapeType('circle'); updateToolUI();">
           &#9675;
         </button>
       </li>
       <li>
-        <button type="button">
+        <!-- DISABLED FOR NOW -->
+        <button type="button" id="tool-polygon" disabled
+          onclick="Lens.methods.setShapeType('polygon'); updateToolUI();">
           &#11041;
         </button>
       </li>
