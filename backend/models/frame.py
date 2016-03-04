@@ -6,7 +6,9 @@ import six
 import logging
 from toro import Lock
 from bson import Binary
-from video import Video
+from annotation import Annotation
+from tag import Tag
+from feed import Feed
 from datetime import datetime, timedelta
 from tornado.gen import coroutine, Return
 from motorengine import Document, fields, Q
@@ -42,36 +44,42 @@ class Frame(Document):
     """Video image document.
 
     Attributes:
-        video: Corresponding video.
-        index: Frame index in video.
-        image: JPEG binary data.
         tags: List of tags.
-        metadata: List of JSON annotations.
+        feed: Corresponding feed.
+        sequence: Frame index in video.
+        height: Height of frame.
+        width: Width of frame.
+        encoding: Type of encoding.
+        image_data: Image data.
+        annotations: List of annotations.
         accessed: Datetime accessed in UTC, an indicator of whether in use.
-        added: Datetime added to the database in UTC.
     """
 
     __lazy__ = False
     __collection__ = "frames"
 
-    video = fields.ReferenceField(reference_document_type=Video)
-    index = fields.IntField(required=True)
-    image = ImageField(required=True)
-    tags = fields.ListField(base_field=fields.StringField())
-    metadata = fields.ListField(base_field=fields.JsonField())
+    tags = fields.ListField(fields.ReferenceField(Tag))
+    feed = fields.ReferenceField(reference_document_type=Feed)
+    sequence = fields.IntField(required=True)
+    height = fields.IntField(required=True)
+    width = fields.IntField(required=True)
+    encoding = fields.StringField(required=True)
+    image_data = fields.BinaryField(required=True)
+    annotations = fields.ListField(fields.ReferenceField(Annotation))
     accessed = fields.DateTimeField()
-    added = fields.DateTimeField(default=datetime.utcnow())
 
     def dump(self):
         """Returns dictionary representation of frame information."""
         return {
             "id": str(self._id),
-            "video": self.video.dump(),
-            "index": self.index,
             "tags": self.tags,
-            "metadata": self.metadata,
+            "feed": self.feed.dump(),
+            "sequence": self.sequence,
+            "height": self.height,
+            "width": self.width,
+            "encoding": self.encoding,
+            "annotations": self.annotations,
             "accessed": self.accessed,
-            "added": self.added
         }
 
     @coroutine
@@ -143,35 +151,50 @@ class Frame(Document):
             raise Return(next_frame)
 
     @coroutine
-    def annotate(self, metadata, tags):
-        """Updates the frame's metadata.
+    def annotate(self, annotations, tags):
+        """Updates the frame's annotations.
 
         Args:
-            metadata: Metadata.
+            annotations: Annotations.
             tags: List of tags.
         """
         # Avoid concurrently overwriting a frame's annotations.
         with (yield lock.acquire()):
-            self.metadata.append(metadata)
+            self.annotations.extend(annotations)
             self.tags.extend(tags)
             yield self.save()
-
     @classmethod
     @coroutine
-    def from_image(cls, video, index, image):
-        """Creates a Frame from image data and writes it to the database.
+    def to_ros_image(feed, sequence):
+        """TODO: Returns a ROS image of the frame. """
+        pass
+    @classmethod
+    @coroutine
+    def from_ros_image(cls, feed, sequence, image_data, height, width, encoding):
+        """Creates a Frame from image_data data and writes it to the database.
 
         Args:
-            video: Corresponding video.
-            index: Frame index in video.
-            image: JPEG binary data.
+            feed: Corresponding feed.
+            sequence: Frame sequence in feed.
+            image_data: JPEG binary data.
+            height: Height of frame.
+            width: Width of frame.
+            encoding: Video encoding.
 
         Returns:
             Frame.
         """
         frame = yield Frame.objects.create(
-            video=video,
-            index=index,
-            image=image
+            feed=feed,
+            sequence=sequence,
+            image_data=image_data,
+            height=height,
+            width=width,
+            encoding=encoding
         )
         raise Return(frame)
+    @classmethod
+    @coroutine
+    def to_jpeg():
+        """TODO: Returns a jpeg image of the frame. """
+        pass
