@@ -33,8 +33,6 @@ class LensUIHandler(RequestHandler):
         stylesheet_id = self.get_query_argument('stylesheet', None)
         if (script_id):
             self.render(LensUIHandler.SOURCE_DIR + script_id);
-        else if(stylesheet_id):
-            self.render(LensUIHandler.STYLE_DIR + stylesheet_id)
         else:
             self.render(LensUIHandler.VIEWS_DIR + 'annotate.html')
 
