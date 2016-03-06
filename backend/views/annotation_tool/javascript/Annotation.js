@@ -48,7 +48,7 @@ Annotation.prototype.addLabel = function () {
   label.setAttribute('x', this.x + 7);
   label.setAttribute('y', this.y + font);
   label.setAttribute('font-size', font);
-  
+
   label.setAttribute('img-offsetx', this.x + 3);
   label.setAttribute('img-offsety', this.y + font);
 
@@ -59,11 +59,19 @@ Annotation.prototype.addLabel = function () {
   this.svgGroup.appendChild(label);
 }
 
+/**
+ * Populates the info of the pop up based on the clicked annotation and makes
+ * the pop up visible.
+ * @author Malcolm Watt
+ * @param  {MouseEvent} event
+ *         : The event object containing all relevant event data to click.
+ * @return undefined
+ */
 Annotation.prototype.displayAnnotationInfo = function (event){
   var annotation = this;
   var overlay = document.getElementById("overlay");
   var popup = document.getElementById("popup");
-  
+
   Annotation.prototype.addInfoToPopup(popup, annotation);
 
   overlay.style.display = "block";
@@ -126,10 +134,15 @@ Annotation.prototype.drawBox = function () {
   return rect;
 }
 
-
+/**
+ * Remove the current annotation from the page both from the ui, as well as
+ * from the dataset that will be submitted to the backend.
+ * @author Malcolm Watt
+ * @return undefined
+ */
 Annotation.prototype.delete = function() {
   var annotation = this;
-  
+
   // remove svg group from DOM
   var g = annotation.svgGroup;
   g.parentElement.removeChild(g);
@@ -145,6 +158,11 @@ Annotation.prototype.delete = function() {
   Lens.methods.closePopUp();
 };
 
+/**
+ * Returns an object containing the important information for the database.
+ * @author Malcolm Watt
+ * @return {Object} The current annotation's relevant information.
+ */
 Annotation.prototype.getUsefullData = function() {
   return {
     x : this.x,
