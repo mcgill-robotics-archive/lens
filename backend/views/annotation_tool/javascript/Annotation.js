@@ -30,6 +30,7 @@ function Annotation (vertices) {
 Annotation.prototype.constructGroup = function() {
   var image = Lens.image.container;
   var group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  group.setAttribute('class', 'annotation-group');
   image.appendChild(group);
   return group;
 };
@@ -44,27 +45,56 @@ Annotation.prototype.addLabel = function () {
   var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   var font = 15;
   label.innerHTML = this.label;
-  label.setAttribute('x', this.x + 3);
+  label.setAttribute('x', this.x + 7);
   label.setAttribute('y', this.y + font);
-  label.setAttribute('font-family', 'Arial');
   label.setAttribute('font-size', font);
-  label.setAttribute('stroke', '#FFFFFF');
-  label.setAttribute('fill', '#FFFFFF');
   
   label.setAttribute('img-offsetx', this.x + 3);
   label.setAttribute('img-offsety', this.y + font);
 
-
-  label.addEventListener('mousedown', this.displayAnnotationInfo);
+  var annotation = this;
+  label.addEventListener('click', function (event) {
+  	Annotation.prototype.displayAnnotationInfo.call(annotation, event);
+  });
   this.svgGroup.appendChild(label);
 }
 
 Annotation.prototype.displayAnnotationInfo = function (event){
-  // Code for the display should go here. 
-  console.log('Hi there');
+  var annotation = this;
+  var overlay = document.getElementById("overlay");
+  var popup = document.getElementById("popup");
+  
+  Annotation.prototype.addInfoToPopup(popup, annotation);
+
+  overlay.style.display = "block";
+  popup.style.display = "block";
   event.stopPropagation();
 }
 
+/**
+ * Use the grouped annotation data, and append this info into the popup div.
+ * @author Malcolm Watt
+ * @return undefined
+ */
+Annotation.prototype.addInfoToPopup = function (popup, annotation) {
+  var firstRow = popup.getElementsByClassName('attribute-names')[0];
+  var secondRow = popup.getElementsByClassName('attribute-values')[0];
+
+  var metadata = Annotation.prototype.getUsefullData.call(annotation);
+
+  for (var keys in metadata) {
+  	if (metadata.hasOwnProperty(keys)) {
+  	  var attributeName = document.createElement('th');
+  	  attributeName.innerHTML = keys;
+  	  attributeName.setAttribute('class', 'annotation-attribs');
+  	  var attributeValue = document.createElement('td');
+  	  attributeValue.innerHTML = metadata[keys];
+  	  attributeValue.setAttribute('class', 'annotation-vals');
+  	  firstRow.appendChild(attributeName);
+  	  secondRow.appendChild(attributeValue);
+  	}
+  }
+};
 
 /**
  * Uses the coordinates, width and height to draw containing region.

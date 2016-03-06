@@ -18,6 +18,7 @@ var Lens = {
     init : function () {
       Lens.image = new Image();
       Lens.methods.initializeImageListeners();
+      Lens.methods.initOverlayListener();
     },
 
     /**
@@ -80,6 +81,34 @@ var Lens = {
       var image = Lens.image.container;
       image.addEventListener('mousedown', Lens.methods.imageDownClickListener);
     },
+
+
+    initOverlayListener : function () {
+      document.getElementById("CloseBtn").onclick = function() {
+        var overlay = document.getElementById("overlay");
+        var popup = document.getElementById("popup");
+
+        var firstRow = popup.getElementsByClassName('attribute-names')[0];
+        var secondRow = popup.getElementsByClassName('attribute-values')[0];
+        var attributeNames = firstRow.getElementsByClassName(
+          'annotation-attribs');
+        
+        for (var i = attributeNames.length - 1; i >= 0; i--) {
+          firstRow.removeChild(attributeNames[i]);
+        }
+        
+        var attributeValues = secondRow.getElementsByClassName(
+          'annotation-vals');
+        
+        for (var j = attributeValues.length - 1; j >= 0; j--) {
+          secondRow.removeChild(attributeValues[j]);
+        }
+
+        overlay.style.display = "none";
+        popup.style.display = "none";
+      };
+    },
+
 
     /**
      * Sets the starting point (x and y) of the Lens object when the
@@ -152,16 +181,17 @@ var Lens = {
           endY = _event.offsetY + _elementOffsetY;
         }
 
-        var annotation = new Annotation({
-          startX: startX,
-          startY: startY,
-          endX: endX,
-          endY: endY
-        });
+        if (endX - startX > 5 || endY - startY > 5){
+          var annotation = new Annotation({
+            startX: startX,
+            startY: startY,
+            endX: endX,
+            endY: endY
+          });
 
-        var annotationTable = Lens.image.annotationTable;
-        annotationTable.validateAndAdd(annotation);
-
+          var annotationTable = Lens.image.annotationTable;
+          annotationTable.validateAndAdd(annotation);
+        }
         removeClickReleaseListeners();
       }
 

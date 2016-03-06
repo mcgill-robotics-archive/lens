@@ -18,6 +18,22 @@
       text-align: center;
       vertical-align: center;
     }
+    .annotation {
+      pointer-events: none;
+    }
+
+    .annotation-group text {
+      filter: url(#label-background-light);
+      stroke: #000000;
+      fill: #000000;  
+      font-family: Arial;
+    }
+    .annotation-group:hover text {
+      filter: url(#label-background-dark);
+      stroke: #FFFFFF;
+      fill: #FFFFFF;
+    }
+
     div.displayed {
       display: block;
       margin-left: auto;
@@ -34,6 +50,61 @@
     #img-container {
       position: relative;
     }
+    #overlay {
+      display: none;
+      position: fixed;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      opacity: 0.5;
+      z-index: 99999;
+    }
+
+    #popup {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 400px;
+      height: 150px;
+      margin-top: -75px;
+      margin-left: -150px;
+      background: #FFFFFF;
+      border: 2px solid #000;
+      z-index: 100000;
+    }
+    table {
+    border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        padding: 4px 4px 4px 4px;
+    }
+
+    #popup-table {
+      overflow-x: auto;
+      margin: 10px 10px 10px 10px;
+    }
+
+    #CloseBtn {
+      float: right;
+      font-size: 10px;
+      margin: 2px 2px 2px 2px;
+      padding : 2px 2px 2px 2px;
+      font-family: Arial;
+      color: black;
+      border-radius: 20px;
+      border: 1px solid black;
+    }
+    #CloseBtn:hover {
+      color: white;
+      background-color: black;
+      border: 1px solid white;
+    }
+
   </style>
 
   <!--
@@ -78,15 +149,27 @@
   -->
   <script type="text/javascript" src="/lens?script=Annotation.js"></script>
 
+  <link rel="stylesheet" href=
+  "https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+  >
+
 </head>
 <body onload="Lens.methods.init()">
   <h3>McGill Robotics Lens</h3>
 
   <div id="img-container">
-    <svg
-      id="annotate-img"
-      class="annotate-img"
-      xmlns="http://www.w3.org/2000/svg">
+    <svg id="annotate-img" class="annotate-img" 
+         xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter x="-0.1" y="0" width="1.2" height="1" id="label-background-light">
+          <feFlood flood-color="white" />
+          <feComposite in="SourceGraphic" />
+        </filter>
+        <filter x="-0.1" y="0" width="1.2" height="1" id="label-background-dark">
+          <feFlood flood-color="black" />
+          <feComposite in="SourceGraphic" />
+        </filter>
+      </defs>
     </svg>
   </div>
 
@@ -120,6 +203,22 @@
     <button type="button" onclick="Lens.methods.submit(true);">
       Submit Annotations
     </button>
+  </div>
+
+  <div id="overlay"></div>
+  <div id="popup">
+    <span id="CloseBtn"><i class="fa fa-times"></i></span>
+
+    <div id="popup-table">
+      <table>
+        <tr class="attribute-names">
+          <th id="attr-row-label">Attribute</th>  
+        </tr>
+        <tr class="attribute-values">
+          <th id="val-row-label">Value</th>
+        </tr>
+      </table>
+    </div>
   </div>
 
 </body>
