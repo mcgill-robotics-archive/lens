@@ -6,12 +6,22 @@
  * @constructor
  */
 function Annotation (vertices) {
-  this.svgGroup = this.constructGroup();
-  this.x = Math.min(vertices.startX, vertices.endX);
-  this.y = Math.min(vertices.startY, vertices.endY);
-  this.width = Math.abs(vertices.endX - vertices.startX);
-  this.height = Math.abs(vertices.endY - vertices.startY);
-  this.boxElement = this.drawBox();
+  // The Px suffix denotes that the unit is pixels
+  let leftXVertexPx = Math.min(vertices.startX, vertices.endX);
+  let bottomYVertexPx = Math.min(vertices.startY, vertices.endY);
+  let widthPx = Math.abs(vertices.endX - vertices.startX);
+  let heightPx = Math.abs(vertices.endY - vertices.startY);
+
+  this.boxElement = this.drawBox(leftXVertexPx, bottomYVertexPx, widthPx,
+          heightPx);
+
+  let img = Lens.image.container;
+
+  this.x = leftXVertexPx / img.clientWidth;
+  this.y = bottomYVertexPx / img.clientHeight;
+  this.width = widthPx / img.clientWidth;
+  this.height = heightPx / img.clientHeight;
+
   this.label = this.promptUserForLabel();
   this.type = 'rect'; // This needs to be sourced from a multiple select
   if (this.label) {
@@ -45,12 +55,16 @@ Annotation.prototype.addLabel = function () {
   var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   var font = 15;
   label.innerHTML = this.label;
-  label.setAttribute('x', this.x + 7);
-  label.setAttribute('y', this.y + font);
+
+  var leftXVertexPx = this.x * Lens.image.container.clientWidth;
+  var rightXVertexPx = this.y * Lens.image.container.clientHeight;
+
+  label.setAttribute('x', leftXVertexPx + 7);
+  label.setAttribute('y', rightXVertexPx + font);
   label.setAttribute('font-size', font);
 
-  label.setAttribute('img-offsetx', this.x + 3);
-  label.setAttribute('img-offsety', this.y + font);
+  label.setAttribute('img-offsetx', leftXVertexPx + 3);
+  label.setAttribute('img-offsety', rightXVertexPx + font);
 
   var annotation = this;
   label.addEventListener('click', function (event) {
@@ -111,27 +125,32 @@ Annotation.prototype.addInfoToPopup = function (popup, annotation) {
 /**
  * Uses the coordinates, width and height to draw containing region.
  * @author Malcolm Watt
+ * @param {Integer} x - The horizontal position of the leftmost line in px.
+ * @param {Integer} y - The vertical position of the top line in px.
+ * @param {Integer} width - The width of the box
+ * @param {Integer} height - The height of the box
  * @return {object} svgBox : The HTML element for drawn box.
  */
-Annotation.prototype.drawBox = function () {
-  var rect = document.createElementNS('http://www.w3.org/2000/svg',
+Annotation.prototype.drawBox = function (x, y, width, height) {
+  var image = Lens.image.container;
+  var rectangle = document.createElementNS('http://www.w3.org/2000/svg',
     'rect');
 
-  rect.setAttribute('class', 'annotation');
-  rect.setAttribute('shape-type', this.type);
-  rect.setAttribute('x', this.x);
-  rect.setAttribute('y', this.y);
-  rect.setAttribute('width', this.width);
-  rect.setAttribute('height', this.height);
-  rect.setAttribute('stroke-width', '3');
-  rect.setAttribute('stroke', 'red');
-  rect.setAttribute('fill-opacity', '0');
+  rectangle.setAttribute('class', 'annotation');
+  rectangle.setAttribute('shape-type', this.type);
+  rectangle.setAttribute('x', x);
+  rectangle.setAttribute('y', y);
+  rectangle.setAttribute('width', width);
+  rectangle.setAttribute('height', height);
+  rectangle.setAttribute('stroke-width', '3');
+  rectangle.setAttribute('stroke', 'red');
+  rectangle.setAttribute('fill-opacity', '0');
 
-  rect.setAttribute('img-offsetx', this.x);
-  rect.setAttribute('img-offsety', this.y);
+  rectangle.setAttribute('img-offsetx', x);
+  rectangle.setAttribute('img-offsety', y);
 
-  this.svgGroup.appendChild(rect);
-  return rect;
+  image.appendChild(rectangle);
+  return rectangle;
 }
 
 /**
