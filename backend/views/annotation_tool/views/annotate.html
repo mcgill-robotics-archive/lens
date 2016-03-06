@@ -2,47 +2,14 @@
 <html>
 <head>
   <title>McGill Robotics Lens</title>
-  <style type="text/css">
-    table, th, td {
-      border: 1px solid black;
-      border-collapse: collapse;
-    }
-    h3, p, div {
-      text-align: center;
-    }
-    tr {
-      padding: 15px;
-    }
-    th, td {
-      padding: 15px;
-      text-align: center;
-      vertical-align: center;
-    }
-    div.displayed {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    #annotation-header {
-      background-color: #CDCCCC;
-    }
-    #annotate-img{
-      width: 600px;
-      height: 600px;
-      background-size: 100% 100%;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css"
+  href="{{ static_url("css/annotation_tool.css") }}">
 
   <!--
     @TODO : add circles, and also add arbitrary polygons
     @TODO : angled rectangles
-    @TODO : want to be able to say there is nothing - HTML Element (Button) &
     Onclick Function.
      * Need to add the onclick functionality
-     * Need to be able to actually submit tags and annotations (Server side
-     * post configuration)
-     * Need to be able to visualize the currently existing tags / annotations
-     *  of the image
     @TODO : Selecting instead of just free form input
   -->
 
@@ -75,31 +42,32 @@
   -->
   <script type="text/javascript" src="/lens?script=Annotation.js"></script>
 
+  <link rel="stylesheet" href=
+  "https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+  >
+
 </head>
 <body onload="Lens.methods.init()">
   <h3>McGill Robotics Lens</h3>
 
-  <div>
-    <svg
-      id="annotate-img"
-      class="annotate-img"
-      xmlns="http://www.w3.org/2000/svg">
+  <div id="img-container">
+    <svg id="annotate-img" class="annotate-img"
+         xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="label-background-light" x="-0.1" y="0" width="1.2"
+          height="1">
+          <feFlood flood-color="white" />
+          <feComposite in="SourceGraphic" />
+        </filter>
+        <filter id="label-background-dark" x="-0.1" y="0" width="1.2"
+          height="1">
+          <feFlood flood-color="black" />
+          <feComposite in="SourceGraphic" />
+        </filter>
+      </defs>
     </svg>
   </div>
 
-  <div style="overflow-x:auto;">
-    <table id="annotation-table" align="center">
-      <tr class="annotation-header" id="annotation-header">
-        <th>colour</th>
-        <th>label</th>
-        <th>x</th>
-        <th>y</th>
-        <th>width</th>
-        <th>height</th>
-        <th>remove</th>
-      </tr>
-    </table>
-  </div>
   <p>
     <b>Help: </b> <br>
     Click and drag on the image to select a region you wish to annotate. <br>
@@ -117,6 +85,29 @@
     <button type="button" onclick="Lens.methods.submit(true);">
       Submit Annotations
     </button>
+  </div>
+
+  <div id="overlay"></div>
+  <div id="popup">
+    <span id="close-button">
+      <i class="fa fa-times"></i>
+    </span>
+
+    <div id="popup-table">
+      <table>
+        <tr class="attribute-names">
+          <th id="attr-row-label">Attribute</th>
+        </tr>
+        <tr class="attribute-values">
+          <th id="val-row-label">Value</th>
+        </tr>
+      </table>
+    </div>
+    <div class="delete-annotation">
+      <span id="delete-annotation" class="delete-annotation">
+        Delete <i class="fa fa-exclamation-triangle"></i>
+      </span>
+    </div>
   </div>
 
 </body>

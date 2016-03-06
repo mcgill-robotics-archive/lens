@@ -28,6 +28,7 @@ class Backend(Application):
         super(Backend, self).__init__(
             handlers=get_handlers(),
             template_path="views",
+            static_path="media",
             **kwargs
         )
 
