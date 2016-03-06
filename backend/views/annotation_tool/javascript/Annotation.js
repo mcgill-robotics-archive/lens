@@ -6,6 +6,7 @@
  * @constructor
  */
 function Annotation (vertices) {
+  this.svgGroup = this.constructGroup(); 
   // The Px suffix denotes that the unit is pixels
   let leftXVertexPx = Math.min(vertices.startX, vertices.endX);
   let bottomYVertexPx = Math.min(vertices.startY, vertices.endY);
@@ -132,7 +133,7 @@ Annotation.prototype.addInfoToPopup = function (popup, annotation) {
  * @return {object} svgBox : The HTML element for drawn box.
  */
 Annotation.prototype.drawBox = function (x, y, width, height) {
-  var image = Lens.image.container;
+  var group = this.svgGroup;
   var rectangle = document.createElementNS('http://www.w3.org/2000/svg',
     'rect');
 
@@ -149,7 +150,7 @@ Annotation.prototype.drawBox = function (x, y, width, height) {
   rectangle.setAttribute('img-offsetx', x);
   rectangle.setAttribute('img-offsety', y);
 
-  image.appendChild(rectangle);
+  group.appendChild(rectangle);
   return rectangle;
 }
 
