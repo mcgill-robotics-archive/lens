@@ -3,6 +3,10 @@
 <head>
   <title>McGill Robotics Lens</title>
   <style type="text/css">
+    body {
+      font-family: Arial;
+    }
+
     table, th, td {
       border: 1px solid black;
       border-collapse: collapse;
@@ -94,7 +98,6 @@
       font-size: 10px;
       margin: 2px 2px 2px 2px;
       padding : 2px 2px 2px 2px;
-      font-family: Arial;
       color: black;
       border-radius: 20px;
       border: 1px solid black;
@@ -103,6 +106,21 @@
       color: white;
       background-color: black;
       border: 1px solid white;
+    }
+    div.delete-annotation{
+      margin-top: 25px;
+    }
+    span.delete-annotation{
+      padding: 10px 10px 10px 10px;
+      background-color: #ff0000;
+      color: #FFFFFF;
+      border: 3px solid #ff0000;
+
+    }
+    span.delete-annotation:hover {
+      background-color: #FFFFFF;
+      color: #ff0000;
+      font-weight: bold; 
     }
 
   </style>
@@ -218,6 +236,9 @@
           <th id="val-row-label">Value</th>
         </tr>
       </table>
+    </div>
+    <div class="delete-annotation">
+      <span id="delete-annotation" class="delete-annotation">Delete <i class="fa fa-exclamation-triangle"></i></span>
     </div>
   </div>
 

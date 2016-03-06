@@ -69,6 +69,10 @@ Annotation.prototype.displayAnnotationInfo = function (event){
   overlay.style.display = "block";
   popup.style.display = "block";
   event.stopPropagation();
+
+  document.getElementById('delete-annotation').onclick = function () {
+  	Annotation.prototype.delete.call(annotation);
+  };
 }
 
 /**
@@ -122,14 +126,23 @@ Annotation.prototype.drawBox = function () {
   return rect;
 }
 
-/**
- * This is in the works. It is planned to append all of my labels
- * to the input table, this would allow me to remove them.
- * @param  {[type]} first_argument [description]
- * @return {[type]}                [description]
- */
-Annotation.prototype.removeBox = function() {
-  // body...
+
+Annotation.prototype.delete = function() {
+  var annotation = this;
+  
+  // remove svg group from DOM
+  var g = annotation.svgGroup;
+  g.parentElement.removeChild(g);
+  // remove object from annotation table
+  var annotationTable = Lens.image.annotationTable.annotations;
+  for (var i = annotationTable.length - 1; i >= 0; i--) {
+  	if (annotationTable[i] === annotation) {
+  	  annotationTable.splice(i, 1);
+  	}
+  }
+
+  // call the close box function
+  Lens.methods.closePopUp();
 };
 
 Annotation.prototype.getUsefullData = function() {

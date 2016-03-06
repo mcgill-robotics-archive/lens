@@ -84,29 +84,31 @@ var Lens = {
 
 
     initOverlayListener : function () {
-      document.getElementById("CloseBtn").onclick = function() {
-        var overlay = document.getElementById("overlay");
-        var popup = document.getElementById("popup");
+      document.getElementById("CloseBtn").onclick = Lens.methods.closePopUp;
+    },
 
-        var firstRow = popup.getElementsByClassName('attribute-names')[0];
-        var secondRow = popup.getElementsByClassName('attribute-values')[0];
-        var attributeNames = firstRow.getElementsByClassName(
-          'annotation-attribs');
-        
-        for (var i = attributeNames.length - 1; i >= 0; i--) {
-          firstRow.removeChild(attributeNames[i]);
-        }
-        
-        var attributeValues = secondRow.getElementsByClassName(
-          'annotation-vals');
-        
-        for (var j = attributeValues.length - 1; j >= 0; j--) {
-          secondRow.removeChild(attributeValues[j]);
-        }
+    closePopUp : function () {
+      var overlay = document.getElementById("overlay");
+      var popup = document.getElementById("popup");
 
-        overlay.style.display = "none";
-        popup.style.display = "none";
-      };
+      var firstRow = popup.getElementsByClassName('attribute-names')[0];
+      var secondRow = popup.getElementsByClassName('attribute-values')[0];
+      var attributeNames = firstRow.getElementsByClassName(
+        'annotation-attribs');
+      
+      for (var i = attributeNames.length - 1; i >= 0; i--) {
+        firstRow.removeChild(attributeNames[i]);
+      }
+      
+      var attributeValues = secondRow.getElementsByClassName(
+        'annotation-vals');
+      
+      for (var j = attributeValues.length - 1; j >= 0; j--) {
+        secondRow.removeChild(attributeValues[j]);
+      }
+
+      overlay.style.display = "none";
+      popup.style.display = "none";
     },
 
 
