@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Video feed handler."""
+"""Datetime JSON encoder."""
 
 import json
 import datetime
