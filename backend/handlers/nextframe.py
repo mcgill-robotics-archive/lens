@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Image handler."""
+"""Next frame request handler."""
 
 from models import Frame
 from helpers import Encoder
@@ -28,18 +28,16 @@ class NextFrameHandler(RequestHandler):
             For example:
                 {
                     'id': unique frame ID,
-                    'video': {
-                        'id': unique video ID,
-                        'name': video name,
-                        'location': location,
-                        'recorded': datetime recorded in ISO 8601,
-                        'added': datetime added in ISO 8601
+                    'feed': {
+                        'id': unique Feed ID,
+                        'bag': unique Bag ID,
+                        'topic': ROS topic name,
+                        'available_tags': list of available tags
                     },
-                    'index': frame index,
+                    'seq': frame sequence number,
                     'tags': list of tags,
-                    'metadata': list of JSON metadata,
-                    'accessed': datetime last accessed in ISO 8601,
-                    'added': datetime added in ISO 8601
+                    'annotations': list of JSON metadata,
+                    'accessed': datetime last accessed in ISO 8601
                 }
         """
         previous = self.get_argument("previous", None)
