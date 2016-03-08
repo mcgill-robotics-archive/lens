@@ -4,17 +4,17 @@
 
 import six
 import logging
+from tag import Tag
+from feed import Feed
 from toro import Lock
 from bson import Binary
 from annotation import Annotation
-from tag import Tag
-from feed import Feed
 from datetime import datetime, timedelta
 from tornado.gen import coroutine, Return
 from motorengine import Document, fields, Q
 
-__author__ = "Anass Al-Wohoush"
-__version__ = "0.3.0"
+__author__ = "Anass Al-Wohoush, Monica Ung"
+__version__ = "0.4.0"
 
 lock = Lock()
 
@@ -41,16 +41,12 @@ class ImageField(fields.BinaryField):
 
 class Frame(Document):
 
-    """Video image document.
+    """Image frame document.
 
     Attributes:
         tags: List of tags.
         feed: Corresponding feed.
-        sequence: Frame index in video.
-        height: Height of frame.
-        width: Width of frame.
-        encoding: Type of encoding.
-        image_data: Image data.
+        data: Image data.
         annotations: List of annotations.
         accessed: Datetime accessed in UTC, an indicator of whether in use.
     """
@@ -60,11 +56,8 @@ class Frame(Document):
 
     tags = fields.ListField(fields.ReferenceField(Tag))
     feed = fields.ReferenceField(reference_document_type=Feed)
-    sequence = fields.IntField(required=True)
-    height = fields.IntField(required=True)
-    width = fields.IntField(required=True)
-    encoding = fields.StringField(required=True)
-    image_data = fields.BinaryField(required=True)
+    seq = fields.IntField(required=True)
+    data = fields.BinaryField(required=True)
     annotations = fields.ListField(fields.ReferenceField(Annotation))
     accessed = fields.DateTimeField()
 
@@ -72,13 +65,10 @@ class Frame(Document):
         """Returns dictionary representation of frame information."""
         return {
             "id": str(self._id),
-            "tags": self.tags,
+            "tags": [x.dump() for x in self.tags],
             "feed": self.feed.dump(),
-            "sequence": self.sequence,
-            "height": self.height,
-            "width": self.width,
-            "encoding": self.encoding,
-            "annotations": self.annotations,
+            "seq": self.sequence,
+            "annotations": [x.dump() for x in self.annotations],
             "accessed": self.accessed,
         }
 
@@ -110,8 +100,8 @@ class Frame(Document):
             # the past 10 minutes.
             cache = datetime.utcnow() - timedelta(minutes=10)
             return (
-                Q({"metadata": {"$size": 0}})
-                & (Q(accessed__is_null=True) | Q(accessed__lt=cache))
+                Q({"annotations": {"$size": 0}}) &
+                (Q(accessed__is_null=True) | Q(accessed__lt=cache))
             )
 
         # Look for optimal frame following the previously annotated one.
@@ -125,9 +115,9 @@ class Frame(Document):
             with (yield lock.acquire()):
                 # Find next non-annotated frame from the same video with a
                 # greater index.
-                query = prepare_query() & Q(video=previous_frame.video)
+                query = prepare_query() & Q(feed=previous_frame.feed)
                 next_frame = yield Frame.objects.filter(query).get(
-                    index__gt=previous_frame.index
+                    seq__gt=previous_frame.seq
                 )
 
             # Return the frame if found and mark as in use.
@@ -137,7 +127,7 @@ class Frame(Document):
 
             # Find a new unrelated frame if the end of the video has been
             # reached, otherwise.
-            logging.warn("Reached end of video: %s", previous_frame.video.name)
+            logging.warn("Reached end of feed: %s", previous_frame.feed.name)
 
         # Avoid querying for next frame while marking another frame in use.
         with (yield lock.acquire()):
@@ -151,50 +141,41 @@ class Frame(Document):
             raise Return(next_frame)
 
     @coroutine
-    def annotate(self, annotations, tags):
+    def annotate(self, annotation, tags):
         """Updates the frame's annotations.
 
         Args:
-            annotations: Annotations.
+            annotation: Annotations.
             tags: List of tags.
         """
         # Avoid concurrently overwriting a frame's annotations.
         with (yield lock.acquire()):
-            self.annotations.extend(annotations)
+            self.annotations.append(annotation)
             self.tags.extend(tags)
             yield self.save()
+
     @classmethod
     @coroutine
-    def to_ros_image(feed, sequence):
-        """TODO: Returns a ROS image of the frame. """
-        pass
-    @classmethod
-    @coroutine
-    def from_ros_image(cls, feed, sequence, image_data, height, width, encoding):
-        """Creates a Frame from image_data data and writes it to the database.
+    def from_ros_image(cls, feed, seq, data):
+        """Creates a Frame from a ROS sensor_msgs/Image and writes it to the
+        database.
 
         Args:
             feed: Corresponding feed.
-            sequence: Frame sequence in feed.
-            image_data: JPEG binary data.
-            height: Height of frame.
-            width: Width of frame.
-            encoding: Video encoding.
+            seq: Frame sequence in feed.
+            data: ROS Image.
 
         Returns:
             Frame.
         """
         frame = yield Frame.objects.create(
             feed=feed,
-            sequence=sequence,
-            image_data=image_data,
-            height=height,
-            width=width,
-            encoding=encoding
+            seq=seq,
+            data=data,
         )
         raise Return(frame)
-    @classmethod
+
     @coroutine
     def to_jpeg():
-        """TODO: Returns a jpeg image of the frame. """
+        """TODO: Returns a jpeg image of the frame."""
         pass
