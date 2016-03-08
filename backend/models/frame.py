@@ -3,6 +3,7 @@
 """Frame model."""
 
 import six
+import pickle
 import logging
 from tag import Tag
 from feed import Feed
@@ -57,7 +58,7 @@ class Frame(Document):
     tags = fields.ListField(fields.ReferenceField(Tag))
     feed = fields.ReferenceField(reference_document_type=Feed)
     seq = fields.IntField(required=True)
-    data = fields.BinaryField(required=True)
+    data = ImageField(required=True)
     annotations = fields.ListField(fields.ReferenceField(Annotation))
     accessed = fields.DateTimeField()
 
@@ -67,7 +68,7 @@ class Frame(Document):
             "id": str(self._id),
             "tags": [x.dump() for x in self.tags],
             "feed": self.feed.dump(),
-            "seq": self.sequence,
+            "seq": self.seq,
             "annotations": [x.dump() for x in self.annotations],
             "accessed": self.accessed,
         }
@@ -171,7 +172,7 @@ class Frame(Document):
         frame = yield Frame.objects.create(
             feed=feed,
             seq=seq,
-            data=data,
+            data=pickle.dumps(data),
         )
         raise Return(frame)
 
