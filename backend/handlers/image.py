@@ -31,5 +31,6 @@ class ImageHandler(RequestHandler):
             self.write_error(404)
             return
 
+        jpeg = yield frame.to_jpeg()
         self.set_header("Content-Type", "image/jpeg")
-        self.write(frame.to_jpeg())
+        self.write(jpeg)

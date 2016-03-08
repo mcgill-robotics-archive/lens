@@ -2,6 +2,7 @@
 
 """Frame model."""
 
+import cv2
 import six
 import pickle
 import logging
@@ -9,6 +10,7 @@ from tag import Tag
 from feed import Feed
 from toro import Lock
 from bson import Binary
+from cv_bridge import CvBridge
 from annotation import Annotation
 from datetime import datetime, timedelta
 from tornado.gen import coroutine, Return
@@ -172,11 +174,19 @@ class Frame(Document):
         frame = yield Frame.objects.create(
             feed=feed,
             seq=seq,
-            data=pickle.dumps(data),
+            data=pickle.dumps(data)
         )
         raise Return(frame)
 
     @coroutine
-    def to_jpeg():
-        """TODO: Returns a jpeg image of the frame."""
-        pass
+    def to_jpeg(self):
+        """Returns a JPEG image of the frame."""
+        # Unpickle ROS Image.
+        msg = pickle.loads(self.data)
+
+        # Convert ROS Image to OpenCV image.
+        bridge = CvBridge()
+        img = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
+
+        # Convert to JPEG.
+        raise Return(cv2.imencode('.jpg', img)[1].tostring())
