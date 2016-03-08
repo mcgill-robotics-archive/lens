@@ -104,7 +104,8 @@ class BagHandler(RequestHandler):
             if topic in feeds:
                 feed = feeds[topic]
             else:
-                feeds[topic] = yield Feed.from_topic(self.bag, topic)
+                feed = yield Feed.from_topic(self.bag, topic)
+                feeds[topic] = feed
 
             yield Frame.from_ros_image(
                 feed=feed,
