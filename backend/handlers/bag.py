@@ -56,7 +56,7 @@ class BagHandler(RequestHandler):
         name = self.get_argument("name")
         robot = self.get_argument("robot")
         location = self.get_argument("location")
-        conditions = self.get_argument("conditions")
+        conditions = self.get_argument("conditions").split(" ")
         recorded = dateutil.parser.parse(self.get_argument("recorded"))
 
         # Get file.
