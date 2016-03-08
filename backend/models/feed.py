@@ -21,6 +21,7 @@ class Feed(Document):
     """
 
     __collection__ = "feeds"
+    __lazy__ = False
 
     bag = fields.ReferenceField(reference_document_type=Bag)
     topic = fields.StringField(required=True)
