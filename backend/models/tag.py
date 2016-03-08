@@ -12,6 +12,6 @@ class Tag(Document):
         name: Tag name.
     """
 
-    __collection__ = "users"
+    __collection__ = "tags"
 
     name = fields.StringField(required=True)
