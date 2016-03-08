@@ -32,4 +32,4 @@ class ImageHandler(RequestHandler):
             return
 
         self.set_header("Content-Type", "image/jpeg")
-        self.write(frame.image)
+        self.write(frame.to_jpeg())
