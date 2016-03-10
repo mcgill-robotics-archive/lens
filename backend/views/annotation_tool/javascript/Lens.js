@@ -167,7 +167,7 @@ var Lens = {
       var image = Lens.image.container;
 
       image.addEventListener('mouseup', imageReleaseClickListener);
-      document.addEventListener('mouseup', removeClickReleaseListeners);
+      image.addEventListener('mousedown', removeClickReleaseListeners);
 
 
       /**
