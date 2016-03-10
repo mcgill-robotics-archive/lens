@@ -2,10 +2,14 @@
 
 """Lens Backend Models."""
 
+from tag import Tag
+from bag import Bag
+from feed import Feed
+from user import User
 from frame import Frame
-from video import Video
+from annotation import Annotation
 
 __author__ = "Anass Al-Wohoush"
 __version__ = "0.3.0"
 
-__all__ = ["Frame", "Video"]
+__all__ = ["Annotation", "Bag", "Feed", "Frame", "Tag", "User"]

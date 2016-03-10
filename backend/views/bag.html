@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Upload Video</title>
+    <title>Upload Bag</title>
     <style type="text/css">
       body {
         font-family: Arial, sans-serif;
@@ -11,31 +12,37 @@
       }
     </style>
     <script type="text/javascript">
-      var video;
+      var bag;
       var fname;
+      var robot;
+      var conditions;
       var recorded;
-      var details;
       var loc;
+      var details;
       var upload_button;
 
       function init() {
-        video = document.getElementById("video");
+        bag = document.getElementById("bag");
         fname = document.getElementById("fname");
+        robot = document.getElementById("robot");
+        conditions = document.getElementById("conds");
         recorded = document.getElementById("recorded");
-        details = document.getElementById("details");
         loc = document.getElementById("loc");
+        details = document.getElementById("details");
         upload_button = document.getElementById("upload");
       }
 
       function update() {
-        if (!video.files.length) {
+        if (!bag.files.length) {
           fname.value = "";
           recorded.value = "";
+          robot.value = "";
+          conditions.value = "";
           details.style.display = "none";
           return;
         }
 
-        file = video.files[0];
+        file = bag.files[0];
 
         if (!fname.value) {
           fname.value = file.name;
@@ -43,7 +50,8 @@
         recorded.value = file.lastModifiedDate.toISOString();
         details.style.display = "block";
 
-        if (fname.value && recorded.value && loc.value) {
+        if (fname.value && recorded.value && loc.value &&
+            robot.value && conditions.value) {
           upload_button.disabled = false;
         } else {
           upload_button.disabled = true;
@@ -52,18 +60,24 @@
     </script>
   </head>
   <body onload="init()">
-    <h1>Upload Video</h1>
-    <form enctype="multipart/form-data" action="/video" method="post">
-      <input id="video" onchange="update()"
-        type="file" name="video" accept="video/*" /><br>
+    <h1>Upload Bag</h1>
+    <form enctype="multipart/form-data" action="/upload" method="post">
+      <input id="bag" onchange="update()"
+        type="file" name="bag" accept="*.bag" /><br>
       <fieldset id="details" style="display: none;">
         <legend>Details</legend>
 
         <label for="name">Name</label>
         <input onchange="update()" id="fname" name="name" type="text">
         <br>
+        <label for="robot">Robot</label>
+        <input onchange="update()" id="robot" name="robot" type="text">
+        <br>
         <label for="location">Location</label>
         <input onchange="update()" id="loc" name="location" type="text">
+        <br>
+        <label for="conditions">Conditions</label>
+        <input onchange="update()" id="conds" name="conditions" type="text">
 
         <!-- Hidden timestamp -->
         <input id="recorded" name="recorded" type="text" >

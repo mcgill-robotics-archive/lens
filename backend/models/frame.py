@@ -2,17 +2,22 @@
 
 """Frame model."""
 
+import cv2
 import six
+import pickle
 import logging
+from tag import Tag
+from feed import Feed
 from toro import Lock
 from bson import Binary
-from video import Video
+from cv_bridge import CvBridge
+from annotation import Annotation
 from datetime import datetime, timedelta
 from tornado.gen import coroutine, Return
 from motorengine import Document, fields, Q
 
-__author__ = "Anass Al-Wohoush"
-__version__ = "0.3.0"
+__author__ = "Anass Al-Wohoush, Monica Ung"
+__version__ = "0.4.0"
 
 lock = Lock()
 
@@ -39,39 +44,35 @@ class ImageField(fields.BinaryField):
 
 class Frame(Document):
 
-    """Video image document.
+    """Image frame document.
 
     Attributes:
-        video: Corresponding video.
-        index: Frame index in video.
-        image: JPEG binary data.
         tags: List of tags.
-        metadata: List of JSON annotations.
+        feed: Corresponding feed.
+        data: Image data.
+        annotations: List of annotations.
         accessed: Datetime accessed in UTC, an indicator of whether in use.
-        added: Datetime added to the database in UTC.
     """
 
     __lazy__ = False
     __collection__ = "frames"
 
-    video = fields.ReferenceField(reference_document_type=Video)
-    index = fields.IntField(required=True)
-    image = ImageField(required=True)
-    tags = fields.ListField(base_field=fields.StringField())
-    metadata = fields.ListField(base_field=fields.JsonField())
+    tags = fields.ListField(fields.ReferenceField(Tag))
+    feed = fields.ReferenceField(reference_document_type=Feed)
+    seq = fields.IntField(required=True)
+    data = ImageField(required=True)
+    annotations = fields.ListField(fields.ReferenceField(Annotation))
     accessed = fields.DateTimeField()
-    added = fields.DateTimeField(default=datetime.utcnow())
 
     def dump(self):
         """Returns dictionary representation of frame information."""
         return {
             "id": str(self._id),
-            "video": self.video.dump(),
-            "index": self.index,
-            "tags": self.tags,
-            "metadata": self.metadata,
+            "tags": [x.dump() for x in self.tags],
+            "feed": self.feed.dump(),
+            "seq": self.seq,
+            "annotations": [x.dump() for x in self.annotations],
             "accessed": self.accessed,
-            "added": self.added
         }
 
     @coroutine
@@ -102,8 +103,8 @@ class Frame(Document):
             # the past 10 minutes.
             cache = datetime.utcnow() - timedelta(minutes=10)
             return (
-                Q({"metadata": {"$size": 0}})
-                & (Q(accessed__is_null=True) | Q(accessed__lt=cache))
+                Q({"annotations": {"$size": 0}}) &
+                (Q(accessed__is_null=True) | Q(accessed__lt=cache))
             )
 
         # Look for optimal frame following the previously annotated one.
@@ -117,9 +118,9 @@ class Frame(Document):
             with (yield lock.acquire()):
                 # Find next non-annotated frame from the same video with a
                 # greater index.
-                query = prepare_query() & Q(video=previous_frame.video)
+                query = prepare_query() & Q(feed=previous_frame.feed)
                 next_frame = yield Frame.objects.filter(query).get(
-                    index__gt=previous_frame.index
+                    seq__gt=previous_frame.seq
                 )
 
             # Return the frame if found and mark as in use.
@@ -129,7 +130,7 @@ class Frame(Document):
 
             # Find a new unrelated frame if the end of the video has been
             # reached, otherwise.
-            logging.warn("Reached end of video: %s", previous_frame.video.name)
+            logging.warn("Reached end of feed: %s", previous_frame.feed.name)
 
         # Avoid querying for next frame while marking another frame in use.
         with (yield lock.acquire()):
@@ -143,35 +144,49 @@ class Frame(Document):
             raise Return(next_frame)
 
     @coroutine
-    def annotate(self, metadata, tags):
-        """Updates the frame's metadata.
+    def annotate(self, annotation, tags):
+        """Updates the frame's annotations.
 
         Args:
-            metadata: Metadata.
+            annotation: Annotations.
             tags: List of tags.
         """
         # Avoid concurrently overwriting a frame's annotations.
         with (yield lock.acquire()):
-            self.metadata.append(metadata)
+            self.annotations.append(annotation)
             self.tags.extend(tags)
             yield self.save()
 
     @classmethod
     @coroutine
-    def from_image(cls, video, index, image):
-        """Creates a Frame from image data and writes it to the database.
+    def from_ros_image(cls, feed, seq, data):
+        """Creates a Frame from a ROS sensor_msgs/Image and writes it to the
+        database.
 
         Args:
-            video: Corresponding video.
-            index: Frame index in video.
-            image: JPEG binary data.
+            feed: Corresponding feed.
+            seq: Frame sequence in feed.
+            data: ROS Image.
 
         Returns:
             Frame.
         """
         frame = yield Frame.objects.create(
-            video=video,
-            index=index,
-            image=image
+            feed=feed,
+            seq=seq,
+            data=pickle.dumps(data)
         )
         raise Return(frame)
+
+    @coroutine
+    def to_jpeg(self):
+        """Returns a JPEG image of the frame."""
+        # Unpickle ROS Image.
+        msg = pickle.loads(self.data)
+
+        # Convert ROS Image to OpenCV image.
+        bridge = CvBridge()
+        img = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
+
+        # Convert to JPEG.
+        raise Return(cv2.imencode('.jpg', img)[1].tostring())
