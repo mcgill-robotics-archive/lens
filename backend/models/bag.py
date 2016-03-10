@@ -6,9 +6,6 @@ from datetime import datetime
 from motorengine import Document, fields
 from tornado.gen import coroutine, Return
 
-__author__ = "Monica Ung"
-__version__ = "0.1.0"
-
 
 class Bag(Document):
     """Bag document.

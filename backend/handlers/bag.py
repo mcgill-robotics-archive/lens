@@ -6,6 +6,7 @@ import os
 import uuid
 import rosbag
 import logging
+import json
 import dateutil.parser
 from helpers import Encoder
 from tornado.gen import coroutine
@@ -53,40 +54,41 @@ class BagHandler(RequestHandler):
                 }
         """
         # Get form data.
-        name = self.get_argument("name")
-        robot = self.get_argument("robot")
-        location = self.get_argument("location")
-        conditions = self.get_argument("conditions").split(" ")
-        recorded = dateutil.parser.parse(self.get_argument("recorded"))
+        # name = self.get_argument("name")
+        # robot = self.get_argument("robot")
+        # location = self.get_argument("location")
+        # conditions = self.get_argument("conditions").split(" ")
+        # recorded = dateutil.parser.parse(self.get_argument("recorded"))
 
         # Get file.
-        fileinfo = self.request.files["bag"][0]
-        fname = fileinfo["filename"]
-        extn = os.path.splitext(fname)[1]
-        cname = str(uuid.uuid4()) + extn
-        self.path = os.path.join(BagHandler.UPLOADS, cname)
+        # fileinfo = self.request.files["bag"][0]
+        # fname = fileinfo["filename"]
+        # extn = os.path.splitext(fname)[1]
+        # cname = str(uuid.uuid4()) + extn
+        # self.path = os.path.join(BagHandler.UPLOADS, cname)
 
         # Save to temporary file.
-        f = open(self.path, "w")
-        data = fileinfo["body"]
-        logging.warn("Writing %d bytes to %s", len(data), self.path)
-        f.write(data)
+        # f = open(self.path, "w")
+        # data = fileinfo["body"]
+        # logging.warn("Writing %d bytes to %s", len(data), self.path)
+        # f.write(data)
 
         # Write bag properties to database.
-        self.bag = yield Bag.from_ros_bag(
-            name=name,
-            robot=robot,
-            location=location,
-            conditions=conditions,
-            recorded=recorded
-        )
+        # self.bag = yield Bag.from_ros_bag(
+        #     name=name,
+        #     robot=robot,
+        #     location=location,
+        #     conditions=conditions,
+        #     recorded=recorded
+        # )
 
         # Respond.
         self.set_header("Content-Type", "application/json")
-        self.finish(Encoder().encode(self.bag.dump()))
+        self.finish(Encoder().encode("done"))
+        # self.finish(Encoder().encode(self.bag.dump()))
 
         # Write frames to database in the background.
-        yield self.write_frames()
+        # yield self.write_frames()
 
     @coroutine
     def write_frames(self):

@@ -20,6 +20,7 @@ def get_handlers():
         (r"/image/(.+)/?", ImageHandler),
         (r"/annotate/(.+)?", MetadataHandler),
         (r"/bag/?", BagHandler),
+        (r"/success/?", BagHandler),
         (r"/lens/?", LensUIHandler),
     ]
 
