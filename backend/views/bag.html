@@ -66,8 +66,8 @@
   </head>
   <body onload="init()">
     <h1>Upload Bag</h1>
-    <form id="bag_form" name="bag_form" enctype="multipart/form-data"
-    action="/upload?name=woop" method="post">
+    <form id="bag_form" enctype="multipart/form-data"
+    action="/upload" method="post">
       <input id="bag" onchange="update()"
         type="file" name="bag" accept=".bag" /><br>
       <fieldset id="details" style="display: none;">
