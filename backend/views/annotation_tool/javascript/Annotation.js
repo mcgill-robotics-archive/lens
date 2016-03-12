@@ -14,14 +14,14 @@ function Annotation (vertices) {
   
   this.type = Lens.shapeType;
   switch (this.type) {
-    case 'circle':
-      this.boxElement = this.drawCircle(leftXVertexPx, bottomYVertexPx, widthPx,
-          heightPx);
+    case 'ellipse':
+      this.boxElement = this.drawEllipse(leftXVertexPx, bottomYVertexPx,
+        widthPx, heightPx);
       break;
     case 'rectangle':
     default:
       this.boxElement = this.drawBox(leftXVertexPx, bottomYVertexPx, widthPx,
-          heightPx);
+        heightPx);
       break;
   }
   
@@ -66,11 +66,11 @@ Annotation.prototype.drawBox = function (x, y, width, height) {
 }
 
 /**
- * Uses the coordinates, width and height to draw a containing circle.
+ * Uses the coordinates, width and height to draw a containing ellipse.
  * @author David Lougheed
- * @return {object} circle : The SVG element for drawn box.
+ * @return {object} ellipse : The SVG element for drawn ellipse.
  */
-Annotation.prototype.drawCircle = function(x, y, width, height) {
+Annotation.prototype.drawEllipse = function(x, y, width, height) {
   var image = Lens.image.container;
   var ellipse = document.createElementNS('http://www.w3.org/2000/svg',
     'ellipse');

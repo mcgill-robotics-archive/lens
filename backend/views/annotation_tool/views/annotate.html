@@ -161,7 +161,7 @@
       position: absolute;
       pointer-events: none;
     }
-    #dragShape.circle {
+    #dragShape.ellipse {
         border-radius: 100%; /* Turn it into an ellipse */
     }
   </style>
@@ -211,19 +211,19 @@
   <script type="text/javascript">
     function updateToolUI() {
       var rectangleTool = document.getElementById('tool-rectangle');
-      var circleTool = document.getElementById('tool-circle');
+      var ellipseTool = document.getElementById('tool-ellipse');
       var polygonTool = document.getElementById('tool-polygon');
 
       rectangleTool.className = '';
-      circleTool.className = '';
+      ellipseTool.className = '';
       polygonTool.className = '';
 
       switch (Lens.shapeType) {
         case 'rectangle':
           rectangleTool.className = 'active';
           break;
-        case 'circle':
-          circleTool.className = 'active';
+        case 'ellipse':
+          ellipseTool.className = 'active';
           break;
         case 'polygon':
           polygonTool.className = 'active';
@@ -252,8 +252,8 @@
         </button>
       </li>
       <li>
-        <button type="button" id="tool-circle"
-          onclick="Lens.methods.setShapeType('circle'); updateToolUI();">
+        <button type="button" id="tool-ellipse"
+          onclick="Lens.methods.setShapeType('ellipse'); updateToolUI();">
           Circle
         </button>
       </li>
