@@ -7,175 +7,14 @@
   <link
     href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700'
     rel='stylesheet' type='text/css'>
-  <style type="text/css">
-    table, th, td {
-      border: 1px solid black;
-      border-collapse: collapse;
-    }
-    h3, p, div {
-      text-align: center;
-    }
-    tr {
-      padding: 15px;
-    }
-    th, td {
-      padding: 15px;
-      text-align: center;
-      vertical-align: center;
-    }
-    div.displayed {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    h1#title {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 100;
-
-      margin: 0;
-
-      font-family: sans-serif;
-      font-size: 1rem;
-    }
-
-    #img-container {
-      position: absolute;
-      top: 0; bottom: 0; left: 0; right: 60px;
-
-      background-color: #777;
-
-      overflow-y: auto;
-    }
-    #sidebar {
-      box-sizing: border-box;
-
-      position: absolute;
-      top: 0; bottom: 0; right: 0;
-      width: 140px;
-      padding: 10px;
-
-      background-color: #1b1b1b;
-    }
-    #sidebar #mr-logo {
-      max-width: 100%;
-      margin-bottom: 10px;
-    }
-    #sidebar ul {
-      list-style: none;
-      padding: 0; margin: 0;
-    }
-    #sidebar ul #bottom {
-      position: absolute;
-      bottom: 0;
-    }
-    #sidebar ul li {
-      margin-bottom: 10px;
-    }
-    #sidebar ul li h4 {
-      color: #777;
-      font-family: "Open Sans Condensed", sans-serif;
-      margin: 0;
-    }
-    #sidebar ul li button {
-      box-sizing: border-box;
-
-      width: 120px;
-      height: 40px;
-      line-height: 36px;
-      vertical-align: top;
-
-      border: 2px solid #ffffff;
-      background-color: #1b1b1b;
-
-      font-family: "Open Sans Condensed", sans-serif;
-      font-size: 1rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: #f9f9f9;
-
-      outline: none;
-
-      transition: background-color 0.15s;
-    }
-    #sidebar ul li button.big {
-      height: 80px;
-      line-height: 74px;
-
-      font-size: 1.5rem;
-    }
-    #sidebar ul li button:disabled {
-      border: 2px solid #999;
-      color: #999;
-      cursor: not-allowed;
-    }
-    #sidebar ul li button i {
-      display: inline-block;
-      vertical-align: top;
-      font-size: 1.1rem;
-      margin-top: 8px;
-
-      color: #d9d9d9;
-    }
-    #sidebar ul li button:active, #sidebar ul li button.active {
-      background-color: #fff;
-      color: #1b1b1b;
-      transition: background-color 0.15s;
-    }
-    #sidebar ul li hr {
-      border: none;
-      border-top: 1px solid #C9C9C9;
-    }
-    #help {
-      position: absolute;
-      bottom: 0; left: 0; right: 140px;
-
-      padding: 7px; margin: 0;
-
-      background-color: #AAA;
-      border-top: 1px solid #666;
-
-      font-family: sans-serif;
-      font-size: 0.9rem;
-    }
-
-    #annotation-header {
-      background-color: #CDCCCC;
-    }
-    #annotate-img {
-      width: 600px;
-      height: 450px;
-      margin-top: 40px;
-
-      background-size: 100% auto;
-      background-repeat: no-repeat;
-
-      border: 1px solid #444;
-      box-shadow: 0px 1px 3px rbga(0, 0, 0, 0.1);
-    }
-
-    #dragShape {
-      border: 1px dashed red;
-      position: absolute;
-      pointer-events: none;
-    }
-    #dragShape.ellipse {
-        border-radius: 100%; /* Turn it into an ellipse */
-    }
-  </style>
+  <link rel="stylesheet" type="text/css"
+  href="{{ static_url("css/annotation_tool.css") }}">
 
   <!--
     @TODO : add circles, and also add arbitrary polygons
     @TODO : angled rectangles
-    @TODO : want to be able to say there is nothing - HTML Element (Button) &
     Onclick Function.
      * Need to add the onclick functionality
-     * Need to be able to actually submit tags and annotations (Server side
-     * post configuration)
-     * Need to be able to visualize the currently existing tags / annotations
-     *  of the image
     @TODO : Selecting instead of just free form input
   -->
 
@@ -232,13 +71,28 @@
     }
   </script>
 
+  <link rel="stylesheet" href=
+  "https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+  >
 </head>
 <body onload="Lens.methods.init()">
+  <h3>McGill Robotics Lens</h3>
+
   <div id="img-container">
-    <svg
-      id="annotate-img"
-      class="annotate-img"
-      xmlns="http://www.w3.org/2000/svg">
+    <svg id="annotate-img" class="annotate-img"
+         xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="label-background-light" x="-0.1" y="0" width="1.2"
+          height="1">
+          <feFlood flood-color="white" />
+          <feComposite in="SourceGraphic" />
+        </filter>
+        <filter id="label-background-dark" x="-0.1" y="0" width="1.2"
+          height="1">
+          <feFlood flood-color="black" />
+          <feComposite in="SourceGraphic" />
+        </filter>
+      </defs>
     </svg>
   </div>
   <div id="sidebar">
@@ -288,5 +142,28 @@
   </p>
 
   <!-- Configure this button to set the 'Tags' of the image -->
+
+  <div id="overlay"></div>
+  <div id="popup">
+    <span id="close-button">
+      <i class="fa fa-times"></i>
+    </span>
+
+    <div id="popup-table">
+      <table>
+        <tr class="attribute-names">
+          <th id="attr-row-label">Attribute</th>
+        </tr>
+        <tr class="attribute-values">
+          <th id="val-row-label">Value</th>
+        </tr>
+      </table>
+    </div>
+    <div class="delete-annotation">
+      <span id="delete-annotation" class="delete-annotation">
+        Delete <i class="fa fa-exclamation-triangle"></i>
+      </span>
+    </div>
+  </div>
 </body>
 </html>

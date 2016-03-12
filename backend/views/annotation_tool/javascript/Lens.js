@@ -19,6 +19,7 @@ var Lens = {
     init : function () {
       Lens.image = new Image();
       Lens.methods.initializeImageListeners();
+      Lens.methods.initOverlayListener();
     },
 
     /**
@@ -83,6 +84,48 @@ var Lens = {
     },
 
     /**
+     * Add the close button listener to the pop up element.
+     * @author Malcolm Watt
+     * @return undefined
+     */
+    initOverlayListener : function () {
+      document.getElementById("close-button").onclick = Lens.methods.closePopUp;
+    },
+
+    /**
+     * Removes all columns except the defaults from the table in the pop up,
+     * then sets the display to none, rendering the pop up invisible.
+     * @author Malcolm Watt
+     * @return undefined
+     */
+    closePopUp : function () {
+      var overlay = document.getElementById("overlay");
+      var popup = document.getElementById("popup");
+
+      var firstRow = popup.getElementsByClassName('attribute-names')[0];
+      var secondRow = popup.getElementsByClassName('attribute-values')[0];
+
+      // Remove the columns in the first row
+      var attributeNames = firstRow.getElementsByClassName(
+        'annotation-attribs');
+      for (var i = attributeNames.length - 1; i >= 0; i--) {
+        firstRow.removeChild(attributeNames[i]);
+      }
+
+      var attributeValues = secondRow.getElementsByClassName(
+        'annotation-vals');
+
+      // Remove the columns in the second row
+      for (var j = attributeValues.length - 1; j >= 0; j--) {
+        secondRow.removeChild(attributeValues[j]);
+      }
+
+      overlay.style.display = "none";
+      popup.style.display = "none";
+    },
+
+
+    /**
      * Sets the starting point (x and y) of the Lens object when the
      * image is clicked.
      * @author Malcolm Watt
@@ -141,7 +184,7 @@ var Lens = {
       body.appendChild(dragShape);
 
       image.addEventListener('mouseup', imageReleaseClickListener);
-      document.addEventListener('mouseup', removeClickReleaseListeners);
+      image.addEventListener('mousedown', removeClickReleaseListeners);
 
       /**
        * Handles drawing of perimeter during mouse movement.
@@ -202,16 +245,17 @@ var Lens = {
         // Remove the temporary drag shape
         body.removeChild(dragShape);
 
-        var annotation = new Annotation({
-          startX: startX,
-          startY: startY,
-          endX: endX,
-          endY: endY
-        });
+        if (endX - startX > 5 || endY - startY > 5){
+          var annotation = new Annotation({
+            startX: startX,
+            startY: startY,
+            endX: endX,
+            endY: endY
+          });
 
-        var annotationTable = Lens.image.annotationTable;
-        annotationTable.validateAndAdd(annotation);
-
+          var annotationTable = Lens.image.annotationTable;
+          annotationTable.validateAndAdd(annotation);
+        }
         removeClickReleaseListeners();
       }
 
