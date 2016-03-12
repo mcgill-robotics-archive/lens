@@ -91,6 +91,9 @@ var Lens = {
      * @return undefined
      */
     imageDownClickListener : function (event) {
+      // Prevent text selection and other unwanted dragging side effects
+      event.preventDefault();
+
       // Check for an offset on the element that triggered the event
       var triggerElement = event.target;
 
@@ -123,10 +126,53 @@ var Lens = {
       }
 
       var image = Lens.image.container;
+      var body = document.querySelector('body');
+
+      // Cache image position
+      var imageLeft = image.offsetLeft;
+      var imageTop = image.offsetTop;
+
+      image.addEventListener('mousemove', imageMouseMoveListener);
+
+      // Append a temporary element for displaying drag shape as mouse moves
+      var dragShape = document.createElement('div');
+      dragShape.setAttribute('id', 'dragShape');
+      dragShape.setAttribute('class', Lens.shapeType);
+      body.appendChild(dragShape);
 
       image.addEventListener('mouseup', imageReleaseClickListener);
       document.addEventListener('mouseup', removeClickReleaseListeners);
 
+      /**
+       * Handles drawing of perimeter during mouse movement.
+       * @author David Lougheed
+       * @param {Event} _event : The Event object
+       * @return undefined
+       */
+      function imageMouseMoveListener (_event) {
+        // See above block comment on event.offset
+        var currentX, currentY;
+        if (!!window.chrome) {
+          currentX = _event.offsetX;
+          currentY = _event.offsetY;
+        } else {
+          currentX = _event.offsetX + elementOffsetX;
+          currentY = _event.offsetY + elementOffsetY;
+        }
+
+        // Adjust drag shape's width, height, and position to match mouse pos.
+        dragShape.style.width = Math.abs(currentX - startX).toString() + 'px';
+        dragShape.style.left = (startX + imageLeft).toString() + 'px';
+        if(currentX < startX) {
+          dragShape.style.left = (currentX + imageLeft).toString() + 'px';
+        }
+
+        dragShape.style.height = Math.abs(currentY - startY).toString() + 'px';
+        dragShape.style.top = (startY + imageTop).toString() + 'px';
+        if(currentY < startY) {
+          dragShape.style.top = (currentY + imageTop).toString() + 'px';
+        }
+      }
 
       /**
        * Handles the release of the click.
@@ -153,6 +199,9 @@ var Lens = {
           endY = _event.offsetY + _elementOffsetY;
         }
 
+        // Remove the temporary drag shape
+        body.removeChild(dragShape);
+
         var annotation = new Annotation({
           startX: startX,
           startY: startY,
@@ -170,6 +219,8 @@ var Lens = {
         var image = Lens.image.container;
         image.removeEventListener('mouseup', imageReleaseClickListener);
         document.removeEventListener('mouseup', removeClickReleaseListeners);
+
+        image.removeEventListener('mousemove', imageMouseMoveListener);
       }
     },
 
