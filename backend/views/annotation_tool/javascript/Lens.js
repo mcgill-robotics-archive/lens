@@ -184,6 +184,7 @@ var Lens = {
       body.appendChild(dragShape);
 
       image.addEventListener('mouseup', imageReleaseClickListener);
+      document.addEventListener('mouseup', missedReleaseClickListener);
       image.addEventListener('mousedown', removeClickReleaseListeners);
 
       /**
@@ -223,6 +224,8 @@ var Lens = {
        * @param  {Event} _event : The Event object
        */
       function imageReleaseClickListener (_event) {
+        _event.stopPropagation();
+
         // Check for an offset on the element that triggered the event
         var _triggerElement = _event.target;
 
@@ -263,8 +266,19 @@ var Lens = {
         var image = Lens.image.container;
         image.removeEventListener('mouseup', imageReleaseClickListener);
         document.removeEventListener('mouseup', removeClickReleaseListeners);
+        document.removeEventListener('mouseup', missedReleaseClickListener);
 
         image.removeEventListener('mousemove', imageMouseMoveListener);
+      }
+
+      /**
+       * Handles a 'missed' click on the document outside of the image.
+       * @author David Lougheed
+       * @return undefined
+       */
+      function missedReleaseClickListener() {
+        body.removeChild(dragShape);
+        removeClickReleaseListeners();
       }
     },
 
