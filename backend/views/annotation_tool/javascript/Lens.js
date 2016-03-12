@@ -248,7 +248,19 @@ var Lens = {
         // Remove the temporary drag shape
         body.removeChild(dragShape);
 
-        if (endX - startX > 5 || endY - startY > 5){
+        // Handle if someone dragged in reverse
+        if (endX < startX) {
+          var tmp = endX;
+          endX = startX;
+          startX = tmp;
+        }
+        if (endY < startY) {
+          var tmp = endY;
+          endY = startY;
+          startY = tmp;
+        }
+
+        if (endX - startX > 5 || endY - startY > 5) {
           var annotation = new Annotation({
             startX: startX,
             startY: startY,
