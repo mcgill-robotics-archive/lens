@@ -63,3 +63,18 @@ class Bag(Document):
             recorded=recorded
         )
         raise Return(bag)
+    @classmethod
+    @coroutine
+    def get_bags(self):
+        """ Returns all bags """
+        bags = yield Bag.objects.find_all()
+        raise Return(bags)
+    @classmethod
+    @coroutine
+    def get_bag(self, id):
+        """ Returns a single bag """
+        bag = yield Bag.objects.filter(_id=id).limit(1).find_all()
+        if bag:
+            raise Return(bag[0])
+        else:
+            return

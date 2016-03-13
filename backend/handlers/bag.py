@@ -20,14 +20,14 @@ __version__ = "0.1.0"
 
 class BagHandler(RequestHandler):
 
-    """ROS bag request handler."""
+    """ROS bag upload request handler."""
 
     UPLOADS = "/tmp/"
 
     @coroutine
     def get(self):
         """Renders bag uploading template."""
-        self.render("bag.html")
+        self.render("upload-bag.html")
 
     @coroutine
     def post(self):
@@ -64,7 +64,7 @@ class BagHandler(RequestHandler):
         name = form_data['name'][0]
         robot = form_data['robot'][0]
         location = form_data['location'][0]
-        conditions = form_data['conditions'][0].split(",")
+        conditions = form_data['conditions'][0].split(" ")
         recorded = dateutil.parser.parse(form_data['recorded'][0])
 
         # Write bag properties to database.
@@ -102,7 +102,8 @@ class BagHandler(RequestHandler):
             else:
                 feed = yield Feed.from_topic(self.bag, topic)
                 feeds[topic] = feed
-
+            logging.warn("Making frames for topic:")
+            logging.warn(topic)
             yield Frame.from_ros_image(
                 feed=feed,
                 seq=msg.header.seq,
@@ -112,3 +113,63 @@ class BagHandler(RequestHandler):
         # Delete temporary file.
         logging.warn("Deleting %s", self.path)
         os.remove(self.path)
+
+class BagsHandler(RequestHandler):
+
+    """ROS bags request handler."""
+
+    @coroutine
+    def get(self):
+        # Get all bag and feed data to display on web page
+        bags = yield Bag.get_bags()
+        if not bags:
+            self.set_status(404)
+            self.write_error(404)
+            return
+        feeds = yield Feed.get_feeds()
+        d = [] # each element is a tuple containing a bag and its feeds
+        for bag in bags:
+            feeds = yield Feed.get_feeds(bag)
+            d.append((bag, feeds))
+        self.render("bags.html", d=d)
+
+    @coroutine
+    def post(self):
+        # Get form data
+        bag_id = self.get_argument("id")
+        name = self.get_argument("name")
+        robot = self.get_argument("robot")
+        location = self.get_argument("location")
+        conditions = self.get_argument("conditions").split(" ")
+        # Get bag and its feeds
+        bag = Bag.get_bag(bag_id)
+        related_feeds = Feed.get_feeds(bag)
+        for feed in related_feeds:
+            tags = self.get_argument("tags_" + feed._id).split(" ")
+            # Save tags to database
+            for tag_name in tags:
+                tag = Tag.from_tag(tag_name)
+                feed.add_tag(tag)
+        # Get all bag and feed data to display on web page
+        bags = yield Bag.get_bags()
+        if not bags:
+            self.set_status(404)
+            self.write_error(404)
+            return
+        feeds = yield Feed.get_feeds()
+        d = [] # each element is a tuple containing a bag and its feeds
+        for bag in bags:
+            feeds = yield Feed.get_feeds(bag)
+            d.append((bag, feeds))
+        self.render("bags.html", d=d)
+
+    @coroutine
+    def get_data(self):
+        bags = yield Bag.get_bags()
+        feeds = yield Feed.get_feeds()
+        d = [] # each element is a tuple containing a bag and its feeds
+        for bag in bags:
+            feeds = yield Feed.get_feeds(bag)
+            d.append((bag, feeds))
+        yield d
+        return

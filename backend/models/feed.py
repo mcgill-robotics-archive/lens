@@ -71,3 +71,14 @@ class Feed(Document):
         """
         self.available_tags.append(tag)
         yield self.save()
+    @classmethod
+    @coroutine
+    def get_feeds(self, bag=None):
+        """ Returns feeds belonging to a certain bag or returns all feeds if a
+            bag is not specified
+        """
+        if bag == None:
+            feeds = yield Feed.objects.find_all()
+        else:
+            feeds = yield Feed.objects.filter(bag=bag).find_all()
+        raise Return(feeds)
