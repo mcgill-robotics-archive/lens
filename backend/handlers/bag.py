@@ -10,7 +10,7 @@ import json
 import dateutil.parser
 from helpers import Encoder
 from tornado.gen import coroutine
-from models import Bag, Feed, Frame
+from models import Bag, Feed, Frame, Tag
 from tornado.web import RequestHandler
 from urlparse import urlparse, parse_qs
 
@@ -142,10 +142,10 @@ class BagsHandler(RequestHandler):
         location = self.get_argument("location")
         conditions = self.get_argument("conditions").split(" ")
         # Get bag and its feeds
-        bag = Bag.get_bag(bag_id)
-        related_feeds = Feed.get_feeds(bag)
+        bag = yield Bag.get_bag(bag_id)
+        related_feeds = yield Feed.get_feeds(bag)
         for feed in related_feeds:
-            tags = self.get_argument("tags_" + feed._id).split(" ")
+            tags = self.get_argument("tags_" + str(feed._id)).split(" ")
             # Save tags to database
             for tag_name in tags:
                 tag = Tag.from_tag(tag_name)
