@@ -126,7 +126,6 @@ class BagsHandler(RequestHandler):
             self.set_status(404)
             self.write_error(404)
             return
-        feeds = yield Feed.get_feeds()
         d = [] # each element is a tuple containing a bag and its feeds
         for bag in bags:
             feeds = yield Feed.get_feeds(bag)
@@ -144,12 +143,15 @@ class BagsHandler(RequestHandler):
         # Get bag and its feeds
         bag = yield Bag.get_bag(bag_id)
         related_feeds = yield Feed.get_feeds(bag)
+        # BUG: get_bag() fails to grab a bag based on id, so right now
+        #      related_feeds holds all feeds in the database
         for feed in related_feeds:
-            tags = self.get_argument("tags_" + str(feed._id)).split(" ")
-            # Save tags to database
-            for tag_name in tags:
-                tag = Tag.from_tag(tag_name)
-                feed.add_tag(tag)
+            if str(feed.bag._id) == bag_id:
+                tags = self.get_argument("tags_" + str(feed._id)).split(" ")
+                # Save tags to database
+                for tag_name in tags:
+                    tag = Tag.from_tag(tag_name)
+                    feed.add_tag(tag)
         # Get all bag and feed data to display on web page
         bags = yield Bag.get_bags()
         if not bags:
