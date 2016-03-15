@@ -58,7 +58,6 @@ class Feed(Document):
         feed = yield Feed.objects.create(
             bag=bag,
             topic=topic,
-            available_tags=[]
         )
         raise Return(feed)
 
@@ -69,7 +68,7 @@ class Feed(Document):
         Args:
             tag: Possible Tag that could be seen in the feed.
         """
-        self.available_tags.append(tag)
+        self.available_tags.extend(tag)
         yield self.save()
     @classmethod
     @coroutine
@@ -77,8 +76,8 @@ class Feed(Document):
         """ Returns feeds belonging to a certain bag or returns all feeds if a
             bag is not specified
         """
-        if bag == None:
-            feeds = yield Feed.objects.find_all()
-        else:
+        if bag:
             feeds = yield Feed.objects.filter(bag=bag).find_all()
+        else:
+            feeds = yield Feed.objects.find_all()
         raise Return(feeds)
