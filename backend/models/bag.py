@@ -5,6 +5,7 @@
 from datetime import datetime
 from motorengine import Document, fields
 from tornado.gen import coroutine, Return
+from bson.objectid import ObjectId
 
 
 class Bag(Document):
@@ -71,9 +72,9 @@ class Bag(Document):
         raise Return(bags)
     @classmethod
     @coroutine
-    def get_bag(self, id):
+    def get_bag(self, bag_id):
         """ Returns a single bag """
-        bag = yield Bag.objects.filter(_id=id).limit(1).find_all()
+        bag = yield Bag.objects.filter(id=ObjectId(bag_id)).limit(1).find_all()
         if bag:
             raise Return(bag[0])
         else:

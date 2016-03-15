@@ -68,7 +68,7 @@ class Feed(Document):
         Args:
             tag: Possible Tag that could be seen in the feed.
         """
-        self.available_tags.extend(tag)
+        yield self.available_tags.extend(tag)
         yield self.save()
     @classmethod
     @coroutine

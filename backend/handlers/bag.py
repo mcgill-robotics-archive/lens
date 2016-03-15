@@ -64,7 +64,7 @@ class BagHandler(RequestHandler):
         name = form_data['name'][0]
         robot = form_data['robot'][0]
         location = form_data['location'][0]
-        conditions = form_data['conditions'][0].split(" ")
+        conditions = form_data['conditions'][0].split(",")
         recorded = dateutil.parser.parse(form_data['recorded'][0])
 
         # Write bag properties to database.
@@ -139,17 +139,20 @@ class BagsHandler(RequestHandler):
         name = self.get_argument("name")
         robot = self.get_argument("robot")
         location = self.get_argument("location")
-        conditions = self.get_argument("conditions").split(" ")
-        # Get bag and its feeds
+        conditions = self.get_argument("conditions").split(",")
+        # Get bag and update it
         bag = yield Bag.get_bag(bag_id)
+        bag.name = name
+        bag.robot = robot
+        bag.location = location
+        bag.conditions = conditions
+        bag.save()
         related_feeds = yield Feed.get_feeds(bag)
-        # BUG: get_bag() fails to grab a bag based on id, so right now
-        #      related_feeds holds all feeds in the database
         for feed in related_feeds:
-            if str(feed.bag._id) == bag_id:
-                tags = self.get_argument("tags_" + str(feed._id)).split(" ")
-                # Save tags to database
-                for tag_name in tags:
+            tags = self.get_argument("tags_" + str(feed._id)).split(" ")
+            # Save tags to database
+            for tag_name in tags:
+                if tag_name:
                     tag = Tag.from_tag(tag_name)
                     feed.add_tag(tag)
         # Get all bag and feed data to display on web page
@@ -158,7 +161,6 @@ class BagsHandler(RequestHandler):
             self.set_status(404)
             self.write_error(404)
             return
-        feeds = yield Feed.get_feeds()
         d = [] # each element is a tuple containing a bag and its feeds
         for bag in bags:
             feeds = yield Feed.get_feeds(bag)
