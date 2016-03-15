@@ -68,16 +68,44 @@ class Feed(Document):
         Args:
             tag: Possible Tag that could be seen in the feed.
         """
-        yield self.available_tags.extend(tag)
-        yield self.save()
+        if not self.exist(tag):
+            self.available_tags.append(tag)
+            yield self.save()
+
     @classmethod
     @coroutine
     def get_feeds(self, bag=None):
         """ Returns feeds belonging to a certain bag or returns all feeds if a
             bag is not specified
+
+            Args:
+                bag: The bag that you want the feeds of.
+
+            Returns:
+                Feeds.
         """
         if bag:
             feeds = yield Feed.objects.filter(bag=bag).find_all()
         else:
             feeds = yield Feed.objects.find_all()
         raise Return(feeds)
+
+    @coroutine
+    def clear_tags(self):
+        """Clears available_tags."""
+        self.available_tags = []
+        yield self.save()
+
+    def exist(self, tag):
+        """Checks if tag already exists in available_tags.
+
+        Args:
+            tag: The tag object that you want to check.
+
+        Returns:
+            Boolean.
+        """
+        for existing_tag in self.available_tags:
+            if tag.name == existing_tag.name:
+                return True
+        return False

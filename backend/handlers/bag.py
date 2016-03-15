@@ -147,14 +147,19 @@ class BagsHandler(RequestHandler):
         bag.location = location
         bag.conditions = conditions
         bag.save()
+
+        # Save feed information
         related_feeds = yield Feed.get_feeds(bag)
         for feed in related_feeds:
+            # Clear existing tags in case any tags were deleted in the form
+            feed.clear_tags()
             tags = self.get_argument("tags_" + str(feed._id)).split(" ")
             # Save tags to database
             for tag_name in tags:
                 if tag_name:
-                    tag = Tag.from_tag(tag_name)
+                    tag = yield Tag.from_tag(tag_name)
                     feed.add_tag(tag)
+
         # Get all bag and feed data to display on web page
         bags = yield Bag.get_bags()
         if not bags:
