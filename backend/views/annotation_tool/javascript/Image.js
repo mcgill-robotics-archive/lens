@@ -7,8 +7,7 @@
  * @constructor
  */
 function Image () {
-  this.container = document.getElementById('annotate-img');
-  this.annotationTable = new AnnotationTable ();
+  this.image = document.getElementById('annotate-img');
   var that = this;
   resolveImage();
 

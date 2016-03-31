@@ -6,13 +6,13 @@
  * @constructor
  */
 function Annotation (vertices) {
-  this.svgGroup = this.constructGroup(); 
+  this.svgGroup = this.constructGroup();
   // The Px suffix denotes that the unit is pixels
-  let leftXVertexPx = Math.min(vertices.startX, vertices.endX);
-  let bottomYVertexPx = Math.min(vertices.startY, vertices.endY);
-  let widthPx = Math.abs(vertices.endX - vertices.startX);
-  let heightPx = Math.abs(vertices.endY - vertices.startY);
-  
+  var leftXVertexPx = Math.min(vertices.startX, vertices.endX);
+  var bottomYVertexPx = Math.min(vertices.startY, vertices.endY);
+  var widthPx = Math.abs(vertices.endX - vertices.startX);
+  var heightPx = Math.abs(vertices.endY - vertices.startY);
+
   this.type = Lens.shapeType;
   switch (this.type) {
     case 'ellipse':
@@ -26,7 +26,7 @@ function Annotation (vertices) {
       break;
   }
 
-  let img = Lens.image.container;
+  var img = Lens.image.container;
 
   this.x = leftXVertexPx / img.clientWidth;
   this.y = bottomYVertexPx / img.clientHeight;

@@ -1,26 +1,30 @@
 'use strict';
-
 /**
  * Lens Global stores all data & functionality related to Lens appart from
  * constructors and class methods.
  * @author Malcolm Watt
  */
 var Lens = {
-  image : null, // Gets initialized by the body elements onload event handler
+  image : null,
   frameId : null,
-  shapeType : 'rectangle',
   tags : [],
-  methods : {
-    /**
-     * Initialize the page property and add all required event listeners.
-     * @author Malcolm Watt
-     * @return undefined
-     */
-    init : function () {
-      Lens.image = new Image();
-      Lens.methods.initializeImageListeners();
-      Lens.methods.initOverlayListener();
-    },
+  annotations : [],
+  user : null
+};
+
+Lens.methods = {
+  /**
+   * Initialize the page property and add all required event listeners.
+   * @author Malcolm Watt
+   * @return undefined
+   */
+  init : function () {
+    Lens.image = document.getElementById('annotate-img');
+    Lens.methods.initializeImageListeners();
+    Lens.methods.initOverlayListener();
+  },
+
+}
 
     /**
      * Submit the annotations from the annotation table to the backend.
@@ -45,7 +49,7 @@ var Lens = {
       Lens.frameId = null;
       Lens.tags = [];
       Lens.image = new Image();
-      var annotations = document.getElementsByClassName('annotation');
+      var annotations = document.getElementsByClassName('annotation-group');
       for (var i = 0; i < annotations.length; i++) {
           annotations[i].remove();
       }
