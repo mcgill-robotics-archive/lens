@@ -28,10 +28,13 @@ function Annotation (vertices) {
 
   var img = Lens.image.container;
 
-  this.x = leftXVertexPx / img.clientWidth;
-  this.y = bottomYVertexPx / img.clientHeight;
-  this.width = widthPx / img.clientWidth;
-  this.height = heightPx / img.clientHeight;
+
+  var imageWidth = img.clientWidth || img.parentNode.clientWidth;
+  var imageHeight = img.clentHeight || img.parentNode.clientHeight;
+  this.x = leftXVertexPx / imageWidth;
+  this.y = bottomYVertexPx / imageHeight;
+  this.width = widthPx / imageWidth;
+  this.height = heightPx / imageHeight;
 
   this.label = this.promptUserForLabel();
   if (this.label) {
@@ -236,5 +239,5 @@ Annotation.prototype.getUsefullData = function() {
  * @return {string} label : The user entered annotation.
  */
 Annotation.prototype.promptUserForLabel = function(){
-  return prompt('Label:');
+  return prompt('Label:').toLowerCase();
 };
