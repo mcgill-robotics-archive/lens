@@ -8,7 +8,6 @@
  */
 function Image () {
   this.container = document.getElementById('annotate-img');
-  var that = this;
   resolveImage();
 
   /**
@@ -31,6 +30,6 @@ function Image () {
     var frameInfo = JSON.parse(this.responseText);
     Lens.frameId = frameInfo.id;
     var url = 'url(/image/' + Lens.frameId + ')';
-    that.container.style.backgroundImage = url;
+    Lens.image.container.style.backgroundImage = url;
   };
 }
