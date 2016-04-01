@@ -10,7 +10,8 @@ var Lens = {
   tags: [],
   annotations: [],
   user: null,
-  methods : {}
+  methods : {},
+  shapeType : 'rectangle'
 };
 
 
@@ -33,7 +34,7 @@ Lens.methods.init = function() {
  */
 Lens.methods.submit = function(interesting) {
   var req = new XMLHttpRequest();
-  req.open('POST', '/annotate/', true);
+  req.open('POST', '/annotate/' + Lens.frameId, true);
   req.setRequestHeader('Content-Type', 'application/json');
   req.send(Lens.methods.formatData(interesting));
   Lens.methods.reload();
@@ -52,6 +53,7 @@ Lens.methods.reload = function() {
   for (var i = 0; i < annotations.length; i++) {
     annotations[i].remove();
   }
+  Lens.annotations = [];
 },
 
 /**
@@ -63,7 +65,6 @@ Lens.methods.reload = function() {
  */
 Lens.methods.formatData = function(interesting) {
   var description = {};
-  description.frame_id = Lens.frameId;
   description.interesting = interesting;
 
   description.annotations = [];
@@ -144,7 +145,6 @@ Lens.methods.imageDownClickListener = function(event) {
 
   // Check for an offset on the element that triggered the event
   var triggerElement = event.target;
-
   var imageOffsetX = triggerElement.getAttribute('img-offsetx');
   var elementOffsetX = parseFloat(imageOffsetX) || 0;
 
