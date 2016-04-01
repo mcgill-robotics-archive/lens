@@ -239,5 +239,6 @@ Annotation.prototype.getUsefullData = function() {
  * @return {string} label : The user entered annotation.
  */
 Annotation.prototype.promptUserForLabel = function(){
-  return prompt('Label:').toLowerCase();
+  var label = prompt('Label:') || ''; // If canceled we return an empty string
+  return label.toLowerCase();
 };
