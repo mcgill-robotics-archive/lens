@@ -53,6 +53,11 @@
         if (fname.value && recorded.value && loc.value &&
             robot.value && conditions.value) {
           upload_button.disabled = false;
+
+          document.getElementById('bag_form').action = "/upload?bag=" +
+          bag.value + "&name=" + fname.value + "&robot=" + robot.value +
+          "&conditions=" + conditions.value.split(/[ ,]+/).join(',') +
+          "&recorded=" + recorded.value + "&location=" + loc.value;
         } else {
           upload_button.disabled = true;
         }
@@ -61,9 +66,10 @@
   </head>
   <body onload="init()">
     <h1>Upload Bag</h1>
-    <form enctype="multipart/form-data" action="/upload" method="post">
+    <form id="bag_form" enctype="multipart/form-data"
+    action="/upload" method="post">
       <input id="bag" onchange="update()"
-        type="file" name="bag" accept="*.bag" /><br>
+        type="file" name="bag" accept=".bag" /><br>
       <fieldset id="details" style="display: none;">
         <legend>Details</legend>
 
@@ -77,7 +83,10 @@
         <input onkeypress="update()" id="loc" name="location" type="text">
         <br>
         <label for="conditions">Conditions</label>
-        <input onkeypress="update()" id="conds" name="conditions" type="text">
+        <input onchange="update()" id="conds" name="conditions" type="text">
+        <br>
+        Note: space separated
+        <br>
 
         <!-- Hidden timestamp -->
         <input id="recorded" name="recorded" type="text" >

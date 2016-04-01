@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Bags</title>
+  </head>
+  <body>
+    <h1>Bags</h1>
+    {% for bag,feeds in d %}
+    <form id="edit_bag" action="/bags" method="post">
+      <input id="id" name="id" type="hidden" value="{{ bag._id }}">
+      <label for="name">Name</label>
+      <input id="fname" name="name" type="text" value="{{ bag.name }}">
+      <br>
+      <label for="robot">Robot</label>
+      <input id="robot" name="robot" type="text" value="{{ bag.robot }}">
+      <br>
+      <label for="location">Location</label>
+      <input id="loc" name="location" type="text" value="{{ bag.location}}">
+      <br>
+      <label for="conditions">Conditions</label>
+      <input id="conds" name="conditions" type="text" value="{% for condition \
+         in bag.conditions %}{{ condition }} {% end %}">
+      <br>
+      Feeds:
+      {% for feed in feeds %}
+        <div style="padding-left:30px">
+        Topic: {{ feed.topic }}
+        <br>
+        <label for="tags">Tags</label>:
+        <input id="tags" name="tags_{{feed._id}}" type="text"
+        value="{% for tag in feed.available_tags %} {{ tag.name }} {% end %}">
+        </div>
+      {% end %}
+      <input id="submit" type="submit" value="Save changes" />
+      </form>
+      <hr>
+    {% end %}
+
+  </body>
+</html>

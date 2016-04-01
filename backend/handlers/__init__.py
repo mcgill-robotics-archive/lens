@@ -2,7 +2,7 @@
 
 """Lens Backend Handlers."""
 
-from bag import BagHandler
+from bag import BagHandler, BagsHandler
 from image import ImageHandler
 from lensui import LensUIHandler
 from metadata import MetadataHandler
@@ -19,6 +19,7 @@ def get_handlers():
         (r"/next/?", NextFrameHandler),
         (r"/image/(.+)/?", ImageHandler),
         (r"/annotate/(.+)?", MetadataHandler),
+        (r"/bags/?", BagsHandler),
         (r"/bag/?", BagHandler),
         (r"/success/?", BagHandler),
         (r"/lens/?", LensUIHandler),
