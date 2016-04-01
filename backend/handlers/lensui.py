@@ -6,7 +6,7 @@ import logging
 from tornado.gen import coroutine
 from tornado.web import RequestHandler
 from image import ImageHandler
-from frame import NextFrameHandler
+from nextframe import NextFrameHandler
 from helpers import Encoder
 from models import Frame
 import json
