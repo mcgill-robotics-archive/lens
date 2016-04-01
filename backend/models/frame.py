@@ -102,7 +102,7 @@ class Frame(Document):
             """
             # Find the first non-annotated frame that hasn't been accessed in
             # the past 10 minutes.
-            cache = datetime.utcnow() - timedelta(minutes=10)
+            cache = datetime.utcnow() - timedelta(minutes=1)
             return (
                 Q({"annotations": {"$size": 0}}) &
                 (Q(accessed__is_null=True) | Q(accessed__lt=cache))
