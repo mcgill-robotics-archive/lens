@@ -33,10 +33,3 @@ class LensUIHandler(RequestHandler):
             self.render(LensUIHandler.SOURCE_DIR + script_id);
         else:
             self.render(LensUIHandler.VIEWS_DIR + 'annotate.html')
-
-    @coroutine
-    def post(self):
-        body = self.request.body
-        self.finish()
-        logging.debug(body)
-

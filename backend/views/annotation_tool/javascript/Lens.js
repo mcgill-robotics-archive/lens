@@ -63,13 +63,15 @@ Lens.methods.reload = function() {
  */
 Lens.methods.formatData = function(interesting) {
   var description = {};
-  description.frame = Lens.frameId;
+  description.frame_id = Lens.frameId;
   description.interesting = interesting;
-  // description.tags = Lens.tags; We need a way to annotate the image in
-  // general. This is a placeholder for when this is implemented.
-  description.annotations = JSON.parse(
-    Lens.image.annotationTable.stringify()
-  );
+
+  description.annotations = [];
+  Lens.annotations.forEach(function (element, index) {
+    description.annotations.push(element.getUsefullData());
+  });
+
+  description.tags = Lens.tags;
   console.log(description);
   return JSON.stringify(description);
 },
@@ -271,9 +273,12 @@ Lens.methods.imageDownClickListener = function(event) {
         endY: endY
       });
 
-      var annotationTable = Lens.image.annotationTable;
-      annotationTable.validateAndAdd(annotation);
+      if (annotation.label) {
+        Lens.annotations.push(annotation);
+        Lens.tags.push(annotation.label);
+      }
     }
+
     removeClickReleaseListeners();
   }
 
