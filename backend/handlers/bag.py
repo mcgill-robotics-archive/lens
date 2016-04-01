@@ -96,7 +96,12 @@ class BagHandler(RequestHandler):
 
         # Iterate through all ROS Images and write them to the database.
         feeds = {}
+        count = 0
         for topic, msg, t in bag.read_messages(connection_filter=images_pls):
+            count += 1
+            if not (count % 10):
+                continue
+
             if topic in feeds:
                 feed = feeds[topic]
             else:
@@ -114,6 +119,7 @@ class BagHandler(RequestHandler):
         logging.warn("Deleting %s", self.path)
         os.remove(self.path)
 
+
 class BagsHandler(RequestHandler):
 
     """ROS bags request handler."""
@@ -126,7 +132,7 @@ class BagsHandler(RequestHandler):
             self.set_status(404)
             self.write_error(404)
             return
-        d = [] # each element is a tuple containing a bag and its feeds
+        d = []  # each element is a tuple containing a bag and its feeds
         for bag in bags:
             feeds = yield Feed.get_feeds(bag)
             d.append((bag, feeds))
@@ -166,7 +172,7 @@ class BagsHandler(RequestHandler):
             self.set_status(404)
             self.write_error(404)
             return
-        d = [] # each element is a tuple containing a bag and its feeds
+        d = []  # each element is a tuple containing a bag and its feeds
         for bag in bags:
             feeds = yield Feed.get_feeds(bag)
             d.append((bag, feeds))
@@ -176,7 +182,7 @@ class BagsHandler(RequestHandler):
     def get_data(self):
         bags = yield Bag.get_bags()
         feeds = yield Feed.get_feeds()
-        d = [] # each element is a tuple containing a bag and its feeds
+        d = []  # each element is a tuple containing a bag and its feeds
         for bag in bags:
             feeds = yield Feed.get_feeds(bag)
             d.append((bag, feeds))
