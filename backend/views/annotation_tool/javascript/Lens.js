@@ -33,7 +33,7 @@ Lens.methods.init = function() {
  */
 Lens.methods.submit = function(interesting) {
   var req = new XMLHttpRequest();
-  req.open('POST', '/Lens/', true);
+  req.open('POST', '/annotate/', true);
   req.setRequestHeader('Content-Type', 'application/json');
   req.send(Lens.methods.formatData(interesting));
   Lens.methods.reload();
