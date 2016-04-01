@@ -15,7 +15,7 @@ __version__ = "0.3.0"
 
 def get_handlers():
     handlers = [
-        (r"/?", HomePageHandler),
+        (r"/?", LensUIHandler),
         (r"/next/?", NextFrameHandler),
         (r"/image/(.+)/?", ImageHandler),
         (r"/annotate/(.+)?", MetadataHandler),
