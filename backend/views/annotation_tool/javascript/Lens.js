@@ -5,6 +5,7 @@
  * @author Malcolm Watt
  */
 var Lens = {
+  issueUrl : "https://github.com/mcgill-robotics/lens/issues/new",
   image: null,
   frameId: null,
   tags: [],
@@ -25,6 +26,8 @@ Lens.methods.init = function() {
   Lens.methods.initializeImageListeners();
   Lens.methods.initOverlayListener();
 },
+
+
 
 /**
  * Submit the annotations from the annotation table to the backend.
