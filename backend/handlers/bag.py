@@ -99,7 +99,7 @@ class BagHandler(RequestHandler):
         count = 0
         for topic, msg, t in bag.read_messages(connection_filter=images_pls):
             count += 1
-            if not (count % 10):
+            if not (count % 10 == 0):
                 continue
 
             if topic in feeds:
