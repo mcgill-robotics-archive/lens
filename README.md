@@ -3,8 +3,8 @@ McGill Robotics Lens
 
 Dependencies
 ------------
-To run, this application requires `MongoDB`, `ffmpeg`, `NGINX` and all the
-dependencies found in `requirements.txt`.
+To run, this application requires `MongoDB`, `NGINX` and all the
+dependencies found in `backend/requirements.txt`.
 
 NGINX setup
 -----------
@@ -32,12 +32,15 @@ sudo ln -s [YOUR_LENS_PROJECT_PATH]/lens/nginx/nginx.conf /etc/nginx/conf/nginx.
 sudo /etc/nginx/sbin/nginx -s reload
 ```
 
-Create directories in your /tmp for the upload form.
+Create directories in your `/tmp` and `/var/log` for the upload form.
 
 ```
 cd /tmp
 mkdir 0 1 2 3 4 5 6 7 8 9
 sudo chown www-data 0 1 2 3 4 5 6 7 8 9
+
+cd /var/log
+sudo mkdir nginx
 ```
 
 Running
