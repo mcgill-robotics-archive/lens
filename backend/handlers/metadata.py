@@ -3,11 +3,11 @@
 """Image handler."""
 
 import logging
-from models import Frame
 from helpers import Encoder
 from tornado.gen import coroutine
 from tornado.escape import json_decode
 from tornado.web import RequestHandler
+from models import Annotation, Frame, Tag, User
 
 __author__ = "Anass Al-Wohoush"
 __version__ = "0.3.0"
@@ -27,9 +27,9 @@ class MetadataHandler(RequestHandler):
         Body:
             {
                 'frame_id': Unique frame ObjectId,
-                'metadata': {
+                'annotations': [{
                     ...
-                },
+                }],
                 'tags': [
                     ...
                 ]
@@ -64,12 +64,19 @@ class MetadataHandler(RequestHandler):
             self.set_status(404)
             self.write_error(404)
             return
+        
+        user = yield User.from_username("robotics")
+        ant_data = data["annotations"]
+        annotations = yield [Annotation.from_json(a, user)
+                             for a in ant_data]
+        tags = yield [Tag.from_tag(s.lower())
+                      for s in data["tags"]]
 
-        yield frame.annotate(**data)
+        yield frame.annotate(annotations, tags)
         logging.info(
-            "Annotated frame %d of %s",
-            frame.index,
-            frame.video.name
+            "Annotated frame %r of %s",
+            str(frame._id),
+            frame.feed.topic
         )
         self.set_header("Content-Type", "application/json")
         self.write(Encoder().encode(frame.dump()))
