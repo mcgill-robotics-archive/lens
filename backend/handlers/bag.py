@@ -107,7 +107,7 @@ class BagHandler(RequestHandler):
             yield Frame.from_ros_image(
                 feed=feed,
                 seq=msg.header.seq,
-                data=msg
+                msg=msg
             )
 
         # Delete temporary file.

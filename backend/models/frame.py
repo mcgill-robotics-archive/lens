@@ -4,8 +4,9 @@
 
 import cv2
 import six
-import pickle
+import base64
 import logging
+import numpy as np
 from tag import Tag
 from feed import Feed
 from toro import Lock
@@ -144,49 +145,53 @@ class Frame(Document):
             raise Return(next_frame)
 
     @coroutine
-    def annotate(self, annotation, tags):
+    def annotate(self, annotations, tags):
         """Updates the frame's annotations.
 
         Args:
-            annotation: Annotations.
+            annotations: Annotations.
             tags: List of tags.
         """
         # Avoid concurrently overwriting a frame's annotations.
         with (yield lock.acquire()):
-            self.annotations.append(annotation)
+            self.annotations.extend(annotations)
             self.tags.extend(tags)
+            self.tags = list(set(self.tags))
             yield self.save()
 
     @classmethod
     @coroutine
-    def from_ros_image(cls, feed, seq, data):
+    def from_ros_image(cls, feed, seq, msg):
         """Creates a Frame from a ROS sensor_msgs/Image and writes it to the
         database.
 
         Args:
             feed: Corresponding feed.
             seq: Frame sequence in feed.
-            data: ROS Image.
+            msg: ROS Image.
 
         Returns:
             Frame.
         """
+        # Convert ROS Image to OpenCV image.
+        bridge = CvBridge()
+        img = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
+
+        # Convert to JPEG.
+        img = cv2.imencode('.bmp', img)[1].tostring()
+
         frame = yield Frame.objects.create(
             feed=feed,
             seq=seq,
-            data=pickle.dumps(data)
+            data=base64.b64encode(img)
         )
         raise Return(frame)
 
     @coroutine
     def to_jpeg(self):
         """Returns a JPEG image of the frame."""
-        # Unpickle ROS Image.
-        msg = pickle.loads(self.data)
-
-        # Convert ROS Image to OpenCV image.
-        bridge = CvBridge()
-        img = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
+        nparr = np.fromstring(base64.b64decode(self.data), np.uint8)
+        img = cv2.imdecode(nparr, cv2.CV_LOAD_IMAGE_COLOR)
 
         # Convert to JPEG.
         raise Return(cv2.imencode('.jpg', img)[1].tostring())
