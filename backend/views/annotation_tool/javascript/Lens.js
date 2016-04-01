@@ -20,7 +20,7 @@ var Lens = {
  * @return undefined
  */
 Lens.methods.init = function() {
-  Lens.image = document.getElementById('annotate-img');
+  Lens.image = new Image();
   Lens.methods.initializeImageListeners();
   Lens.methods.initOverlayListener();
 },
