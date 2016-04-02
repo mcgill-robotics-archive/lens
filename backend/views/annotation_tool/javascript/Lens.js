@@ -8,7 +8,6 @@ var Lens = {
   issueUrl : "https://github.com/mcgill-robotics/lens/issues/new",
   image: null,
   frameId: null,
-  tags: [],
   annotations: [],
   user: null,
   methods : {},
@@ -51,7 +50,6 @@ Lens.methods.submit = function(interesting) {
  */
 Lens.methods.reload = function() {
   Lens.frameId = null;
-  Lens.tags = [];
   Lens.image = new Frame();
   var annotations = document.getElementsByClassName('annotation-group');
   for (var i = annotations.length - 1; i >= 0; i--) {
@@ -71,12 +69,13 @@ Lens.methods.formatData = function(interesting) {
   var description = {};
   description.interesting = interesting;
 
+  description.tags = [];
   description.annotations = [];
   Lens.annotations.forEach(function (element, index) {
     description.annotations.push(element.getUsefullData());
+    description.tags.push(element.label);
   });
 
-  description.tags = Lens.tags;
   console.log(description);
   return JSON.stringify(description);
 },
