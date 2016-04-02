@@ -2,7 +2,6 @@
 
 """Search handler."""
 
-import urllib
 import logging
 from helpers import Encoder
 from models import Frame, Tag
@@ -18,17 +17,17 @@ class SearchByTagHandler(RequestHandler):
     """Search by tag request handler."""
 
     @coroutine
-    def get(self, tag_name):
+    def get(self):
         """Annotates and tags a frame.
 
-        Args:
-            tag_name: Tag name.
+        Parameters:
+            q: Search query (tag name).
 
         Returns:
             A list of frame IDs.
             application/json if successfull, 404 otherwise.
         """
-        tag_name = urllib.unquote(tag_name)
+        tag_name = self.get_argument("q")
         logging.debug("Searching for frames tagged as: %s", tag_name)
 
         tag = yield Tag.from_tag(tag_name)

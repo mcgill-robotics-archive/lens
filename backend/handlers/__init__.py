@@ -22,7 +22,7 @@ def get_handlers():
         (r"/bags/?", BagsHandler),
         (r"/bag/?", BagHandler),
         (r"/success/?", BagHandler),
-        (r"/search/(.+)/?", SearchByTagHandler)
+        (r"/search/?", SearchByTagHandler)
     ]
 
     return handlers
