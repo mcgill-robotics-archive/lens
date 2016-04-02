@@ -6,7 +6,7 @@
  * @author Malcolm Watt
  * @constructor
  */
-function Image () {
+function Frame () {
   var that = this;
   this.container = document.getElementById('annotate-img');
   this.aspectRatio;
@@ -40,7 +40,7 @@ function Image () {
   };
 }
 
-Image.prototype.fitToPage = function() {
+Frame.prototype.fitToPage = function() {
   var image = document.getElementById('annotate-img');
   image.style.backgroundSize = 'cover';
 

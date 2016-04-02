@@ -22,7 +22,7 @@ var Lens = {
  * @return undefined
  */
 Lens.methods.init = function() {
-  Lens.image = new Image();
+  Lens.image = new Frame();
   Lens.methods.initializeImageListeners();
   Lens.methods.initOverlayListener();
   window.onresize = Lens.image.fitToPage;
@@ -52,7 +52,7 @@ Lens.methods.submit = function(interesting) {
 Lens.methods.reload = function() {
   Lens.frameId = null;
   Lens.tags = [];
-  Lens.image = new Image();
+  Lens.image = new Frame();
   var annotations = document.getElementsByClassName('annotation-group');
   for (var i = annotations.length - 1; i >= 0; i--) {
     annotations[i].remove();
