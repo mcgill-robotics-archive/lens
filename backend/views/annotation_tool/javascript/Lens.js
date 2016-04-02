@@ -278,7 +278,6 @@ Lens.methods.imageDownClickListener = function(event) {
 
       if (annotation.label) {
         Lens.annotations.push(annotation);
-        Lens.tags.push(annotation.label);
       }
     }
 
