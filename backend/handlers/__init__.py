@@ -2,12 +2,12 @@
 
 """Lens Backend Handlers."""
 
-from bag import BagHandler, BagsHandler
 from image import ImageHandler
 from lensui import LensUIHandler
 from metadata import MetadataHandler
-from homepage import HomePageHandler
+from search import SearchByTagHandler
 from nextframe import NextFrameHandler
+from bag import BagHandler, BagsHandler
 
 __author__ = "Anass Al-Wohoush"
 __version__ = "0.3.0"
@@ -22,7 +22,7 @@ def get_handlers():
         (r"/bags/?", BagsHandler),
         (r"/bag/?", BagHandler),
         (r"/success/?", BagHandler),
-        (r"/lens/?", LensUIHandler),
+        (r"/search/by-tag/(.+)/?", SearchByTagHandler)
     ]
 
     return handlers
