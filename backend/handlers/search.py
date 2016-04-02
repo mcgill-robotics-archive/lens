@@ -2,6 +2,7 @@
 
 """Search handler."""
 
+import urllib
 import logging
 from helpers import Encoder
 from models import Frame, Tag
@@ -29,15 +30,15 @@ class SearchByTagHandler(RequestHandler):
         """
         logging.debug("Searching for frames tagged as: %s", tag_name)
 
-        tag = yield Tag.from_name(tag_name)
-        frames = yield Frame.objects.filter(tag__eq=tag).find_all()
+        tag = yield Tag.from_tag(urllib.unquote(tag_name))
+        frames = yield Frame.objects.filter({"tags": tag._id}).find_all()
 
         if not frames:
             self.set_status(404)
             self.write_error(404)
             return
 
-        frame_ids = [frame._id for frame in frames]
+        frame_ids = [str(f._id) for f in frames]
 
         self.set_header("Content-Type", "application/json")
         self.write(Encoder().encode(frame_ids))
