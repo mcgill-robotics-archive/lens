@@ -25,6 +25,7 @@ Lens.methods.init = function() {
   Lens.image = new Image();
   Lens.methods.initializeImageListeners();
   Lens.methods.initOverlayListener();
+  window.onresize = Lens.image.fitToPage;
 },
 
 
