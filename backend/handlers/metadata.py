@@ -18,6 +18,43 @@ class MetadataHandler(RequestHandler):
     """Metadata request handler."""
 
     @coroutine
+    def get(self, frame_id):
+        """Retrieves annotations and tags of a frame.
+
+        Args:
+            frame_id: Unique frame object ID.
+
+        Returns:
+            application/json if successfull, 404 otherwise.
+
+            For example:
+                {
+                    'id': unique frame ID,
+                    'bag': {
+                        'id': unique video ID,
+                        'name': video name,
+                        'location': location,
+                        'recorded': datetime recorded in ISO 8601,
+                        'added': datetime added in ISO 8601
+                    },
+                    'index': frame index,
+                    'tags': list of tags,
+                    'metadata': list of JSON metadata,
+                    'accessed': datetime last accessed in ISO 8601,
+                    'added': datetime added in ISO 8601
+                }
+        """
+        frame = yield Frame.objects.get(frame_id)
+
+        if not frame:
+            self.set_status(404)
+            self.write_error(404)
+            return
+        
+        self.set_header("Content-Type", "application/json")
+        self.write(Encoder().encode(frame.dump()))
+
+    @coroutine
     def post(self, frame_id):
         """Annotates and tags a frame.
 
