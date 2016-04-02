@@ -8,6 +8,7 @@
  */
 function Image () {
   this.container = document.getElementById('annotate-img');
+  this.fitToPage();
   resolveImage();
 
   /**
@@ -33,3 +34,20 @@ function Image () {
     Lens.image.container.style.backgroundImage = url;
   };
 }
+
+Image.prototype.fitToPage = function() {
+  var image = document.getElementById('annotate-img');
+  image.style.backgroundSize = 'cover';
+
+  var pageWidth = Number(window.innerWidth);
+  // We need to consider the sidebar's width so we do not have overlap
+  var sidebarWidth = Number(document.getElementById('sidebar').clientWidth);
+  var desiredWidth = pageWidth - sidebarWidth;
+  image.style.width = desiredWidth + "px";
+
+  var pageHeight = Number(window.innerHeight);
+  // We need to consider the height of the help text
+  var helpHeight = Number(document.getElementById('help').clientHeight);
+  var desiredHeight = pageHeight - helpHeight;
+  image.style.height = desiredHeight + "px";
+};
