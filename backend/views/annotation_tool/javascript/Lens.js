@@ -25,6 +25,7 @@ Lens.methods.init = function() {
   Lens.image = new Image();
   Lens.methods.initializeImageListeners();
   Lens.methods.initOverlayListener();
+  window.onresize = Lens.image.fitToPage;
 },
 
 
@@ -53,7 +54,7 @@ Lens.methods.reload = function() {
   Lens.tags = [];
   Lens.image = new Image();
   var annotations = document.getElementsByClassName('annotation-group');
-  for (var i = 0; i < annotations.length; i++) {
+  for (var i = annotations.length - 1; i >= 0; i--) {
     annotations[i].remove();
   }
   Lens.annotations = [];
