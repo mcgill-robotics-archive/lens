@@ -6,9 +6,9 @@
  * @author Malcolm Watt
  * @constructor
  */
-function Image () {
+function Frame () {
   this.container = document.getElementById('annotate-img');
-  this.fitToPage();
+  this.aspectRatio;
   resolveImage();
 
   /**
@@ -30,12 +30,18 @@ function Image () {
   function setBackgroundImage() {
     var frameInfo = JSON.parse(this.responseText);
     Lens.frameId = frameInfo.id;
-    var url = 'url(/image/' + Lens.frameId + ')';
-    Lens.image.container.style.backgroundImage = url;
+    var url = '/image/' + Lens.frameId;
+    Lens.image.container.style.backgroundImage = 'url(' + url + ')';
+    var img = document.createElement('img');
+    img.onload = function () {
+      Lens.image.aspectRatio = img.width / img.height;
+      Lens.image.fitToPage();
+    }
+    img.src = url;
   };
 }
 
-Image.prototype.fitToPage = function() {
+Frame.prototype.fitToPage = function() {
   var image = document.getElementById('annotate-img');
   image.style.backgroundSize = 'cover';
 
@@ -46,4 +52,18 @@ Image.prototype.fitToPage = function() {
   var helpHeight = Number(document.getElementById('help').clientHeight);
   var desiredHeight = pageHeight - helpHeight;
   image.style.height = desiredHeight + "px";
+
+  // Now we need to check the aspect ratio and adjust accordingly
+  var aspectRatio = image.clientWidth / image.clientHeight;
+
+  if (aspectRatio > Lens.image.aspectRatio) {
+    // Limiting factor is height
+    var adjustedWidth = image.clientHeight * Lens.image.aspectRatio;
+    var adjustedWidthPercentage = adjustedWidth / image.clientWidth;
+    image.style.width = adjustedWidthPercentage * 100 + '%';
+  } else {
+    // Limiting factor is width
+    var adjustedHeight = image.clientWidth / Lens.image.aspectRatio;
+    image.style.height = adjustedHeight + 'px';
+  }
 };
