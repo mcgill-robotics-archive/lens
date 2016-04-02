@@ -183,8 +183,13 @@ class Frame(Document):
         bridge = CvBridge()
         img = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
 
-        # Convert to BMP.
-        img = cv2.imencode('.bmp', img)[1].tostring()
+        # Convert to PNG with highest level of compression.
+        # Although high quality compression is slower, it is acceptable since
+        # these images are read more often than they are written.
+        # PNG is a lossless format, so this can be retrived as a ROS image
+        # without issue.
+        compression = [cv2.IMWRITE_PNG_COMPRESSION, 9]
+        img = cv2.imencode('.png', img, compression)[1].tostring()
 
         frame = yield Frame.objects.create(
             feed=feed,
