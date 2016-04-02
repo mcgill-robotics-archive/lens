@@ -35,8 +35,10 @@ function Frame () {
     var url = '/image/' + Lens.frameId;
     Lens.image.container.style.backgroundImage = 'url(' + url + ')';
     var img = document.createElement('img');
+    img.onload = function () {
+      that.aspectRatio = img.width / img.height;
+    }
     img.src = url;
-    that.aspectRatio = img.width / img.height;
   };
 }
 
