@@ -28,9 +28,10 @@ class SearchByTagHandler(RequestHandler):
             A list of frame IDs.
             application/json if successfull, 404 otherwise.
         """
+        tag_name = urllib.unquote(tag_name)
         logging.debug("Searching for frames tagged as: %s", tag_name)
 
-        tag = yield Tag.from_tag(urllib.unquote(tag_name))
+        tag = yield Tag.from_tag(tag_name)
         frames = yield Frame.objects.filter({"tags": tag._id}).find_all()
 
         if not frames:
