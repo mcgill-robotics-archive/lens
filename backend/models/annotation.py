@@ -20,6 +20,7 @@ class Annotation(Document):
         timestamp:  Time of annotation.
     """
 
+    __lazy__ = False
     __collection__ = "annotations"
 
     data = fields.JsonField(required=True)
