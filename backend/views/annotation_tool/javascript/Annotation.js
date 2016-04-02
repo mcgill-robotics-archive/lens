@@ -200,17 +200,14 @@ Annotation.prototype.drawEllipse = function(x, y, width, height) {
  * @return undefined
  */
 Annotation.prototype.delete = function() {
-  var annotation = this;
-
   // remove svg group from DOM
-  var g = annotation.svgGroup;
+  var g = this.svgGroup;
   g.parentElement.removeChild(g);
-  // remove object from annotation table
-  var annotationTable = Lens.image.annotationTable.annotations;
-  for (var i = annotationTable.length - 1; i >= 0; i--) {
-  	if (annotationTable[i] === annotation) {
-  	  annotationTable.splice(i, 1);
-  	}
+  // remove object from annotations list
+  for (var i = Lens.annotations.length - 1; i >= 0; i--) {
+    if (Lens.annotations[i] === this) {
+      Lens.annotations.splice(i, 1);
+    }
   }
 
   // call the close box function
