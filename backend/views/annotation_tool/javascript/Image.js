@@ -38,6 +38,12 @@ function Image () {
 Image.prototype.fitToPage = function() {
   var image = document.getElementById('annotate-img');
   image.style.backgroundSize = 'cover';
+
   image.style.width = "100%";
-  image.style.height = "100%";
+
+  var pageHeight = Number(window.innerHeight);
+  // We need to consider the height of the help text
+  var helpHeight = Number(document.getElementById('help').clientHeight);
+  var desiredHeight = pageHeight - helpHeight;
+  image.style.height = desiredHeight + "px";
 };
