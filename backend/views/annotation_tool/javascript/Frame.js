@@ -7,10 +7,8 @@
  * @constructor
  */
 function Frame () {
-  var that = this;
   this.container = document.getElementById('annotate-img');
   this.aspectRatio;
-  this.fitToPage();
   resolveImage();
 
   /**
@@ -36,7 +34,8 @@ function Frame () {
     Lens.image.container.style.backgroundImage = 'url(' + url + ')';
     var img = document.createElement('img');
     img.onload = function () {
-      that.aspectRatio = img.width / img.height;
+      Lens.image.aspectRatio = img.width / img.height;
+      Lens.image.fitToPage();
     }
     img.src = url;
   };
@@ -57,14 +56,14 @@ Frame.prototype.fitToPage = function() {
   // Now we need to check the aspect ratio and adjust accordingly
   var aspectRatio = image.clientWidth / image.clientHeight;
 
-  if (aspectRatio < this.aspectRatio) {
+  if (aspectRatio > Lens.image.aspectRatio) {
     // Limiting factor is height
-    var adjustedWidth = image.clientHeight * this.aspectRatio;
+    var adjustedWidth = image.clientHeight * Lens.image.aspectRatio;
     var adjustedWidthPercentage = adjustedWidth / image.clientWidth;
-    image.style.width = adjustedWidthPercentage + '%';
+    image.style.width = adjustedWidthPercentage * 100 + '%';
   } else {
     // Limiting factor is width
-    var adjustedHeight = image.clientWidth / this.aspectRatio;
+    var adjustedHeight = image.clientWidth / Lens.image.aspectRatio;
     image.style.height = adjustedHeight + 'px';
   }
 };
