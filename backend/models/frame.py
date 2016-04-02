@@ -67,11 +67,17 @@ class Frame(Document):
 
     def dump(self):
         """Returns dictionary representation of frame information."""
+        # Get image size.
+        img = self.parse_image()
+        height, width = img.shape[:2]
+
         return {
             "id": str(self._id),
             "tags": [x.dump() for x in self.tags],
             "feed": self.feed.dump(),
             "seq": self.seq,
+            "height": height,
+            "width": width,
             "annotations": [x.dump() for x in self.annotations],
             "accessed": self.accessed,
         }
@@ -177,7 +183,7 @@ class Frame(Document):
         bridge = CvBridge()
         img = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
 
-        # Convert to JPEG.
+        # Convert to BMP.
         img = cv2.imencode('.bmp', img)[1].tostring()
 
         frame = yield Frame.objects.create(
@@ -187,11 +193,25 @@ class Frame(Document):
         )
         raise Return(frame)
 
-    @coroutine
-    def to_jpeg(self):
-        """Returns a JPEG image of the frame."""
+    def parse_image(self):
+        """Parses image into OpenCV image.
+
+        Returns:
+            OpenCV Image.
+        """
         nparr = np.fromstring(base64.b64decode(self.data), np.uint8)
         img = cv2.imdecode(nparr, cv2.CV_LOAD_IMAGE_COLOR)
+
+        return img
+
+    @coroutine
+    def to_jpeg(self):
+        """Returns a JPEG image of the frame.
+
+        Returns:
+            JPEG encoded byte string.
+        """
+        img = self.parse_image()
 
         # Convert to JPEG.
         raise Return(cv2.imencode('.jpg', img)[1].tostring())
