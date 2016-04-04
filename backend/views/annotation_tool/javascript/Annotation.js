@@ -77,8 +77,8 @@ Annotation.prototype.addLabel = function () {
   label.setAttribute('y', centerY);
   label.setAttribute('font-size', font);
 
-  label.setAttribute('img-offsetx', leftXVertexPx + 3);
-  label.setAttribute('img-offsety', rightXVertexPx + font);
+  label.setAttribute('img-offsetx', centerX);
+  label.setAttribute('img-offsety', centerY);
 
   var annotation = this;
   label.addEventListener('click', function (event) {
