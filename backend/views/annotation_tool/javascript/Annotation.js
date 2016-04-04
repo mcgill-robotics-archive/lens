@@ -247,6 +247,7 @@ Annotation.prototype.promptUserForLabel = function(){
   document.getElementById('confirm-annotation').onclick = function () {
     var selection = document.getElementById('annotation-selection');
     that.label = selection.options[selection.selectedIndex].value;
+    Lens.annotations.push(that);
     that.addLabel();
     overlay.style.display = "none";
     popup.style.display = "none";

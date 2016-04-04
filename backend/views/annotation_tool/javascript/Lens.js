@@ -275,10 +275,6 @@ Lens.methods.imageDownClickListener = function(event) {
         endX: endX,
         endY: endY
       });
-
-      if (annotation.label) {
-        Lens.annotations.push(annotation);
-      }
     }
 
     removeClickReleaseListeners();
