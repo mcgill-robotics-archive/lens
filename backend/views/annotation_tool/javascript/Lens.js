@@ -109,7 +109,7 @@ Lens.methods.initOverlayListener = function() {
  */
 Lens.methods.closePopUp = function() {
   var overlay = document.getElementById("overlay");
-  var popup = document.getElementById("popup");
+  var popup = document.getElementById("annotation-detail-popup");
 
   var firstRow = popup.getElementsByClassName('attribute-names')[0];
   var secondRow = popup.getElementsByClassName('attribute-values')[0];

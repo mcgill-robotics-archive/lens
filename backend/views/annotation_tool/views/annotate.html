@@ -133,7 +133,7 @@
   <!-- Configure this button to set the 'Tags' of the image -->
 
   <div id="overlay"></div>
-  <div id="popup">
+  <div id="annotation-detail-popup">
     <span id="close-button">
       <i class="fa fa-times"></i>
     </span>
@@ -154,5 +154,32 @@
       </span>
     </div>
   </div>
+
+  <div id="label-form-popup">
+    <br>
+    Select the appropriate annotation:
+    <div class="choose">
+
+    <select id="annotation-selection">
+      <option value='red buoy'>Red Buoy</option>
+      <option value='green buoy'>Green Buoy</option>
+      <option value='gate'>Gate</option>
+      <option value='left gate post'>Left Gate Post</option>
+      <option value='right gate post'>Right Gate Post</option>
+      <option value='lane'>Lane</option>
+    </select>
+    </div>
+
+    <div class="confirm-annotation">
+      <span id="confirm-annotation" class="confirm-annotation">
+        Confirm
+      </span>
+    </div>
+    <div class="cancel-annotation">
+      <span id="cancel-annotation" class="cancel-annotation">
+        Cancel <i class="fa fa-exclamation-triangle"></i>
+      </span>
+    </div>
+</div>
 </body>
 </html>

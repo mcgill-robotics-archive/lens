@@ -37,11 +37,6 @@ function Annotation (vertices) {
   this.height = heightPx / imageHeight;
 
   this.label = this.promptUserForLabel();
-  if (this.label) {
-    this.addLabel();
-  } else {
-    Lens.image.container.removeChild(this.svgGroup);
-  }
 }
 
 /**
@@ -97,7 +92,7 @@ Annotation.prototype.addLabel = function () {
 Annotation.prototype.displayAnnotationInfo = function (event){
   var annotation = this;
   var overlay = document.getElementById("overlay");
-  var popup = document.getElementById("popup");
+  var popup = document.getElementById("annotation-detail-popup");
 
   Annotation.prototype.addInfoToPopup(popup, annotation);
 
@@ -236,6 +231,24 @@ Annotation.prototype.getUsefullData = function() {
  * @return {string} label : The user entered annotation.
  */
 Annotation.prototype.promptUserForLabel = function(){
-  var label = prompt('Label:') || ''; // If canceled we return an empty string
-  return label.toLowerCase();
+  var overlay = document.getElementById("overlay");
+  var popup = document.getElementById("label-form-popup");
+  overlay.style.display = "block";
+  popup.style.display = "block";
+
+  var that = this;
+
+  document.getElementById('cancel-annotation').onclick = function () {
+    Lens.image.container.removeChild(that.svgGroup);
+    overlay.style.display = "none";
+    popup.style.display = "none";
+  }
+
+  document.getElementById('confirm-annotation').onclick = function () {
+    var selection = document.getElementById('annotation-selection');
+    that.label = selection.options[selection.selectedIndex].value;
+    that.addLabel();
+    overlay.style.display = "none";
+    popup.style.display = "none";
+  }
 };
