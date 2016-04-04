@@ -64,11 +64,17 @@ Annotation.prototype.addLabel = function () {
   var font = 15;
   label.innerHTML = this.label;
 
-  var leftXVertexPx = this.x * Lens.image.container.clientWidth;
-  var rightXVertexPx = this.y * Lens.image.container.clientHeight;
+  var leftVertexPx = this.x * Lens.image.container.clientWidth;
+  var topVertexPx = this.y * Lens.image.container.clientHeight;
 
-  label.setAttribute('x', leftXVertexPx + 7);
-  label.setAttribute('y', rightXVertexPx + font);
+  var widthPx = this.width * Lens.image.container.clientWidth;
+  var heightPx = this.height * Lens.image.container.clientHeight;
+
+  var centerX = leftVertexPx + widthPx / 2;
+  var centerY = topVertexPx - heightPx / 2
+
+  label.setAttribute('x', centerX);
+  label.setAttribute('y', centerY);
   label.setAttribute('font-size', font);
 
   label.setAttribute('img-offsetx', leftXVertexPx + 3);
