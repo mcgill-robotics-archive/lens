@@ -48,22 +48,21 @@ Frame.prototype.fitToPage = function() {
   image.style.width = "100%";
 
   var pageHeight = Number(window.innerHeight);
-  // We need to consider the height of the help text
-  var helpHeight = Number(document.getElementById('help').clientHeight);
-  var desiredHeight = pageHeight - helpHeight;
-  image.style.height = desiredHeight + "px";
+  image.style.height = pageHeight + "px";
 
   // Now we need to check the aspect ratio and adjust accordingly
-  var aspectRatio = image.clientWidth / image.clientHeight;
+  var imageWidth = image.clientWidth || image.parentElement.clientWidth;
+  var imageHeight = image.clientHeight || image.parentElement.clientHeight;
+  var aspectRatio = imageWidth / imageHeight;
 
   if (aspectRatio > Lens.image.aspectRatio) {
     // Limiting factor is height
-    var adjustedWidth = image.clientHeight * Lens.image.aspectRatio;
-    var adjustedWidthPercentage = adjustedWidth / image.clientWidth;
+    var adjustedWidth = imageHeight * Lens.image.aspectRatio;
+    var adjustedWidthPercentage = adjustedWidth / imageWidth;
     image.style.width = adjustedWidthPercentage * 100 + '%';
   } else {
     // Limiting factor is width
-    var adjustedHeight = image.clientWidth / Lens.image.aspectRatio;
+    var adjustedHeight = imageWidth / Lens.image.aspectRatio;
     image.style.height = adjustedHeight + 'px';
   }
 };

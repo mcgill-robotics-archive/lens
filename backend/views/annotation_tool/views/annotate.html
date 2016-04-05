@@ -2,14 +2,15 @@
 <html>
 <head>
   <title>McGill Robotics Lens</title>
+  <!--
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link
     href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700'
     rel='stylesheet' type='text/css'>
+  -->
   <link rel="stylesheet" type="text/css"
   href="{{ static_url("css/annotation_tool.css") }}">
-
   <!--
     The following script tag fetches the Lens.js script from
     annotation_tool/javascript. The script contains the pages
@@ -55,9 +56,9 @@
     }
   </script>
 
-  <link rel="stylesheet" href=
+  <!--<link rel="stylesheet" href=
   "https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
-  >
+  >-->
 </head>
 <body onload="Lens.methods.init()">
   <h3>McGill Robotics Lens</h3>
@@ -68,40 +69,44 @@
       <defs>
         <filter id="label-background-light" x="-0.1" y="0" width="1.2"
           height="1">
-          <feFlood flood-color="white" />
-          <feComposite in="SourceGraphic" />
+          <feFlood flood-color="white"></feFlood>
+          <feComposite in="SourceGraphic"></feComposite>
         </filter>
         <filter id="label-background-dark" x="-0.1" y="0" width="1.2"
           height="1">
-          <feFlood flood-color="black" />
-          <feComposite in="SourceGraphic" />
+          <feFlood flood-color="black"></feFlood>
+          <feComposite in="SourceGraphic"></feComposite>
         </filter>
       </defs>
     </svg>
   </div>
   <div id="sidebar">
-      <svg id="mr-logo" data-name="mr-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 455 455"><defs><style>.cls-1{fill:#fff;fill-rule:evenodd;}.cls-2{fill:none;}</style></defs><title>mr_logo</title><path id="_Compound_Path_" data-name="&lt;Compound Path&gt;" class="cls-1" d="M121.33,367.07h-72L30.19,378.36a5,5,0,0,0-2.46,4.31v27.6H142.94v-27.6a5,5,0,0,0-2.46-4.31l-19.14-11.29h0Zm230.46-252-0.06,158.35a36,36,0,0,1,43.13,0l0.06-158.34A36,36,0,1,0,351.79,115.11ZM49.33,359.87h72V335.19a5,5,0,0,0-2.47-4.31l-11.93-7h0V176.61L77.74,128.78a43,43,0,0,1-14-5.1V323.86h0l-11.94,7a5,5,0,0,0-2.47,4.31v24.67Zm302,25.42v17.36a5,5,0,0,1-4.22,4.94l-12.25,1.93a5,5,0,0,1-5.69-4l-13-67.52a5,5,0,0,1,1.37-4.48l21.17-21.17a36.08,36.08,0,0,0,22.11,23.71l-9.51,9.51v39.72Zm-6.84-266.85a43.31,43.31,0,0,1-9.17-11.54L232.7,274.48l4.18,6.86a43.23,43.23,0,0,1,29.65,20.55l78-127.33V118.44Zm63.54,194.16-6.24-6.23a28.81,28.81,0,1,0-21.89,23.91l15,15v57.34a5,5,0,0,0,4.22,4.94l12.6,2a5,5,0,0,0,5.69-4L430.39,338a5,5,0,0,0-1.38-4.48ZM233.75,288.15L118.62,100a36,36,0,1,0-37.08,22.07L196.28,309.58A36,36,0,1,0,233.75,288.15Z"/><rect id="_Slice_" data-name="&lt;Slice&gt;" class="cls-2" x="-5.61" y="450" width="486" height="57"/></svg>
+      <div>
+        <svg id="mr-logo" data-name="mr-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 455 455"><defs><style>.cls-1{fill:#fff;fill-rule:evenodd;}.cls-2{fill:none;}</style></defs><title>mr_logo</title><path id="_Compound_Path_" data-name="&lt;Compound Path&gt;" class="cls-1" d="M121.33,367.07h-72L30.19,378.36a5,5,0,0,0-2.46,4.31v27.6H142.94v-27.6a5,5,0,0,0-2.46-4.31l-19.14-11.29h0Zm230.46-252-0.06,158.35a36,36,0,0,1,43.13,0l0.06-158.34A36,36,0,1,0,351.79,115.11ZM49.33,359.87h72V335.19a5,5,0,0,0-2.47-4.31l-11.93-7h0V176.61L77.74,128.78a43,43,0,0,1-14-5.1V323.86h0l-11.94,7a5,5,0,0,0-2.47,4.31v24.67Zm302,25.42v17.36a5,5,0,0,1-4.22,4.94l-12.25,1.93a5,5,0,0,1-5.69-4l-13-67.52a5,5,0,0,1,1.37-4.48l21.17-21.17a36.08,36.08,0,0,0,22.11,23.71l-9.51,9.51v39.72Zm-6.84-266.85a43.31,43.31,0,0,1-9.17-11.54L232.7,274.48l4.18,6.86a43.23,43.23,0,0,1,29.65,20.55l78-127.33V118.44Zm63.54,194.16-6.24-6.23a28.81,28.81,0,1,0-21.89,23.91l15,15v57.34a5,5,0,0,0,4.22,4.94l12.6,2a5,5,0,0,0,5.69-4L430.39,338a5,5,0,0,0-1.38-4.48ZM233.75,288.15L118.62,100a36,36,0,1,0-37.08,22.07L196.28,309.58A36,36,0,1,0,233.75,288.15Z"></path><rect id="_Slice_" data-name="&lt;Slice&gt;" class="cls-2" x="-5.61" y="450" width="486" height="57"></rect></svg>
+    </div>
     <ul>
-      <li><h4>SELECTION TOOLS</li>
-      <li>
-        <button type="button" id="tool-rectangle" class="active"
-          onclick="Lens.methods.setShapeType('rectangle'); updateToolUI();">
-          Rectangle
-        </button>
-      </li>
-      <li>
-        <button type="button" id="tool-ellipse"
-          onclick="Lens.methods.setShapeType('ellipse'); updateToolUI();">
-          Circle
-        </button>
-      </li>
-      <li>
-        <!-- DISABLED FOR NOW -->
-        <button type="button" id="tool-polygon" disabled
-          onclick="Lens.methods.setShapeType('polygon'); updateToolUI();">
-          Polygon
-        </button>
-      </li>
+      <div id="top-sidebar">
+        <li><h4>SELECTION TOOLS</h4></li>
+        <li>
+          <button type="button" id="tool-ellipse" class="active"
+            onclick="Lens.methods.setShapeType('ellipse'); updateToolUI();">
+            Circle
+          </button>
+        </li>
+        <li>
+          <button type="button" id="tool-rectangle"
+            onclick="Lens.methods.setShapeType('rectangle'); updateToolUI();">
+            Rectangle
+          </button>
+        </li>
+        <li>
+          <!-- DISABLED FOR NOW -->
+          <button type="button" id="tool-polygon" disabled
+            onclick="Lens.methods.setShapeType('polygon'); updateToolUI();">
+            Polygon
+          </button>
+        </li>
+      </div>
 
       <div id="bottom">
         <li>
@@ -115,20 +120,9 @@
             Skip
           </button>
         </li>
-        <li>
-          <button type="button" onclick="window.open(Lens.issueUrl)">
-            Report Issue
-          </button>
-        </li>
       </div>
     </ul>
   </div>
-
-  <p id="help">
-    <b>Help: </b>
-    Click and drag on the image to select a region you wish to annotate.
-    You will be prompted to enter a label for the selected region.
-  </p>
 
   <!-- Configure this button to set the 'Tags' of the image -->
 
