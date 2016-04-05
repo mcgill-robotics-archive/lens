@@ -163,9 +163,9 @@ class BagsHandler(RequestHandler):
             tags = self.get_argument("tags_" + str(feed._id)).split(",")
             # Save tags to database
             for tag_name in tags:
-                tag_name_stripped = tag_name.strip()
-                if tag_name_stripped:
-                    tag = yield Tag.from_tag(tag_name_stripped)
+                tag_name_sanitized = tag_name.strip().lower()
+                if tag_name_sanitized:
+                    tag = yield Tag.from_tag(tag_name_sanitized)
                     feed.add_tag(tag)
 
         # Get all bag and feed data to display on web page
