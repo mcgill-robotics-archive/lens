@@ -18,7 +18,6 @@ from tornado.gen import coroutine, Return
 from motorengine import Document, fields, Q
 
 __author__ = "Anass Al-Wohoush, Monica Ung"
-__version__ = "0.4.0"
 
 lock = Lock()
 
@@ -93,11 +92,8 @@ class Frame(Document):
 
     @classmethod
     @coroutine
-    def next(cls, previous=None):
+    def next(cls):
         """Returns the optimal next frame to annotate.
-
-        Args:
-            previous: Object Id of previous frame annotated.
 
         Returns:
             Non-annotated frame.
@@ -113,31 +109,6 @@ class Frame(Document):
                 Q({"annotations": {"$size": 0}}) &
                 (Q(accessed__is_null=True) | Q(accessed__lt=cache))
             )
-
-        # Look for optimal frame following the previously annotated one.
-        if previous:
-            # Mark previous frame as used in order to prevent it from appearing
-            # as a next frame if no frame from the same video is found.
-            previous_frame = yield Frame.objects.get(id=previous)
-            previous_frame.use()
-
-            # Avoid querying for next frame while marking another frame in use.
-            with (yield lock.acquire()):
-                # Find next non-annotated frame from the same video with a
-                # greater index.
-                query = prepare_query() & Q(feed=previous_frame.feed)
-                next_frame = yield Frame.objects.filter(query).get(
-                    seq__gt=previous_frame.seq
-                )
-
-            # Return the frame if found and mark as in use.
-            if next_frame:
-                yield next_frame.use()
-                raise Return(next_frame)
-
-            # Find a new unrelated frame if the end of the video has been
-            # reached, otherwise.
-            logging.warn("Reached end of feed: %s", previous_frame.feed.name)
 
         # Avoid querying for next frame while marking another frame in use.
         with (yield lock.acquire()):
