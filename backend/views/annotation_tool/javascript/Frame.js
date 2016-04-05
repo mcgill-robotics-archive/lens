@@ -43,6 +43,9 @@ function Frame () {
 
 Frame.prototype.fitToPage = function() {
   var image = document.getElementById('annotate-img');
+  var prevHeight = image.clientHeight || image.parentElement.clientHeight;
+  var prevWidth = image.clientWidth || image.parentElement.clientWidth;
+
   image.style.backgroundSize = 'cover';
 
   image.style.width = "100%";
@@ -66,16 +69,21 @@ Frame.prototype.fitToPage = function() {
     image.style.height = adjustedHeight + 'px';
   }
 
-  var scaleFactor = Lens.image.aspectRatio / aspectRatio;
+  var currentHeight = image.clientHeight || image.parentElement.clientHeight;
+  var currentWidth = image.clientWidth || image.parentElement.clientWidth;
+
+  // Get the x and y scale factor
+  var scaleFactorX = currentWidth / prevWidth;
+  var scaleFactorY = currentHeight / prevHeight;
 
   // We also need to update the annotations, which we will do based on the
   // effective scale factor of the image.
   Lens.annotations.forEach(function(annotation, index, set) {
     // Determine the new coordinates
-    var x = annotation.x * imageWidth * scaleFactor;
-    var y = annotation.y * imageHeight * scaleFactor;
-    var width = annotation.width * imageWidth * scaleFactor;
-    var height = annotation.height * imageHeight * scaleFactor;
+    var x = annotation.x * imageWidth * scaleFactorX;
+    var y = annotation.y * imageHeight * scaleFactorY;
+    var width = annotation.width * imageWidth * scaleFactorX;
+    var height = annotation.height * imageHeight * scaleFactorY;
 
     // Remove the old svg element
     var previousBoxElement = annotation.boxElement;
