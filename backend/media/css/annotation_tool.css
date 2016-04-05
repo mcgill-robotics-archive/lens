@@ -270,7 +270,6 @@ div.confirm-annotation, div.cancel-annotation, div.delete-annotation{
   margin-right: 15px;
 }
 span.confirm-annotation, span.cancel-annotation, span.delete-annotation{
-  border-radius: 10px;
   padding: 10px 10px 10px 10px;
   font-weight: bold;
 }
@@ -281,7 +280,6 @@ span.confirm-annotation{
 
   width: 120px;
   height: 40px;
-  line-height: 36px;
   vertical-align: top;
 
   border: 2px solid #ffffff;
@@ -300,13 +298,15 @@ span.confirm-annotation{
 span.confirm-annotation:hover {
   background-color: #FFFFFF;
   color: #000000;
+  font-weight: bold;
+  cursor: pointer;
 }
 span.cancel-annotation{
+  float: right;
   box-sizing: border-box;
 
   width: 120px;
   height: 40px;
-  line-height: 36px;
   vertical-align: top;
 
   border: 2px solid #ffffff;
@@ -326,6 +326,7 @@ span.cancel-annotation:hover {
   background-color: #FFFFFF;
   color: #000000;
   font-weight: bold;
+  cursor: pointer;
 }
 span.delete-annotation{
   background-color: #ff0000;
