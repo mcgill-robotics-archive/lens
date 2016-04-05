@@ -60,6 +60,10 @@ h1#title {
   list-style: none;
   padding: 0; margin: 0;
 }
+#sidebar ul #top-sidebar {
+  position: absolute;
+  top: 0;
+}
 #sidebar ul #bottom {
   position: absolute;
   bottom: 0;
