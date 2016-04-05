@@ -75,17 +75,14 @@ h1#title {
 }
 
 #img-container {
-  position: absolute;
+  position: fixed;
   top: 0; bottom: 0; left: 0; right: 140px;
-
   background-color: #777;
-
-  overflow-y: auto;
 }
 #sidebar {
   box-sizing: border-box;
 
-  position: absolute;
+  position: fixed;
   top: 0; bottom: 0; right: 0;
   width: 140px;
   padding: 10px;
@@ -100,9 +97,13 @@ h1#title {
   list-style: none;
   padding: 0; margin: 0;
 }
+#sidebar ul #top-sidebar {
+  position: absolute;
+  margin-top: 10px;
+}
 #sidebar ul #bottom {
   position: absolute;
-  bottom: 0;
+  bottom: 0px;
 }
 #sidebar ul li {
   margin-bottom: 10px;
@@ -203,7 +204,6 @@ div.displayed {
 #annotate-img {
   background-size: 100% auto;
   background-repeat: no-repeat;
-  border: 1px solid #444;
   box-shadow: 0px 1px 3px rbga(0, 0, 0, 0.1);
 }
 

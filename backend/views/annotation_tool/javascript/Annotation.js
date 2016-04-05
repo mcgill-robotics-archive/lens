@@ -15,14 +15,14 @@ function Annotation (vertices) {
 
   this.type = Lens.shapeType;
   switch (this.type) {
-    case 'ellipse':
-      this.boxElement = this.drawEllipse(leftXVertexPx, bottomYVertexPx,
-        widthPx, heightPx);
-      break;
     case 'rectangle':
-    default:
       this.boxElement = this.drawBox(leftXVertexPx, bottomYVertexPx, widthPx,
         heightPx);
+      break;
+    case 'ellipse':
+    default:
+      this.boxElement = this.drawEllipse(leftXVertexPx, bottomYVertexPx,
+        widthPx, heightPx);
       break;
   }
 
