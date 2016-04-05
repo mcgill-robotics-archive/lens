@@ -19,9 +19,6 @@ class NextFrameHandler(RequestHandler):
     def get(self):
         """Returns next frame information.
 
-        Parameters:
-            previous: Unique object ID of previously viewed frame.
-
         Returns:
             application/json if found, 404 otherwise.
 
@@ -40,8 +37,7 @@ class NextFrameHandler(RequestHandler):
                     'accessed': datetime last accessed in ISO 8601
                 }
         """
-        previous = self.get_argument("previous", None)
-        frame = yield Frame.next(previous)
+        frame = yield Frame.next()
 
         if not frame:
             self.set_status(404)
