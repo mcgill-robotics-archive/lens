@@ -65,4 +65,34 @@ Frame.prototype.fitToPage = function() {
     var adjustedHeight = imageWidth / Lens.image.aspectRatio;
     image.style.height = adjustedHeight + 'px';
   }
+
+  var scaleFactor = Lens.image.aspectRatio / aspectRatio;
+
+  // We also need to update the annotations, which we will do based on the
+  // effective scale factor of the image.
+  Lens.annotations.forEach(function(annotation, index, set) {
+    // Determine the new coordinates
+    var x = annotation.x * imageWidth * scaleFactor;
+    var y = annotation.y * imageHeight * scaleFactor;
+    var width = annotation.width * imageWidth * scaleFactor;
+    var height = annotation.height * imageHeight * scaleFactor;
+
+    // Remove the old svg element
+    var previousBoxElement = annotation.boxElement;
+    annotation.svgGroup.removeChild(previousBoxElement);
+
+    // Draw a new svg element
+    switch (annotation.type) {
+      case 'rectangle':
+        annotation.boxElement = annotation.drawBox(x, y, width, height);
+        break;
+      case 'ellipse':
+      default:
+        annotation.boxElement = annotation.drawEllipse(x, y, width, height);
+        break;
+    }
+
+    // Add the newly created svg element
+    annotation.svgGroup.appendChild(annotation.boxElement);
+  });
 };
