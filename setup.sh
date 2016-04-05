@@ -38,7 +38,10 @@ sudo rm -f /etc/nginx/conf/nginx.conf
 sudo ln -s $(pwd)/nginx/nginx.conf /etc/nginx/conf/nginx.conf
 
 # Create logging directory.
-sudo mkdir /var/log/nginx
+sudo mkdir -p /var/log/nginx
+
+# Clean up.
+sudo rm -rf /tmp/pcre* /tmp/nginx-*
 
 # Install MongoDB.
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
@@ -48,4 +51,4 @@ sudo apt-get update
 sudo apt-get install -y mongodb-org
 
 # Install pip dependencies.
-sudo pip -H install -r backend/requirements.txt
+sudo -H pip install -r backend/requirements.txt
