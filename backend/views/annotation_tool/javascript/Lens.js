@@ -11,7 +11,7 @@ var Lens = {
   annotations: [],
   user: null,
   methods : {},
-  shapeType : 'rectangle'
+  shapeType : 'ellipse'
 };
 
 
