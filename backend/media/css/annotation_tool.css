@@ -277,19 +277,50 @@ span.confirm-annotation, span.cancel-annotation, span.delete-annotation{
 
 span.confirm-annotation{
   float: left;
-  background-color: #66ff66;
-  color: #000000;
-  border: 3px solid #66ff66;
+  box-sizing: border-box;
+
+  width: 120px;
+  height: 40px;
+  line-height: 36px;
+  vertical-align: top;
+
+  border: 2px solid #ffffff;
+  background-color: #1b1b1b;
+
+  font-family: "Open Sans Condensed", sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #f9f9f9;
+
+  outline: none;
+
+  transition: background-color 0.15s;
 }
 span.confirm-annotation:hover {
   background-color: #FFFFFF;
   color: #000000;
 }
 span.cancel-annotation{
-  float: right;
-  background-color: #ffff66;
-  color: #000000;
-  border: 3px solid #ffff66;
+  box-sizing: border-box;
+
+  width: 120px;
+  height: 40px;
+  line-height: 36px;
+  vertical-align: top;
+
+  border: 2px solid #ffffff;
+  background-color: #1b1b1b;
+
+  font-family: "Open Sans Condensed", sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #f9f9f9;
+
+  outline: none;
+
+  transition: background-color 0.15s;
 }
 span.cancel-annotation:hover {
   background-color: #FFFFFF;
