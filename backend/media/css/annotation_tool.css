@@ -62,11 +62,11 @@ h1#title {
 }
 #sidebar ul #top-sidebar {
   position: absolute;
-  top: 0;
+  margin-top: 10px;
 }
 #sidebar ul #bottom {
   position: absolute;
-  bottom: 0;
+  bottom: 0px;
 }
 #sidebar ul li {
   margin-bottom: 10px;
