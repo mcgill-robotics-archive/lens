@@ -146,6 +146,7 @@ class BagsHandler(RequestHandler):
         robot = self.get_argument("robot")
         location = self.get_argument("location")
         conditions = self.get_argument("conditions").split(",")
+
         # Get bag and update it
         bag = yield Bag.get_bag(bag_id)
         bag.name = name
@@ -159,11 +160,12 @@ class BagsHandler(RequestHandler):
         for feed in related_feeds:
             # Clear existing tags in case any tags were deleted in the form
             feed.clear_tags()
-            tags = self.get_argument("tags_" + str(feed._id)).split(" ")
+            tags = self.get_argument("tags_" + str(feed._id)).split(",")
             # Save tags to database
             for tag_name in tags:
-                if tag_name:
-                    tag = yield Tag.from_tag(tag_name)
+                tag_name_stripped = tag_name.strip()
+                if tag_name_stripped:
+                    tag = yield Tag.from_tag(tag_name_stripped)
                     feed.add_tag(tag)
 
         # Get all bag and feed data to display on web page
