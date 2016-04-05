@@ -48,10 +48,7 @@ Frame.prototype.fitToPage = function() {
   image.style.width = "100%";
 
   var pageHeight = Number(window.innerHeight);
-  // We need to consider the height of the help text
-  var helpHeight = Number(document.getElementById('help').clientHeight);
-  var desiredHeight = pageHeight - helpHeight;
-  image.style.height = desiredHeight + "px";
+  image.style.height = pageHeight + "px";
 
   // Now we need to check the aspect ratio and adjust accordingly
   var aspectRatio = image.clientWidth / image.clientHeight;
