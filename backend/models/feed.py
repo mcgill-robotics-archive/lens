@@ -33,7 +33,7 @@ class Feed(Document):
             "id": str(self._id),
             "bag": self.bag.dump(),
             "topic": self.topic,
-            "available_tags": self.available_tags
+            "available_tags": [t.dump() for t in self.available_tags]
         }
 
     @classmethod
