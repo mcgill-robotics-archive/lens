@@ -37,10 +37,7 @@ h1#title {
 #img-container {
   position: absolute;
   top: 0; bottom: 0; left: 0; right: 140px;
-
   background-color: #777;
-
-  overflow-y: auto;
 }
 #sidebar {
   box-sizing: border-box;
