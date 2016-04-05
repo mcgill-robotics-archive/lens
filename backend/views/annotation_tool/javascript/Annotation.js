@@ -128,6 +128,12 @@ Annotation.prototype.addInfoToPopup = function (popup, annotation) {
   	  attributeName.innerHTML = keys;
   	  attributeName.setAttribute('class', 'annotation-attribs');
   	  var attributeValue = document.createElement('td');
+
+      // Display numbers as percentages with one decimal of precision
+      if (['x', 'y', 'height', 'width'].indexOf(keys) !== -1) {
+        value = String(Math.round(Number(metadata[keys]) * 1000) / 10) + '%';
+      }
+
   	  attributeValue.innerHTML = metadata[keys];
   	  attributeValue.setAttribute('class', 'annotation-vals');
   	  firstRow.appendChild(attributeName);
