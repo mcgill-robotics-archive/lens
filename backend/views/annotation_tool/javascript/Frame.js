@@ -80,18 +80,12 @@ Frame.prototype.fitToPage = function () {
   var currentHeight = image.clientHeight || image.parentElement.clientHeight;
   var currentWidth = image.clientWidth || image.parentElement.clientWidth;
 
-  // Get the x and y scale factor
-  var scaleFactorX = currentWidth / prevWidth;
-  var scaleFactorY = currentHeight / prevHeight;
-
-  // We also need to update the annotations, which we will do based on the
-  // effective scale factor of the image.
+  // Now we re-write the annotations based on the adjusted size of the image
   Lens.annotations.forEach(function(annotation, index, set) {
-    // Determine the new coordinates
-    var x = annotation.x * imageWidth * scaleFactorX;
-    var y = annotation.y * imageHeight * scaleFactorY;
-    var width = annotation.width * imageWidth * scaleFactorX;
-    var height = annotation.height * imageHeight * scaleFactorY;
+    var x = annotation.x * imageWidth;
+    var y = annotation.y * imageHeight;
+    var width = annotation.width * imageWidth;
+    var height = annotation.height * imageHeight;
 
     // Remove the old svg element
     var previousBoxElement = annotation.boxElement;
