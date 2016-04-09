@@ -1,47 +1,55 @@
 'use strict';
+
+/* global Annotation, Lens */
+
 /**
- * Constructs the image object which is basically
- * just a container for the image
- * and the annotation table.
+ * Constructs a frame object which gets a new frame from the database and
+ * sets up appropriate layout handlers.
+ *
  * @author Malcolm Watt
  * @constructor
  */
 function Frame () {
   this.container = document.getElementById('annotate-img');
   this.aspectRatio;
-  resolveImage();
 
-  /**
-   * Requests the next frame from the database via XMLHttpRequest.
-   * @author Malcolm Watt
-   */
-  function resolveImage() {
-    var req = new XMLHttpRequest();
-    req.addEventListener('load', setBackgroundImage);
-    // Make an assynchronous request for the next frame
-    req.open("GET", '/next', true);
-    req.send();
-  };
-
-  /**
-   * Sets the `background-img` property of the main SVG tag.
-   * @author Malcolm Watt
-   */
-  function setBackgroundImage() {
-    var frameInfo = JSON.parse(this.responseText);
-    Lens.frameId = frameInfo.id;
-    var url = '/image/' + Lens.frameId;
-    Lens.image.container.style.backgroundImage = 'url(' + url + ')';
-    var img = document.createElement('img');
-    img.onload = function () {
-      Lens.image.aspectRatio = img.width / img.height;
-      Lens.image.fitToPage();
-    }
-    img.src = url;
-  };
+  // Request the next frame
+  var req = new XMLHttpRequest();
+  req.addEventListener('load', setBackgroundImage);
+  // Make an assynchronous request for the next frame
+  req.open("GET", '/next', true);
+  req.send();
 }
 
-Frame.prototype.fitToPage = function() {
+
+/**
+ * Sets the `background-img` property of the main SVG tag.
+ *
+ * @author Malcolm Watt
+ * @return undefined
+ */
+Frame.prototype.setBackgroundImage = function () {
+  var frameInfo = JSON.parse(this.responseText);
+  Lens.frameId = frameInfo.id;
+  var url = '/image/' + Lens.frameId;
+  Lens.image.container.style.backgroundImage = 'url(' + url + ')';
+  var img = document.createElement('img');
+  img.onload = function () {
+    Lens.image.aspectRatio = img.width / img.height;
+    Lens.image.fitToPage();
+  }
+  img.src = url;
+};
+
+
+/**
+ * Dynamically fits the frame to the user's page to allow easy annotation of
+ * frames. Maintains aspect ratio.
+ *
+ * @author Malcolm Watt
+ * @return undefined
+ */
+Frame.prototype.fitToPage = function () {
   var image = document.getElementById('annotate-img');
   var prevHeight = image.clientHeight || image.parentElement.clientHeight;
   var prevWidth = image.clientWidth || image.parentElement.clientWidth;

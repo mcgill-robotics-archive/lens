@@ -1,7 +1,10 @@
 'use strict';
+
+/* global Frame, Annotation */
+
 /**
- * Lens Global stores all data & functionality related to Lens appart from
- * constructors and class methods.
+ * Lens Global stores all data & functionality related to Lens.
+ *
  * @author Malcolm Watt
  */
 var Lens = {
@@ -17,6 +20,7 @@ var Lens = {
 
 /**
  * Initialize the page property and add all required event listeners.
+ *
  * @author Malcolm Watt
  * @return undefined
  */
@@ -28,9 +32,9 @@ Lens.methods.init = function() {
 },
 
 
-
 /**
  * Submit the annotations from the annotation table to the backend.
+ *
  * @author Malcolm Watt
  * @param  {boolean} interesting :
  * If the `Not Interesting` button is pressed then this is true.
@@ -45,6 +49,7 @@ Lens.methods.submit = function(interesting) {
 
 /**
  * Reset globals and get new frame from database.
+ *
  * @author Malcolm Watt
  * @return undefined
  */
@@ -60,6 +65,7 @@ Lens.methods.reload = function() {
 
 /**
  * Gets the annotations and tags to the backend.
+ *
  * @author Malcolm Watt
  * @param  {boolean} interesting :
  * If the `Not Interesting` button is pressed then this is true.
@@ -76,13 +82,13 @@ Lens.methods.formatData = function(interesting) {
     description.tags.push(element.label);
   });
 
-  console.log(description);
   return JSON.stringify(description);
 },
 
 /**
  * Initialize the event listeners relevant to the selection of regions on
  * the image.
+ *
  * @author Malcolm Watt
  * @return undefined
  */
@@ -94,6 +100,7 @@ Lens.methods.initializeImageListeners = function() {
 
 /**
  * Add the close button listener to the pop up element.
+ *
  * @author Malcolm Watt
  * @return undefined
  */
@@ -104,6 +111,7 @@ Lens.methods.initOverlayListener = function() {
 /**
  * Removes all columns except the defaults from the table in the pop up,
  * then sets the display to none, rendering the pop up invisible.
+ *
  * @author Malcolm Watt
  * @return undefined
  */
@@ -137,6 +145,7 @@ Lens.methods.closePopUp = function() {
 /**
  * Sets the starting point (x and y) of the Lens object when the
  * image is clicked.
+ *
  * @author Malcolm Watt
  * @param  {MouseEvent} event
  *        : The event object containing all relevant event data.
@@ -197,6 +206,7 @@ Lens.methods.imageDownClickListener = function(event) {
 
   /**
    * Handles drawing of perimeter during mouse movement.
+   *
    * @author David Lougheed
    * @param {Event} _event : The Event object
    * @return undefined
@@ -228,6 +238,7 @@ Lens.methods.imageDownClickListener = function(event) {
 
   /**
    * Handles the release of the click.
+   *
    * @author Malcolm Watt
    * @param  {Event} _event : The Event object
    */
@@ -280,17 +291,25 @@ Lens.methods.imageDownClickListener = function(event) {
     removeClickReleaseListeners();
   }
 
+
+  /**
+   * Utility method which removes the event listeners previously
+   * placed on the image.
+   *
+   * @author Malcolm Watt
+   * @return undefined
+   */
   function removeClickReleaseListeners() {
     var image = Lens.image.container;
     image.removeEventListener('mouseup', imageReleaseClickListener);
     document.removeEventListener('mouseup', removeClickReleaseListeners);
     document.removeEventListener('mouseup', missedReleaseClickListener);
-
     image.removeEventListener('mousemove', imageMouseMoveListener);
   }
 
   /**
    * Handles a 'missed' click on the document outside of the image.
+   *
    * @author David Lougheed
    * @return undefined
    */
