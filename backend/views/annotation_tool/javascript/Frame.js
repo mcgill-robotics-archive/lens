@@ -11,7 +11,7 @@
  */
 function Frame () {
   this.container = document.getElementById('annotate-img');
-  this.container.onresize = this.resizeAnnotations;
+  this.container.SVGResize = this.resizeAnnotations;
   this.aspectRatio;
 
   // Request the next frame
