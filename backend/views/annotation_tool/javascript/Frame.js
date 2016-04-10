@@ -11,7 +11,6 @@
  */
 function Frame () {
   this.container = document.getElementById('annotate-img');
-  this.container.SVGResize = this.resizeAnnotations;
   this.aspectRatio;
 
   // Request the next frame
@@ -77,6 +76,10 @@ Frame.prototype.resizeFrame = function () {
     var adjustedHeight = imageWidth / Lens.image.aspectRatio;
     image.style.height = adjustedHeight + 'px';
   }
+  
+  // This hack a symptom of a bad approach to the resizing problem. 
+  // We need to wait for the SVG element to actually change size in DOM.
+  window.setTimeout(Lens.image.resizeAnnotations, 1);
 };
 
 
@@ -89,8 +92,8 @@ Frame.prototype.resizeFrame = function () {
 Frame.prototype.resizeAnnotations = function() {
   var image = document.getElementById('annotate-img');
 
-  var currentHeight = image.clientHeight || image.parentElement.clientHeight;
-  var currentWidth = image.clientWidth || image.parentElement.clientWidth;
+  var imageHeight = image.clientHeight || image.parentElement.clientHeight;
+  var imageWidth = image.clientWidth || image.parentElement.clientWidth;
 
   // Now we re-write the annotations based on the adjusted size of the image
   Lens.annotations.forEach(function(annotation, index, set) {

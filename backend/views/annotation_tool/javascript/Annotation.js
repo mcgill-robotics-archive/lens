@@ -36,7 +36,7 @@ function Annotation (vertices) {
   var img = Lens.image.container;
 
   var imageWidth = img.clientWidth || img.parentNode.clientWidth;
-  var imageHeight = img.clentHeight || img.parentNode.clientHeight;
+  var imageHeight = img.clientHeight || img.parentNode.clientHeight;
 
   // The values below are stored as decimals between 0 and 1 (easily conv. to %)
   this.x = leftXVertexPx / imageWidth;
