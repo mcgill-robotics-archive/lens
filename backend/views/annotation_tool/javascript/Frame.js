@@ -15,7 +15,7 @@ function Frame () {
 
   // Request the next frame
   var req = new XMLHttpRequest();
-  req.addEventListener('load', setBackgroundImage);
+  req.addEventListener('load', this.setBackgroundImage);
   // Make an assynchronous request for the next frame
   req.open("GET", '/next', true);
   req.send();
