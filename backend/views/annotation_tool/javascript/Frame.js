@@ -11,6 +11,7 @@
  */
 function Frame () {
   this.container = document.getElementById('annotate-img');
+  this.container.onresize = this.resizeAnnotations;
   this.aspectRatio;
 
   // Request the next frame
@@ -36,7 +37,7 @@ Frame.prototype.setBackgroundImage = function () {
   var img = document.createElement('img');
   img.onload = function () {
     Lens.image.aspectRatio = img.width / img.height;
-    Lens.image.fitToPage();
+    Lens.image.resizeFrame();
   }
   img.src = url;
 };
@@ -49,7 +50,7 @@ Frame.prototype.setBackgroundImage = function () {
  * @author Malcolm Watt
  * @return undefined
  */
-Frame.prototype.fitToPage = function () {
+Frame.prototype.resizeFrame = function () {
   var image = document.getElementById('annotate-img');
   var prevHeight = image.clientHeight || image.parentElement.clientHeight;
   var prevWidth = image.clientWidth || image.parentElement.clientWidth;
@@ -76,6 +77,17 @@ Frame.prototype.fitToPage = function () {
     var adjustedHeight = imageWidth / Lens.image.aspectRatio;
     image.style.height = adjustedHeight + 'px';
   }
+};
+
+
+/**
+ * Remake the annotation borders based on the newly resized image.
+ *
+ * @author Malcolm Watt
+ * @return undefined
+ */
+Frame.prototype.resizeAnnotations = function() {
+  var image = document.getElementById('annotate-img');
 
   var currentHeight = image.clientHeight || image.parentElement.clientHeight;
   var currentWidth = image.clientWidth || image.parentElement.clientWidth;
