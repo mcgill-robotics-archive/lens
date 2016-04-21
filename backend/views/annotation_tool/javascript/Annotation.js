@@ -1,12 +1,14 @@
-'use strict';
+/**
+ * @file Implements the main Annotation data structure for Lens.
+ * @authors: Malcolm Watt, David Lougheed
+ * @global: Frame, Lens
+ */
 
-/* global Frame, Lens */
+'use strict';
 
 /**
  * This object encapsulates all data and fuctionality relevant to the
  * annotation by the user.
- *
- * @author Malcolm Watt
  * @param {object} vertices : Describes the endpoints of the user's clicks.
  * @constructor
  */
@@ -51,8 +53,6 @@ function Annotation (vertices) {
 /**
  * Creates an SVG Group to store our SVG Elements (text for the tag and shape
  * for the actual visual delimiter) for this particular annotation.
- *
- * @author Malcolm Watt
  * @return {object} group : The DOM element for the SVG Group.
  * @classmethod
  */
@@ -68,8 +68,6 @@ Annotation.prototype.constructGroup = function() {
 /**
  * This function creates a text element with the current label and positions it
  * along side the actual shape that we have just created.
- *
- * @author Malcolm Watt
  * @return undefined
  */
 Annotation.prototype.addLabel = function () {
@@ -106,8 +104,6 @@ Annotation.prototype.addLabel = function () {
 /**
  * Populates the info of the pop up based on the clicked annotation and makes
  * the pop up visible.
- *
- * @author Malcolm Watt
  * @param  {MouseEvent} event
  *         : The event object containing all relevant event data to click.
  * @return undefined
@@ -131,8 +127,6 @@ Annotation.prototype.displayAnnotationInfo = function (event){
 
 /**
  * Use the grouped annotation data, and append this info into the popup div.
- *
- * @author Malcolm Watt
  * @return undefined
  */
 Annotation.prototype.addInfoToPopup = function (popup) {
@@ -166,8 +160,6 @@ Annotation.prototype.addInfoToPopup = function (popup) {
 
 /**
  * Uses the coordinates, width and height to draw containing region.
- *
- * @author Malcolm Watt
  * @param {Integer} x - The horizontal position of the leftmost line in px.
  * @param {Integer} y - The vertical position of the top line in px.
  * @param {Integer} width - The width of the box
@@ -198,8 +190,6 @@ Annotation.prototype.drawBox = function (x, y, width, height) {
 
 /**
  * Uses the coordinates, width and height to draw a containing ellipse.
- *
- * @author David Lougheed
  * @return {object} ellipse : The SVG element for drawn ellipse.
  */
 Annotation.prototype.drawEllipse = function(x, y, width, height) {
@@ -227,8 +217,6 @@ Annotation.prototype.drawEllipse = function(x, y, width, height) {
 /**
  * Remove the current annotation from the page both from the ui, as well as
  * from the dataset that will be submitted to the backend.
- *
- * @author Malcolm Watt
  * @return undefined
  */
 Annotation.prototype.delete = function() {
@@ -249,8 +237,6 @@ Annotation.prototype.delete = function() {
 
 /**
  * Returns an object containing the important information for the database.
- *
- * @author Malcolm Watt
  * @return {Object} The current annotation's relevant information.
  */
 Annotation.prototype.getUsefullData = function() {
@@ -266,8 +252,6 @@ Annotation.prototype.getUsefullData = function() {
 
 /**
  * Requests that the user enter a label for the selected region.
- *
- * @author  Malcolm Watt
  * @return {string} label : The user entered annotation.
  */
 Annotation.prototype.promptUserForLabel = function(){

@@ -1,12 +1,14 @@
+/**
+ * @file Implements frontend Frame requests and handling.
+ * @author: Malcolm Watt
+ * @global: Annotation, Lens
+ */
+
 'use strict';
 
-/* global Annotation, Lens */
-
 /**
- * Constructs a frame object which gets a new frame from the database and
- * sets up appropriate layout handlers.
- *
- * @author Malcolm Watt
+ * Constructs the image object which is basically just a container for
+ * the image and the annotation table.
  * @constructor
  */
 function Frame () {
@@ -25,7 +27,6 @@ function Frame () {
 /**
  * Sets the `background-img` property of the main SVG tag.
  *
- * @author Malcolm Watt
  * @return undefined
  */
 Frame.prototype.setBackgroundImage = function () {
@@ -46,7 +47,6 @@ Frame.prototype.setBackgroundImage = function () {
  * Dynamically fits the frame to the user's page to allow easy annotation of
  * frames. Maintains aspect ratio.
  *
- * @author Malcolm Watt
  * @return undefined
  */
 Frame.prototype.resizeFrame = function () {
@@ -76,8 +76,8 @@ Frame.prototype.resizeFrame = function () {
     var adjustedHeight = imageWidth / Lens.image.aspectRatio;
     image.style.height = adjustedHeight + 'px';
   }
-  
-  // This hack a symptom of a bad approach to the resizing problem. 
+
+  // This hack a symptom of a bad approach to the resizing problem.
   // We need to wait for the SVG element to actually change size in DOM.
   window.setTimeout(Lens.image.resizeAnnotations, 1);
 };
@@ -86,7 +86,6 @@ Frame.prototype.resizeFrame = function () {
 /**
  * Remake the annotation borders based on the newly resized image.
  *
- * @author Malcolm Watt
  * @return undefined
  */
 Frame.prototype.resizeAnnotations = function() {
