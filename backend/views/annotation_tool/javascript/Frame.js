@@ -26,20 +26,24 @@ function Frame () {
 
 /**
  * Sets the `background-img` property of the main SVG tag.
- *
+ * @this: Reffers to the HTTP response object.
  * @return undefined
  */
 Frame.prototype.setBackgroundImage = function () {
-  var frameInfo = JSON.parse(this.responseText);
-  Lens.frameId = frameInfo.id;
-  var url = '/image/' + Lens.frameId;
-  Lens.image.container.style.backgroundImage = 'url(' + url + ')';
-  var img = document.createElement('img');
-  img.onload = function () {
-    Lens.image.aspectRatio = img.width / img.height;
-    Lens.image.resizeFrame();
+  if (this.status !== 500 && this.status !== 404){
+    var frameInfo = JSON.parse(this.responseText);
+    Lens.frameId = frameInfo.id;
+    var url = '/image/' + Lens.frameId;
+    Lens.image.container.style.backgroundImage = 'url(' + url + ')';
+    var img = document.createElement('img');
+    img.onload = function () {
+      Lens.image.aspectRatio = img.width / img.height;
+      Lens.image.resizeFrame();
+    }
+    img.src = url;
+  } else {
+    // Handle errors
   }
-  img.src = url;
 };
 
 
