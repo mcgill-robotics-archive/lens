@@ -82,7 +82,7 @@ Annotation.prototype.addLabel = function () {
   var heightPx = this.height * Lens.image.container.clientHeight;
 
   var centerX = leftVertexPx + widthPx / 2;
-  var centerY = topVertexPx - heightPx / 2
+  var centerY = topVertexPx + heightPx / 2;
 
   label.setAttribute('x', centerX);
   label.setAttribute('y', centerY);
