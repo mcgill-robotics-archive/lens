@@ -1,9 +1,14 @@
+/**
+ * @file Implements frontend Frame requests and handling.
+ * @author: Malcolm Watt
+ */
+
 'use strict';
+
 /**
  * Constructs the image object which is basically
  * just a container for the image
  * and the annotation table.
- * @author Malcolm Watt
  * @constructor
  */
 function Frame () {
@@ -13,7 +18,6 @@ function Frame () {
 
   /**
    * Requests the next frame from the database via XMLHttpRequest.
-   * @author Malcolm Watt
    */
   function resolveImage() {
     var req = new XMLHttpRequest();
@@ -25,9 +29,9 @@ function Frame () {
 
   /**
    * Sets the `background-img` property of the main SVG tag.
-   * @author Malcolm Watt
    */
   function setBackgroundImage() {
+    if (this.status === )
     var frameInfo = JSON.parse(this.responseText);
     Lens.frameId = frameInfo.id;
     var url = '/image/' + Lens.frameId;
