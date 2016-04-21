@@ -106,8 +106,8 @@ Frame.prototype.resizeAnnotations = function() {
     var height = annotation.height * imageHeight;
 
     // Remove the old svg element
-    var previousBoxElement = annotation.boxElement;
-    annotation.svgGroup.removeChild(previousBoxElement);
+    var previousBox = annotation.boxElement;
+    annotation.svgGroup.removeChild(previousBox);
 
     // Draw a new svg element
     switch (annotation.type) {
@@ -120,7 +120,14 @@ Frame.prototype.resizeAnnotations = function() {
         break;
     }
 
-    // Add the newly created svg element
+    // Add the newly created svg shape element
     annotation.svgGroup.appendChild(annotation.boxElement);
+
+    // Remove the label SVG Text element from the SVG Group.
+    var previousLabel = annotation.svgGroup.querySelector('text');
+    annotation.svgGroup.removeChild(previousLabel);
+
+    // Add a new label, which will adjust dimensions automatically.
+    annotation.addLabel.call(annotation);
   });
 };
