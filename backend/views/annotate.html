@@ -10,27 +10,16 @@
     rel='stylesheet' type='text/css'>
   -->
   <link rel="stylesheet" type="text/css"
-  href="{{ static_url("css/annotation_tool.css") }}">
-  <!--
-    The following script tag fetches the Lens.js script from
-    annotation_tool/javascript. The script contains the pages
-    event listeners and is the driver of the annotation tool.
-    Its entry point is the Lens.methods.init method, which is
-    triggered by the onload event of the body.
-   -->
-  <script type="text/javascript" src="?script=Lens.js"></script>
+    href="{{ static_url("css/annotation_tool.css") }}">
 
+  <script type="text/javascript"
+    src="{{ static_url("javascript/lens.js") }}"></script>
 
-  <!--
-    The image class contains the container for the image
-    as well as the Annotation table data.
-  -->
-  <script type="text/javascript" src="?script=Frame.js"></script>
+  <script type="text/javascript"
+    src="{{ static_url("javascript/frame.js") }}"></script>
 
-  <!--
-    The Annotation is an Object template for the Annotations of the image.
-  -->
-  <script type="text/javascript" src="?script=Annotation.js"></script>
+  <script type="text/javascript"
+    src="{{ static_url("javascript/annotation.js") }}"></script>
 
   <script type="text/javascript">
     function updateToolUI() {

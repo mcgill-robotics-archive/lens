@@ -2,34 +2,35 @@
 
 """Lens UI."""
 
-import logging
 from tornado.gen import coroutine
 from tornado.web import RequestHandler
-from image import ImageHandler
-from nextframe import NextFrameHandler
-from helpers import Encoder
-from models import Frame
 import json
 
 __author__ = "Malcolm Watt"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 class LensUIHandler(RequestHandler):
-    VIEWS_DIR = "views/"
-    SOURCE_DIR = "javascript/"
-
-    def get_template_path(self):
-        """ Overide the template path for Lens.
+    @coroutine
+    def prepare(self):
+        """ Parse JSON request bodies to allow access to form data.
         """
-        return "views/annotation_tool"
+        is_json_req = self.request.headers["Content-Type"].
+            startswith("application/json")
+
+        if self.request.method == "POST" and is_json_req:
+            self.json_args = json.loads(self.request.body)
+        else
+            self.json_args = None
+
 
     @coroutine
     def get(self):
-        """ Handles annotation tool application and client script dispatching.
+        """ Handles annotation tool application template dispatch
         """
-        # scripts are accessed with urls of form : [..]/lens?script=name.js
-        script_id = self.get_query_argument('script', None)
-        if (script_id):
-            self.render(LensUIHandler.SOURCE_DIR + script_id);
-        else:
-            self.render(LensUIHandler.VIEWS_DIR + 'annotate.html')
+        self.render('annotate.html')
+
+    @coroutine
+    def post(self):
+        """ Writes the metadata for the annotated frame to the database.
+        """
+        pass
