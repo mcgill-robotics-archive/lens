@@ -7,8 +7,7 @@
 'use strict';
 
 /**
- * Lens Global stores all data & functionality related to Lens appart from
- * constructors and class methods.
+ * Lens Global stores all data & functionality related to Lens.
  */
 var Lens = {
   issueUrl : "https://github.com/mcgill-robotics/lens/issues/new",
@@ -29,9 +28,8 @@ Lens.methods.init = function() {
   Lens.image = new Frame();
   Lens.methods.initializeImageListeners();
   Lens.methods.initOverlayListener();
-  window.onresize = Lens.image.fitToPage; // Add resize listener
+  window.onresize = Lens.image.resizeFrame; // Add resize listener
 },
-
 
 
 /**
@@ -78,7 +76,6 @@ Lens.methods.formatData = function(interesting) {
     description.tags.push(element.label);
   });
 
-  console.log(description);
   return JSON.stringify(description);
 },
 
@@ -108,7 +105,7 @@ Lens.methods.initOverlayListener = function() {
  */
 Lens.methods.closePopUp = function() {
   var overlay = document.getElementById("overlay");
-  var popup = document.getElementById("popup");
+  var popup = document.getElementById("annotation-detail-popup");
 
   var firstRow = popup.getElementsByClassName('attribute-names')[0];
   var secondRow = popup.getElementsByClassName('attribute-values')[0];
@@ -271,17 +268,14 @@ Lens.methods.imageDownClickListener = function(event) {
         endX: endX,
         endY: endY
       });
-
-      if (annotation.label) {
-        Lens.annotations.push(annotation);
-      }
     }
 
     removeClickReleaseListeners();
   }
 
   /**
-   * Removes all click listeners such that they do not culmulate on missclicks.
+   * Utility method which removes the event listeners previously
+   * placed on the image.
    * @return undefined
    */
   function removeClickReleaseListeners() {
@@ -289,7 +283,6 @@ Lens.methods.imageDownClickListener = function(event) {
     image.removeEventListener('mouseup', imageReleaseClickListener);
     document.removeEventListener('mouseup', removeClickReleaseListeners);
     document.removeEventListener('mouseup', missedReleaseClickListener);
-
     image.removeEventListener('mousemove', imageMouseMoveListener);
   }
 

@@ -7,18 +7,21 @@
 'use strict';
 
 /**
- * Stores all data relevant to the annotation by the user.
+ * This object encapsulates all data and fuctionality relevant to the
+ * annotation by the user.
  * @param {object} vertices : Describes the endpoints of the user's clicks.
  * @constructor
  */
 function Annotation (vertices) {
-  this.svgGroup = this.constructGroup();
+  this.svgGroup = this.constructGroup(); // Creates an SVG group
+
   // The Px suffix denotes that the unit is pixels
   var leftXVertexPx = Math.min(vertices.startX, vertices.endX);
   var bottomYVertexPx = Math.min(vertices.startY, vertices.endY);
   var widthPx = Math.abs(vertices.endX - vertices.startX);
   var heightPx = Math.abs(vertices.endY - vertices.startY);
 
+  // Handles the drawing of different shape types
   this.type = Lens.shapeType;
   switch (this.type) {
     case 'rectangle':
@@ -34,26 +37,24 @@ function Annotation (vertices) {
 
   var img = Lens.image.container;
 
-
   var imageWidth = img.clientWidth || img.parentNode.clientWidth;
-  var imageHeight = img.clentHeight || img.parentNode.clientHeight;
+  var imageHeight = img.clientHeight || img.parentNode.clientHeight;
+
+  // The values below are stored as decimals between 0 and 1 (easily conv. to %)
   this.x = leftXVertexPx / imageWidth;
   this.y = bottomYVertexPx / imageHeight;
   this.width = widthPx / imageWidth;
   this.height = heightPx / imageHeight;
 
   this.label = this.promptUserForLabel();
-  if (this.label) {
-    this.addLabel();
-  } else {
-    Lens.image.container.removeChild(this.svgGroup);
-  }
 }
+
 
 /**
  * Creates an SVG Group to store our SVG Elements (text for the tag and shape
  * for the actual visual delimiter) for this particular annotation.
  * @return {object} group : The DOM element for the SVG Group.
+ * @classmethod
  */
 Annotation.prototype.constructGroup = function() {
   var image = Lens.image.container;
@@ -67,28 +68,38 @@ Annotation.prototype.constructGroup = function() {
 /**
  * This function creates a text element with the current label and positions it
  * along side the actual shape that we have just created.
+ * @return undefined
  */
 Annotation.prototype.addLabel = function () {
   var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   var font = 15;
   label.innerHTML = this.label;
 
-  var leftXVertexPx = this.x * Lens.image.container.clientWidth;
-  var rightXVertexPx = this.y * Lens.image.container.clientHeight;
+  var leftVertexPx = this.x * Lens.image.container.clientWidth;
+  var topVertexPx = this.y * Lens.image.container.clientHeight;
 
-  label.setAttribute('x', leftXVertexPx + 7);
-  label.setAttribute('y', rightXVertexPx + font);
+  var widthPx = this.width * Lens.image.container.clientWidth;
+  var heightPx = this.height * Lens.image.container.clientHeight;
+
+  var centerX = leftVertexPx + widthPx / 2;
+  var centerY = topVertexPx + heightPx / 2;
+
+  label.setAttribute('x', centerX);
+  label.setAttribute('y', centerY);
   label.setAttribute('font-size', font);
 
-  label.setAttribute('img-offsetx', leftXVertexPx + 3);
-  label.setAttribute('img-offsety', rightXVertexPx + font);
+  label.setAttribute('img-offsetx', centerX);
+  label.setAttribute('img-offsety', centerY);
 
+  // Add pop up functionality to the label
   var annotation = this;
   label.addEventListener('click', function (event) {
     Annotation.prototype.displayAnnotationInfo.call(annotation, event);
   });
+
   this.svgGroup.appendChild(label);
 }
+
 
 /**
  * Populates the info of the pop up based on the clicked annotation and makes
@@ -100,42 +111,52 @@ Annotation.prototype.addLabel = function () {
 Annotation.prototype.displayAnnotationInfo = function (event){
   var annotation = this;
   var overlay = document.getElementById("overlay");
-  var popup = document.getElementById("popup");
+  var popup = document.getElementById("annotation-detail-popup");
 
-  Annotation.prototype.addInfoToPopup(popup, annotation);
+  Annotation.prototype.addInfoToPopup.call(this, popup);
 
   overlay.style.display = "block";
   popup.style.display = "block";
   event.stopPropagation();
 
   document.getElementById('delete-annotation').onclick = function () {
-  	Annotation.prototype.delete.call(annotation);
+    Annotation.prototype.delete.call(annotation);
   };
 }
+
 
 /**
  * Use the grouped annotation data, and append this info into the popup div.
  * @return undefined
  */
-Annotation.prototype.addInfoToPopup = function (popup, annotation) {
+Annotation.prototype.addInfoToPopup = function (popup) {
   var firstRow = popup.getElementsByClassName('attribute-names')[0];
   var secondRow = popup.getElementsByClassName('attribute-values')[0];
 
-  var metadata = Annotation.prototype.getUsefullData.call(annotation);
+  var metadata = Annotation.prototype.getUsefullData.call(this);
 
+  // For each property of metadata, add an entry to the popup
   for (var keys in metadata) {
   	if (metadata.hasOwnProperty(keys)) {
   	  var attributeName = document.createElement('th');
   	  attributeName.innerHTML = keys;
   	  attributeName.setAttribute('class', 'annotation-attribs');
-  	  var attributeValue = document.createElement('td');
-  	  attributeValue.innerHTML = metadata[keys];
+
+      var value = metadata[keys];
+      // Display numbers as percentages with one decimal of precision
+      if (['x', 'y', 'height', 'width'].indexOf(keys) !== -1) {
+        value = String(Math.round(Number(value) * 1000) / 10) + '%';
+      }
+
+      var attributeValue = document.createElement('td');
+      attributeValue.innerHTML = value;
   	  attributeValue.setAttribute('class', 'annotation-vals');
   	  firstRow.appendChild(attributeName);
   	  secondRow.appendChild(attributeValue);
   	}
   }
 };
+
 
 /**
  * Uses the coordinates, width and height to draw containing region.
@@ -199,17 +220,18 @@ Annotation.prototype.drawEllipse = function(x, y, width, height) {
  * @return undefined
  */
 Annotation.prototype.delete = function() {
-  // remove svg group from DOM
+  // Remove svg group from DOM
   var g = this.svgGroup;
   g.parentElement.removeChild(g);
-  // remove object from annotations list
+
+  // Remove object from annotations list
   for (var i = Lens.annotations.length - 1; i >= 0; i--) {
     if (Lens.annotations[i] === this) {
       Lens.annotations.splice(i, 1);
     }
   }
 
-  // call the close box function
+  // Call the close box function
   Lens.methods.closePopUp();
 };
 
@@ -233,6 +255,26 @@ Annotation.prototype.getUsefullData = function() {
  * @return {string} label : The user entered annotation.
  */
 Annotation.prototype.promptUserForLabel = function(){
-  var label = prompt('Label:') || ''; // If canceled we return an empty string
-  return label.toLowerCase();
+  var overlay = document.getElementById("overlay");
+  var popup = document.getElementById("label-form-popup");
+  overlay.style.display = "block";
+  popup.style.display = "block";
+
+  var that = this;
+  // Add event listener and handler for the cancel button
+  document.getElementById('cancel-annotation').onclick = function () {
+    Lens.image.container.removeChild(that.svgGroup);
+    overlay.style.display = "none";
+    popup.style.display = "none";
+  }
+
+  // Add event listener and handler for the confirm button
+  document.getElementById('confirm-annotation').onclick = function () {
+    var selection = document.getElementById('annotation-selection');
+    that.label = selection.options[selection.selectedIndex].value;
+    Lens.annotations.push(that);
+    that.addLabel();
+    overlay.style.display = "none";
+    popup.style.display = "none";
+  }
 };
