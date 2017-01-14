@@ -12,7 +12,7 @@ from helpers import Encoder
 from tornado.gen import coroutine
 from models import Bag, Feed, Frame, Tag
 from tornado.web import RequestHandler
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 
 __author__ = "Anass Al-Wohoush"
 __version__ = "0.1.0"

@@ -2,7 +2,7 @@
 
 """Annotation model."""
 
-from user import User
+from .user import User
 from datetime import datetime
 from motorengine import Document, fields
 from tornado.gen import coroutine, Return

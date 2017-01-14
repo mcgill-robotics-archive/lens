@@ -2,8 +2,8 @@
 
 """Feed model."""
 
-from tag import Tag
-from bag import Bag
+from .tag import Tag
+from .bag import Bag
 from tornado.gen import coroutine, Return
 from motorengine import Document, fields, Q
 

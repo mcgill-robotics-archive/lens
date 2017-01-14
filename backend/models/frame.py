@@ -7,12 +7,12 @@ import six
 import base64
 import logging
 import numpy as np
-from tag import Tag
-from feed import Feed
+from .tag import Tag
+from .feed import Feed
 from toro import Lock
 from bson import Binary
 from cv_bridge import CvBridge
-from annotation import Annotation
+from .annotation import Annotation
 from datetime import datetime, timedelta
 from tornado.gen import coroutine, Return
 from motorengine import Document, fields, Q
